@@ -1,0 +1,654 @@
+﻿<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C5B8DE0C-3533-4B0A-A19E-788542FE3827}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyName>料金回収代行_WAO</AssemblyName>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>料金回収代行_WAO.MainModule</StartupObject>
+    <AssemblyMajorVersion>1</AssemblyMajorVersion>
+    <AssemblyMinorVersion>0</AssemblyMinorVersion>
+    <AssemblyRevisionNumber>10</AssemblyRevisionNumber>
+    <GenerateRevisionNumber>True</GenerateRevisionNumber>
+    <AssemblyCompanyName>DCS</AssemblyCompanyName>
+    <StartWithIE>False</StartWithIE>
+    <ApplicationIcon>料金回収代行_WAO.ico</ApplicationIcon>
+    <RootNamespace>料金回収代行_WAO</RootNamespace>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>.\bin\</OutputPath>
+    <DocumentationFile>料金回収代行_WAO.xml</DocumentationFile>
+    <DebugSymbols>True</DebugSymbols>
+    <DefineDebug>True</DefineDebug>
+    <DefineTrace>True</DefineTrace>
+    <DefineConstants>ORA_DEBUG = 1 : Win32=True</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355</NoWarn>
+    <DebugType>full</DebugType>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>.\bin\</OutputPath>
+    <DocumentationFile>料金回収代行_WAO.xml</DocumentationFile>
+    <DebugSymbols>False</DebugSymbols>
+    <DefineDebug>False</DefineDebug>
+    <DefineTrace>True</DefineTrace>
+    <DefineConstants>ORA_DEBUG = 1 : Win32=True</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355</NoWarn>
+    <DebugType>none</DebugType>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FarPoint.CalcEngine, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.CalcEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="FarPoint.Excel, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="FarPoint.PDF, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.PDF.dll</HintPath>
+    </Reference>
+    <Reference Include="FarPoint.PluginCalendar.WinForms, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.PluginCalendar.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="FarPoint.Win, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.Win.dll</HintPath>
+    </Reference>
+    <Reference Include="FarPoint.Win.Chart, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.Win.Chart.dll</HintPath>
+    </Reference>
+    <Reference Include="FarPoint.Win.Chart.Design, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.Win.Chart.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="FarPoint.Win.Design, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.Win.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="FarPoint.Win.Spread.DesignJ, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.Win.Spread.DesignJ.dll</HintPath>
+    </Reference>
+    <Reference Include="FarPoint.Win.Spread.Html, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.Win.Spread.Html.dll</HintPath>
+    </Reference>
+    <Reference Include="FarPoint.Win.SpreadJ, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\FarPoint.Win.SpreadJ.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Calendar.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Calendar.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Chart.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Chart.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Dashboard.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Dashboard.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Design.Win.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Design.Win.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Diagnostics.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Diagnostics.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Document.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Document.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Export.Document.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Export.Document.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Export.Excel.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Export.Excel.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Export.Html.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Export.Html.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Export.Image.Unsafe.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Export.Image.Unsafe.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Export.Image.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Export.Image.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Export.Pdf.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Export.Pdf.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Export.Rdf.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Export.Rdf.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Export.Word.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Export.Word.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Export.Xaml.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Export.Xaml.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Export.Xml.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Export.Xml.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Extensibility.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Extensibility.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Interop.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Interop.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.OracleClient.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.OracleClient.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Serializer.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Serializer.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Viewer.Win.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Viewer.Win.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Viewer.Wpf.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Viewer.Wpf.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.VisualStudio.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.VisualStudio.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Web.Design.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Web.Design.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.ActiveReports.Web.v12, Version=12.2.14271.1, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\ActiveReportsNET12\Bin\v12.2.14271.1\GrapeCity.ActiveReports.Web.v12.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.CalcEngine, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\GrapeCity.CalcEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.Framework.InputMan.v24, Version=2.4.4002.2012, Culture=neutral, PublicKeyToken=fdd90f5c44b73170, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\InputManWin10\Bin\v10.0.4002.2012\GrapeCity.Framework.InputMan.v24.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.Spreadsheet, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\GrapeCity.Spreadsheet.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.Spreadsheet.Win, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\GrapeCity.Spreadsheet.Win.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.Win.Editors.Design.v100, Version=10.0.4002.2012, Culture=neutral, PublicKeyToken=0ce01a33ce55ca12, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\InputManWin10\Bin\v10.0.4002.2012\GrapeCity.Win.Editors.Design.v100.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.Win.Editors.v100, Version=10.0.4002.2012, Culture=neutral, PublicKeyToken=0ce01a33ce55ca12, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\InputManWin10\Bin\v10.0.4002.2012\GrapeCity.Win.Editors.v100.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.Win.Input.Interop.v100, Version=10.0.4002.2012, Culture=neutral, PublicKeyToken=40ae1c5c604f43d6, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\InputManWin10\Bin\v10.0.4002.2012\GrapeCity.Win.Input.Interop.v100.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.Win.PluginInputMan, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\GrapeCity.Win.PluginInputMan.dll</HintPath>
+    </Reference>
+    <Reference Include="GrapeCity.Win.PluginInputMan.Design, Version=11.0.4503.2012, Culture=neutral, PublicKeyToken=a5fa960294d899e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SpreadWin11\Bin\v11.0.4503.2012\GrapeCity.Win.PluginInputMan.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic.Compatibility">
+      <Name>Microsoft.VisualBasic.Compatibility</Name>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic.PowerPacks">
+      <Name>Microsoft.VisualBasic.PowerPacks</Name>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>..\..\KUMON\料金回収代行システム.NET\dll\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.XML">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="Microsoft.VisualBasic.Compatibility" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ABOUT.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>ABOUT.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ABOUT.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ActiveReport.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.vb" />
+    <Compile Include="AximDateArray.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="AximTextArray.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DATABASE.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FILE.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FORM.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FurikaeReqImpClass.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FurikaeSchImpClass.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Holiday.vb" />
+    <Compile Include="LineShapeArray.vb" />
+    <Compile Include="MainModule.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MOUSE.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ORACONST.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="REGISTRY.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Report\rptFurikaeReqImport.Designer.vb">
+      <DependentUpon>rptFurikaeReqImport.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Report\rptFurikaeReqImport.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Report\rptKeiyakushaCheckList.Designer.vb">
+      <DependentUpon>rptKeiyakushaCheckList.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Report\rptKeiyakushaCheckList.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Report\rptErrorDuplicate.Designer.vb">
+      <DependentUpon>rptErrorDuplicate.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Report\rptErrorDuplicate.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Report\rptKouzaFurikaeIraisho.Designer.vb">
+      <DependentUpon>rptKouzaFurikaeIraisho.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Report\rptKouzaFurikaeIraisho.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="RptViewer.Designer.vb">
+      <DependentUpon>RptViewer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="RptViewer.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Spread.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StringClass.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Structure.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WIN32API.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="メインメニュー.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>メインメニュー.vb</DependentUpon>
+    </Compile>
+    <Compile Include="メインメニュー.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="休日マスタメンテナンス.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>休日マスタメンテナンス.vb</DependentUpon>
+    </Compile>
+    <Compile Include="休日マスタメンテナンス.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="保護者マスタメンテナンス.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>保護者マスタメンテナンス.vb</DependentUpon>
+    </Compile>
+    <Compile Include="保護者マスタメンテナンス.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="保護者マスタ履歴照会.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>保護者マスタ履歴照会.vb</DependentUpon>
+    </Compile>
+    <Compile Include="保護者マスタ履歴照会.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="保護者マスタ移行処理.Designer.vb">
+      <DependentUpon>保護者マスタ移行処理.vb</DependentUpon>
+    </Compile>
+    <Compile Include="保護者マスタ移行処理.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="口座振替データ作成.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>口座振替データ作成.vb</DependentUpon>
+    </Compile>
+    <Compile Include="口座振替データ作成.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="口座振替依頼書%28印刷%29.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>口座振替依頼書%28印刷%29.vb</DependentUpon>
+    </Compile>
+    <Compile Include="口座振替依頼書%28印刷%29.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="基本情報マスタメンテナンス.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>基本情報マスタメンテナンス.vb</DependentUpon>
+    </Compile>
+    <Compile Include="基本情報マスタメンテナンス.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="契約者マスタ%28印刷%29.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>契約者マスタ%28印刷%29.vb</DependentUpon>
+    </Compile>
+    <Compile Include="契約者マスタ%28印刷%29.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="契約者マスタデータ作成.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>契約者マスタデータ作成.vb</DependentUpon>
+    </Compile>
+    <Compile Include="契約者マスタデータ作成.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="契約者マスタメンテナンス.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>契約者マスタメンテナンス.vb</DependentUpon>
+    </Compile>
+    <Compile Include="契約者マスタメンテナンス.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="契約者名寄せ一覧.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>契約者名寄せ一覧.vb</DependentUpon>
+    </Compile>
+    <Compile Include="契約者名寄せ一覧.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="委託者マスタメンテナンス.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>委託者マスタメンテナンス.vb</DependentUpon>
+    </Compile>
+    <Compile Include="委託者マスタメンテナンス.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="振替予定表%28印刷%29.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>振替予定表%28印刷%29.vb</DependentUpon>
+    </Compile>
+    <Compile Include="振替予定表%28印刷%29.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="振替予定表取込.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>振替予定表取込.vb</DependentUpon>
+    </Compile>
+    <Compile Include="振替予定表取込.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="振替予定表累積.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>振替予定表累積.vb</DependentUpon>
+    </Compile>
+    <Compile Include="振替予定表累積.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="振替依頼書取込.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>振替依頼書取込.vb</DependentUpon>
+    </Compile>
+    <Compile Include="振替依頼書取込.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="振替依頼書取込修正.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>振替依頼書取込修正.vb</DependentUpon>
+    </Compile>
+    <Compile Include="振替依頼書取込修正.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="振替依頼書取込反映.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>振替依頼書取込反映.vb</DependentUpon>
+    </Compile>
+    <Compile Include="振替依頼書取込反映.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ErrorPrint.Designer.vb">
+      <DependentUpon>ErrorPrint.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ErrorPrint.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="追加データ作成.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>追加データ作成.vb</DependentUpon>
+    </Compile>
+    <Compile Include="追加データ作成.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="金融機関データ取込.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>金融機関データ取込.vb</DependentUpon>
+    </Compile>
+    <Compile Include="金融機関データ取込.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="金融機関マスタメンテナンス.Designer.vb">
+      <SubType>Code</SubType>
+      <DependentUpon>金融機関マスタメンテナンス.vb</DependentUpon>
+    </Compile>
+    <Compile Include="金融機関マスタメンテナンス.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <EmbeddedResource Include="ABOUT.resX">
+      <DependentUpon>ABOUT.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Licenses.licx" />
+    <EmbeddedResource Include="My Project\licenses.licx" />
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\rptFurikaeReqImport.resx">
+      <DependentUpon>rptFurikaeReqImport.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\rptKeiyakushaCheckList.resx">
+      <DependentUpon>rptKeiyakushaCheckList.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\rptErrorDuplicate.resx">
+      <DependentUpon>rptErrorDuplicate.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\rptKouzaFurikaeIraisho.resx">
+      <DependentUpon>rptKouzaFurikaeIraisho.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RptViewer.resx">
+      <DependentUpon>RptViewer.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="メインメニュー.resX">
+      <DependentUpon>メインメニュー.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="休日マスタメンテナンス.resX">
+      <DependentUpon>休日マスタメンテナンス.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="保護者マスタメンテナンス.resX">
+      <DependentUpon>保護者マスタメンテナンス.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="保護者マスタ履歴照会.resX">
+      <DependentUpon>保護者マスタ履歴照会.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="保護者マスタ移行処理.resX">
+      <DependentUpon>保護者マスタ移行処理.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="口座振替データ作成.resX">
+      <DependentUpon>口座振替データ作成.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="口座振替依頼書%28印刷%29.resX">
+      <DependentUpon>口座振替依頼書%28印刷%29.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="基本情報マスタメンテナンス.resX">
+      <DependentUpon>基本情報マスタメンテナンス.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="契約者マスタ%28印刷%29.resX">
+      <DependentUpon>契約者マスタ%28印刷%29.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="契約者マスタデータ作成.resX">
+      <DependentUpon>契約者マスタデータ作成.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="契約者マスタメンテナンス.resX">
+      <DependentUpon>契約者マスタメンテナンス.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="契約者名寄せ一覧.resX">
+      <DependentUpon>契約者名寄せ一覧.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="委託者マスタメンテナンス.resX">
+      <DependentUpon>委託者マスタメンテナンス.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="振替予定表%28印刷%29.resX">
+      <DependentUpon>振替予定表%28印刷%29.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="振替予定表取込.resX">
+      <DependentUpon>振替予定表取込.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="振替予定表累積.resX">
+      <DependentUpon>振替予定表累積.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="振替依頼書取込.resX">
+      <DependentUpon>振替依頼書取込.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="振替依頼書取込修正.resX">
+      <DependentUpon>振替依頼書取込修正.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="振替依頼書取込反映.resX">
+      <DependentUpon>振替依頼書取込反映.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ErrorPrint.resX">
+      <DependentUpon>ErrorPrint.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="追加データ作成.resX">
+      <DependentUpon>追加データ作成.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="金融機関データ取込.resX">
+      <DependentUpon>金融機関データ取込.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="金融機関マスタメンテナンス.resX">
+      <DependentUpon>金融機関マスタメンテナンス.vb</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="_UpgradeReport.htm">
+      <SubType>Preview</SubType>
+    </None>
+    <None Include="口座振替依頼書.dsr" />
+    <None Include="契約者マスタチェックリスト.dsr" />
+    <None Include="振替依頼書取込.dsr" />
+    <Content Include="dll\Microsoft.VisualBasic.PowerPacks.dll" />
+    <Content Include="dll\Npgsql.dll" />
+    <Content Include="料金回収代行_WAO.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
