@@ -1,6 +1,7 @@
 Option Strict Off
 Option Explicit On
 Imports System.Configuration
+Imports System.IO
 
 Friend Class FileClass
 
@@ -213,4 +214,38 @@ SaveDialogError:
         Next i
         StrTrim = Trim(tmp)
     End Function
+
+    Public Function ReadCSVFileToArray(ByVal fname As String) As Object
+        Dim num_rows As Long
+        Dim num_cols As Long
+        Dim x As Integer
+        Dim y As Integer
+        Dim strarray(1, 1) As String
+
+        'Check if file exist
+        If File.Exists(fname) Then
+            Dim tmpstream As StreamReader = File.OpenText(fname)
+            Dim strlines() As String
+            Dim strline() As String
+
+            'Load content of file to strLines array
+            strlines = tmpstream.ReadToEnd().Split(Environment.NewLine)
+
+            ' Redimension the array.
+            num_rows = UBound(strlines)
+            strline = strlines(0).Split(",")
+            num_cols = UBound(strline)
+            ReDim strarray(num_rows, num_cols)
+
+            ' Copy the data into the array.
+            For x = 0 To num_rows
+                strline = strlines(x).Split(",")
+                For y = 0 To num_cols
+                    strarray(x, y) = strline(y)
+                Next
+            Next
+        End If
+        ReadCSVFileToArray = strarray
+    End Function
+
 End Class

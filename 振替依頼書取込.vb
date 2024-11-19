@@ -536,29 +536,35 @@ Friend Class frmFurikaeReqImport
 
         Dim fp As Short
         Dim ms As New MouseClass
-        Dim contentarray As String()
-        Dim recordLen As Integer
+        Dim contentarray(,) As String
+        Dim x As Integer
+        Dim y As Integer
         Call ms.Start()
 
-        recordLen = 242 'lenght of record
+        On Error GoTo ReadCSVFileToArrayError
+        contentarray = file.ReadCSVFileToArray(dlgFileOpen.FileName)
 
-        contentarray = IO.File.ReadAllLines(dlgFileOpen.FileName)
-        Dim contentBytes As Byte() = My.Computer.FileSystem.ReadAllBytes(dlgFileOpen.FileName)
-
-        'fraProgressBar.Visible = True
-        pgrProgressBar.Show()
-        'pgrProgressBar.Maximum = LOF(fp) / Len(Hogosha)
-        pgrProgressBar.Maximum = contentarray.Length
-        '//ファイルサイズが違う場合の警告メッセージ
-        'If pgrProgressBar.Maximum <> Int(pgrProgressBar.Maximum) Then
-        'If (LOF(fp) - 1) / Len(Hogosha) <> Int((LOF(fp) - 1) / Len(Hogosha)) Then
-        If ((recordLen * contentarray.Length) <> contentBytes.Length) Then
-            '/処理続行するとＤＢがおかしくなるので中止する
-            'FileClose(fp)
+        If (contentarray.GetLength(1) <> 16) Then
             Call gdDBS.AppMsgBox("指定されたファイル(" & dlgFileOpen.FileName & ")が異常です。" & vbCrLf & vbCrLf & "処理を続行出来ません。", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
             GoTo cmdImport_ClickAbort
             Exit Sub
         End If
+
+        'Dim contentBytes As Byte() = My.Computer.FileSystem.ReadAllBytes(dlgFileOpen.FileName)
+        ''fraProgressBar.Visible = True
+        'pgrProgressBar.Show()
+        ''pgrProgressBar.Maximum = LOF(fp) / Len(Hogosha)
+        'pgrProgressBar.Maximum = contentarray.Length
+        ''//ファイルサイズが違う場合の警告メッセージ
+        ''If pgrProgressBar.Maximum <> Int(pgrProgressBar.Maximum) Then
+        ''If (LOF(fp) - 1) / Len(Hogosha) <> Int((LOF(fp) - 1) / Len(Hogosha)) Then
+        'If ((recordLen * contentarray.Length) <> contentBytes.Length) Then
+        '    '/処理続行するとＤＢがおかしくなるので中止する
+        '    'FileClose(fp)
+        '    Call gdDBS.AppMsgBox("指定されたファイル(" & dlgFileOpen.FileName & ")が異常です。" & vbCrLf & vbCrLf & "処理を続行出来ません。", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
+        '    GoTo cmdImport_ClickAbort
+        '    Exit Sub
+        'End If
         'End If
 
         On Error GoTo cmdImport_ClickError
@@ -591,7 +597,7 @@ Friend Class frmFurikaeReqImport
             recCnt = 0
             Dim intLen As Integer = 0
             Dim encoding As System.Text.Encoding = System.Text.Encoding.GetEncoding("shift-jis")
-            For Each entry As String In contentarray
+            For x = 0 To contentarray.GetLength(0) - 1
                 System.Windows.Forms.Application.DoEvents()
                 If mAbort Then
                     GoTo cmdImport_ClickError
@@ -615,38 +621,22 @@ Friend Class frmFurikaeReqImport
                 ReDim Hogosha.TuuchoBango(7) '//通帳番号 8
                 ReDim Hogosha.CrLf(1) '// CR + LF
                 With Hogosha
-                    .MochikomiBi = encoding.GetString(contentBytes, intLen, Len(.MochikomiBi))
-                    intLen = intLen + 8 'Len(.MochikomiBi)
-                    .Keiyakusha = encoding.GetString(contentBytes, intLen, Len(.Keiyakusha))
-                    intLen = intLen + 7 'Len(.Keiyakusha)
-                    .Filler = encoding.GetString(contentBytes, intLen, Len(.Filler))
-                    intLen = intLen + 5 'Len(.Kyoshittsu)
-                    .HogoshaNo = encoding.GetString(contentBytes, intLen, Len(.HogoshaNo))
-                    intLen = intLen + 8 'Len(.HogoshaNo)
-                    .SeitoShimei = encoding.GetString(contentBytes, intLen, Len(.SeitoShimei))
-                    intLen = intLen + 50 'Len(.SeitoShimei)
-                    .StartYyyyMm = encoding.GetString(contentBytes, intLen, Len(.StartYyyyMm))
-                    intLen = intLen + 6 'Len(.StartYyyyMm)
-                    .HogoshaKana = encoding.GetString(contentBytes, intLen, Len(.HogoshaKana))
-                    intLen = intLen + 40 'Len(.HogoshaKana)
-                    .HogoshaKanji = encoding.GetString(contentBytes, intLen, Len(.HogoshaKanji))
-                    intLen = intLen + 30 'Len(.HogoshaKanji)
-                    .BankCode = encoding.GetString(contentBytes, intLen, Len(.BankCode))
-                    intLen = intLen + 4 'Len(.BankCode)
-                    .BankName = encoding.GetString(contentBytes, intLen, Len(.BankName))
-                    intLen = intLen + 30 'Len(.BankName)
-                    .ShitenCode = encoding.GetString(contentBytes, intLen, Len(.ShitenCode))
-                    intLen = intLen + 3 'Len(.ShitenCode)
-                    .ShitenName = encoding.GetString(contentBytes, intLen, Len(.ShitenName))
-                    intLen = intLen + 30 'Len(.ShitenName)
-                    .YokinShumoku = encoding.GetString(contentBytes, intLen, Len(.YokinShumoku))
-                    intLen = intLen + 1 'Len(.YokinShumoku)
-                    .KouzaBango = encoding.GetString(contentBytes, intLen, Len(.KouzaBango))
-                    intLen = intLen + 7 'Len(.KouzaBango)
-                    .TuuchoKigou = encoding.GetString(contentBytes, intLen, Len(.TuuchoKigou))
-                    intLen = intLen + 3 'Len(.TuuchoKigou)
-                    .TuuchoBango = encoding.GetString(contentBytes, intLen, Len(.TuuchoBango))
-                    intLen = intLen + 8 + Len(.CrLf) 'Len(.FurikaeGaku)
+                    .MochikomiBi = contentarray(x, 0)
+                    .Keiyakusha = contentarray(x, 1)
+                    .Filler = contentarray(x, 2)
+                    .HogoshaNo = contentarray(x, 3)
+                    .SeitoShimei = contentarray(x, 4)
+                    .StartYyyyMm = contentarray(x, 5)
+                    .HogoshaKana = contentarray(x, 6)
+                    .HogoshaKanji = contentarray(x, 7)
+                    .BankCode = contentarray(x, 8)
+                    .BankName = contentarray(x, 9)
+                    .ShitenCode = contentarray(x, 10)
+                    .ShitenName = contentarray(x, 11)
+                    .YokinShumoku = contentarray(x, 12)
+                    .KouzaBango = contentarray(x, 13)
+                    .TuuchoKigou = contentarray(x, 14)
+                    .TuuchoBango = contentarray(x, 15)
                 End With
 
                 recCnt = recCnt + 1
@@ -759,7 +749,6 @@ Friend Class frmFurikaeReqImport
             Call pMakeComboBox()
 
         End Using
-
 commitTransactionerr:
         If Not IsNothing(transaction) Then
             If Not transaction.IsCompleted Then
@@ -801,6 +790,9 @@ cmdImport_ClickError:
             Call gdDBS.AutoLogOut(mCaption, "取込処理は中止されました。")
         End If
         Call pLockedControl(True)
+        GoTo cmdImport_ClickAbort
+ReadCSVFileToArrayError:
+        Call gdDBS.AppMsgBox("指定されたファイル(" & dlgFileOpen.FileName & ")が異常です。" & vbCrLf & vbCrLf & "処理を続行出来ません。", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
         GoTo cmdImport_ClickAbort
     End Sub
 
