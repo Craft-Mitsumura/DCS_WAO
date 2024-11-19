@@ -53,8 +53,8 @@ Friend Class FormClass
     Public Sub Resize()
         On Error Resume Next '//エラーを回避
         '//サイズ変更時にシステム日付を移動する
-        'Dim lblSysDate As Label = CType(mForm.Controls("lblSysDate"), Label)
-        'lblSysDate.Left = mForm.Width - (lblSysDate.Width + 30)
+        Dim lblSysDate As Label = CType(mForm.Controls("lblSysDate"), Label)
+        lblSysDate.Left = mForm.Width - (lblSysDate.Width + 30)
     End Sub
 
     Public Sub Init(ByRef vForm As System.Windows.Forms.Form, Optional ByVal oDbs As Object = Nothing, Optional ByRef oSetMode As Object = False)
