@@ -158,6 +158,28 @@ SaveDialogError:
         End Get
     End Property
 
+    Public ReadOnly Property SaveDialogCsv(ByVal vDlg As Object) As Object
+        Get
+            Dim Result As Short
+            On Error GoTo SaveDialogError
+SaveDialogTop:
+            With vDlg
+                '.Flags = MSComDlg.FileOpenConstants.cdlOFNOverwritePrompt ''//上書き確認を要求thach
+                '.CancelError = True
+                .Filter = "ﾃｷｽﾄﾌｧｲﾙ(*.csv)|*.csv|すべてのﾌｧｲﾙ (*.*)|*.*"
+                'Call .ShowDialog()
+                .FileName = Trim(.FileName) '//前後の空白は削除
+                If .FileName <> "" Then
+                    If UCase(Right(.FileName, 4)) <> UCase(".csv") Then
+                        .FileName = .FileName & ".csv"
+                    End If
+                    SaveDialogCsv = .ShowDialog()
+                End If
+            End With
+SaveDialogError:
+        End Get
+    End Property
+
     Public Function MakeTempFile(Optional ByVal path As String = "D:\", Optional ByVal FileID As String = "~@") As Object
         Dim tmpFile As New VB6.FixedLengthString(256)
         path = ConfigurationManager.AppSettings.Item("tempfilepath")
@@ -240,9 +262,11 @@ SaveDialogError:
             ' Copy the data into the array.
             For x = 0 To num_rows
                 strline = strlines(x).Split(",")
-                For y = 0 To num_cols
-                    strarray(x, y) = strline(y)
-                Next
+                If (strline(0) <> vbLf) Then
+                    For y = 0 To num_cols
+                        strarray(x, y) = strline(y).Replace("""", "")
+                    Next
+                End If
             Next
         End If
         ReadCSVFileToArray = strarray

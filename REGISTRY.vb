@@ -89,17 +89,26 @@ Friend Class RegistryClass
             Call SaveSetting(My.Application.Info.Title, "InputFileName", vSection, Value)
         End Set
 	End Property
-	
-	
+
+
 	Public Property OutputFileName(ByVal vSection As String) As Object
 		Get
 			OutputFileName = GetSetting(My.Application.Info.Title, "OutputFileName", vSection, vSection & ".txt")
 		End Get
 		Set(ByVal Value As Object)
-            Call SaveSetting(My.Application.Info.Title, "OutputFileName", vSection, Value)
-        End Set
+			Call SaveSetting(My.Application.Info.Title, "OutputFileName", vSection, Value)
+		End Set
 	End Property
-	
+
+	Public Property OutputFileNameErr(ByVal vSection As String) As Object
+		Get
+			OutputFileNameErr = GetSetting(My.Application.Info.Title, "OutputFileName", vSection, vSection)
+		End Get
+		Set(ByVal Value As Object)
+			Call SaveSetting(My.Application.Info.Title, "OutputFileName", vSection, Value)
+		End Set
+	End Property
+
 	Public ReadOnly Property TransferCommand(ByVal vSection As String) As Object
 		Get
 			TransferCommand = GetSetting(My.Application.Info.Title, "TransferCommand", vSection, "")

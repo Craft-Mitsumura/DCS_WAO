@@ -523,11 +523,16 @@ Friend Class frmFurikaeReqImport
         '//コマンド・ボタン制御
         Call pLockedControl(False, cmdImport)
 
+        '//Set Visible
+        lblResult.Visible = False
+        lblResultERR.Visible = False
+        cmdExportCSV_ERR.Visible = False
+
         Dim file As New FileClass
 
         dlgFileOpen.Title = "ファイルを開く(" & mCaption & ")"
         dlgFileOpen.FileName = mReg.InputFileName(mCaption)
-        If CType(file.OpenDialog(dlgFileOpen), DialogResult) = DialogResult.Cancel Then
+        If CType(file.OpenDialog(dlgFileOpen, "ﾃｷｽﾄﾌｧｲﾙ (*.csv)|*.csv"), DialogResult) = DialogResult.Cancel Then
             GoTo cmdImport_ClickAbort
             Exit Sub
         End If
@@ -544,7 +549,7 @@ Friend Class frmFurikaeReqImport
         On Error GoTo ReadCSVFileToArrayError
         contentarray = file.ReadCSVFileToArray(dlgFileOpen.FileName)
 
-        If (contentarray.GetLength(1) <> 16) Then
+        If (contentarray.GetLength(1) <> 10) Then
             Call gdDBS.AppMsgBox("指定されたファイル(" & dlgFileOpen.FileName & ")が異常です。" & vbCrLf & vbCrLf & "処理を続行出来ません。", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
             GoTo cmdImport_ClickAbort
             Exit Sub
@@ -597,11 +602,16 @@ Friend Class frmFurikaeReqImport
             recCnt = 0
             Dim intLen As Integer = 0
             Dim encoding As System.Text.Encoding = System.Text.Encoding.GetEncoding("shift-jis")
-            For x = 0 To contentarray.GetLength(0) - 1
+            For x = 1 To contentarray.GetLength(0) - 1
                 System.Windows.Forms.Application.DoEvents()
                 If mAbort Then
                     GoTo cmdImport_ClickError
                 End If
+
+                If contentarray(x, 0) = Nothing Then
+                    Continue For
+                End If
+
                 'FileGet(fp, Hogosha)
                 ReDim Hogosha.MochikomiBi(7) '//持ち込み日 2006/03/24 項目追加 8
                 ReDim Hogosha.Keiyakusha(6) '//契約者番号 7 
@@ -623,20 +633,20 @@ Friend Class frmFurikaeReqImport
                 With Hogosha
                     .MochikomiBi = contentarray(x, 0)
                     .Keiyakusha = contentarray(x, 1)
-                    .Filler = contentarray(x, 2)
-                    .HogoshaNo = contentarray(x, 3)
-                    .SeitoShimei = contentarray(x, 4)
-                    .StartYyyyMm = contentarray(x, 5)
-                    .HogoshaKana = contentarray(x, 6)
-                    .HogoshaKanji = contentarray(x, 7)
-                    .BankCode = contentarray(x, 8)
-                    .BankName = contentarray(x, 9)
-                    .ShitenCode = contentarray(x, 10)
-                    .ShitenName = contentarray(x, 11)
-                    .YokinShumoku = contentarray(x, 12)
-                    .KouzaBango = contentarray(x, 13)
-                    .TuuchoKigou = contentarray(x, 14)
-                    .TuuchoBango = contentarray(x, 15)
+                    .Filler = ""
+                    .HogoshaNo = contentarray(x, 2)
+                    .SeitoShimei = contentarray(x, 3)
+                    .StartYyyyMm = contentarray(x, 4)
+                    .HogoshaKana = contentarray(x, 5)
+                    .HogoshaKanji = "　"
+                    .BankCode = contentarray(x, 6)
+                    .BankName = "　"
+                    .ShitenCode = contentarray(x, 7)
+                    .ShitenName = "　"
+                    .YokinShumoku = contentarray(x, 8)
+                    .KouzaBango = contentarray(x, 9)
+                    .TuuchoKigou = ""
+                    .TuuchoBango = ""
                 End With
 
                 recCnt = recCnt + 1
@@ -749,6 +759,10 @@ Friend Class frmFurikaeReqImport
             Call pMakeComboBox()
 
         End Using
+
+        '//Set AutoImport
+        Call setAutoImport()
+
 commitTransactionerr:
         If Not IsNothing(transaction) Then
             If Not transaction.IsCompleted Then
@@ -794,6 +808,296 @@ cmdImport_ClickError:
 ReadCSVFileToArrayError:
         Call gdDBS.AppMsgBox("指定されたファイル(" & dlgFileOpen.FileName & ")が異常です。" & vbCrLf & vbCrLf & "処理を続行出来ません。", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
         GoTo cmdImport_ClickAbort
+    End Sub
+
+    Private Sub setAutoImport()
+
+        '//STEP 1 (Check Error)
+        '//チェック処理
+        If True = gDataCheck((cboImpDate.Text)) Then
+            '//データ読み込み＆ Spread に設定反映
+            'Call pReadDataAndSetting()
+        End If
+
+        '//STEP 2 (Update Status)
+        On Error GoTo commitTransactionerr
+
+        Dim transaction As Npgsql.NpgsqlTransaction
+        Using connection As Npgsql.NpgsqlConnection = New Npgsql.NpgsqlConnection(gdDBS.Database.ConnectionString)
+            Dim cmd As New Npgsql.NpgsqlCommand()
+            cmd.Connection = connection
+            If Not cmd.Connection.State = ConnectionState.Open Then
+                connection.Open()
+            End If
+
+            transaction = connection.BeginTransaction()
+
+            Dim Sql As String
+            Sql = "SELECT a.* " & vbCrLf
+            Sql = Sql & " FROM " & mRimp.TcHogoshaImport & " a " & vbCrLf
+            Sql = Sql & " WHERE 1 = 1" & vbCrLf
+            Sql = Sql & " AND CIINDT = TO_TIMESTAMP('" & cboImpDate.Text & "','yyyy/mm/dd hh24:mi:ss')::timestamp without time zone" & vbCrLf
+            Sql = Sql & " ORDER BY CIKYCD,CIHGCD"
+            Dim dt As DataTable = gdDBS.ExecuteDataTable(cmd, Sql)
+            For index As Integer = 0 To dt.Rows.Count - 1
+                If Not 0 <> InStr(dt.Rows(index)("CIINSD"), "-1") Then
+                    If InStr(dt.Rows(index)("CIWMSG"), MainModule.cEXISTS_DATA) <> 0 Or InStr(dt.Rows(index)("CIWMSG"), MainModule.cKAIYAKU_DATA) Then
+                        Sql = "UPDATE " & mRimp.TcHogoshaImport & " SET " & vbCrLf
+                        Sql = Sql & " CIOKFG = 1," & vbCrLf
+                        Sql = Sql & " CIERROR = -2," & vbCrLf
+                        Sql = Sql & " CIERSR = 1," & vbCrLf
+                        Sql = Sql & " CIINSD = 1," & vbCrLf
+                        Sql = Sql & " CIUSID = '" & gdDBS.LoginUserName & "'," & vbCrLf
+                        Sql = Sql & " CIUPDT = current_timestamp" & vbCrLf
+                        Sql = Sql & " WHERE CISEQN = " & dt.Rows(index)("CISEQN") & vbCrLf
+                        Sql = Sql & " AND CIINDT = TO_TIMESTAMP('" & cboImpDate.Text & "','yyyy/mm/dd hh24:mi:ss')::timestamp without time zone" & vbCrLf
+                        cmd.CommandText = Sql
+                        cmd.ExecuteNonQuery()
+                    End If
+                End If
+            Next
+
+            transaction.Commit()
+        End Using
+
+        '//STEP 3 (Check Error)
+        If True = gDataCheck((cboImpDate.Text)) Then
+            '//データ読み込み＆ Spread に設定反映
+            'Call pReadDataAndSetting()
+        End If
+
+        '//STEP 4 (Update)
+        SetUpdate()
+
+        'Show Status
+        lblResult.Visible = True
+
+        Dim sqla, cnn As String
+        Dim dyn_err As DataTable
+        sqla = "SELECT count(*) " & vbCrLf
+        sqla = sqla & " FROM " & mRimp.TcHogoshaImport & " a " & vbCrLf
+        sqla = sqla & " WHERE 1 = 1" & vbCrLf
+        sqla = sqla & " AND CIINDT = TO_TIMESTAMP('" & cboImpDate.Text & "','yyyy/mm/dd hh24:mi:ss')::timestamp without time zone" & vbCrLf
+        dyn_err = gdDBS.ExecuteDataForBinding(sqla)
+
+        cnn = dyn_err.Rows(0)(0).ToString
+
+        If cnn = "0" Then
+            lblResultERR.Visible = False
+            cmdExportCSV_ERR.Visible = False
+        Else
+            lblResultERR.Text = "CSV Error Records: " & cnn & " record"
+            cmdExportCSV_ERR.Text = "Export " & cnn & " CSV (Error)"
+            lblResultERR.Visible = True
+            cmdExportCSV_ERR.Visible = True
+        End If
+
+commitTransactionerr:
+        If Not IsNothing(transaction) Then
+            If Not transaction.IsCompleted Then
+                transaction.Rollback()
+            End If
+        End If
+    End Sub
+
+    Private Sub SetUpdate()
+        Dim sql As String = ""
+        Dim msg As String = ""
+        '//////////////////////////////////////////////////////////
+        '//ここで使用する共通の WHERE 条件
+        Dim Condition As String = ""
+        Dim updModeSQL As String = ""
+        Condition = Condition & " And CIINDT = TO_TIMESTAMP('" & cboImpDate.Text & "','yyyy/mm/dd hh24:mi:ss')::timestamp without time zone " & vbCrLf
+            '// CIERROR >= 0 AND CIOKFG >= 0 であること
+            Condition = Condition & " AND CIERROR >= 0" & vbCrLf
+        Condition = Condition & " AND CIOKFG  >= 0"
+        Condition = Condition & " AND CIMUPD   = 0" '//2006/04/04 マスタ反映ＯＫフラグ項目追加
+
+        updModeSQL = " AND (CiITKB,CiKYCD,CiHGCD) IN( " '//保護者に存在する
+        updModeSQL = updModeSQL & " SELECT CAITKB,CAKYCD,CAHGCD FROM tcHogoshaMaster "
+        updModeSQL = updModeSQL & " )"
+        updModeSQL = updModeSQL & " AND CIINSD = 1" '//追加するデータのみ
+
+        Dim transaction As Npgsql.NpgsqlTransaction
+        Using connection As Npgsql.NpgsqlConnection = New Npgsql.NpgsqlConnection(gdDBS.Database.ConnectionString)
+            Try
+                Dim cmd As New Npgsql.NpgsqlCommand()
+                cmd.Connection = connection
+                If Not cmd.Connection.State = ConnectionState.Open Then
+                    connection.Open()
+                End If
+                transaction = connection.BeginTransaction()
+
+                '///////////////////////////////////////
+                '// 取込日時単位で TcHogoshaImport 内に同じ保護者が存在しないこと
+                '//2006/03/17 重複データは後勝ちで更新するように変更にしたのでありえないだろう？
+                '//2006/04/24 教室番号を追加
+                'sql = " SELECT CIKYCD,CIKSCD,CIHGCD"
+                sql = " SELECT CIKYCD,CIHGCD"
+                sql = sql & " FROM " & mRimp.TcHogoshaImport
+                sql = sql & " WHERE 1 = 1" '//おまじない
+                sql = sql & Condition
+                sql = sql & updModeSQL
+                'sql = sql & " GROUP BY CIKYCD,CIKSCD,CIHGCD"
+                sql = sql & " GROUP BY CIKYCD,CIHGCD"
+                sql = sql & " HAVING COUNT(*) > 1 " '//同一の保護者が存在するか？                
+                'dyn = gdDBS.ExecuteDatareader(sql)
+                Dim dt As DataTable = gdDBS.ExecuteDataTable(cmd, sql)
+
+                If Not IsNothing(dt) Then
+                    msg = "取込日時 [ " & cboImpDate.Text & " ] 内に" & vbCrLf & "　 保護者 [ " &
+                        dt.Rows(0)("CIKYCD") & " - " & dt.Rows(0)("CIHGCD") & " ] が複数存在する為     " &
+                        vbCrLf & "マスタ反映は処理続行が出来ません。"
+                End If
+
+                If "" <> msg Then
+                    Call gdDBS.AutoLogOut(mCaption, Replace(msg, vbCrLf, ""))
+                    Call MsgBox(msg, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, mCaption)
+                    lblResult.Text = msg
+                    '//ボタンを戻す
+                    cmdUpdate.Text = cBtnUpdate
+                    '//コマンド・ボタン制御
+                    Call pLockedControl(True)
+                    Exit Sub
+                End If
+
+                Call gdDBS.AutoLogOut(mCaption, "[" & cboImpDate.Text & "] のマスタ反映が開始されました。")
+
+                'Dim updDyn As Npgsql.NpgsqlDataReader
+                Dim updDt As DataTable
+                Dim recCnt As Long
+                Dim ms As New MouseClass
+                Call ms.Start()
+
+                sql = "SELECT a.*" & vbCrLf
+                sql = sql & " FROM " & mRimp.TcHogoshaImport & " a " & vbCrLf
+                sql = sql & " WHERE 1 = 1" & vbCrLf
+                sql = sql & Condition & vbCrLf
+                sql = sql & updModeSQL
+                dt = gdDBS.ExecuteDataTable(cmd, sql)
+
+                If IsNothing(dt) Then
+                    msg = "取込日時 [ " & cboImpDate.Text & " ]" & vbCrLf & "にマスタ反映すべきデータはありません。"
+                    Call gdDBS.AutoLogOut(mCaption, Replace(msg, vbCrLf, ""))
+                    Call MsgBox(msg, MsgBoxStyle.OkOnly + MsgBoxStyle.Information, mCaption)
+                    lblResult.Text = msg
+                    '//ボタンを戻す
+                    cmdUpdate.Text = cBtnUpdate
+                    '//コマンド・ボタン制御
+                    Call pLockedControl(True)
+                    Exit Sub
+                Else
+                    recCnt = dt.Rows.Count
+                End If
+
+                '//2007/07/19 口座戻り件数を表示
+                Dim modoriCnt As Integer = 0
+                '//2007/06/11 大量に AutoLog にかかれるのでトリガを停止
+                '//2015/02/12 TriggerControl() はコメントかされているので紛らわしいのでコメント化
+                '// Call gdDBS.TriggerControl("tcHogoshaMaster", False)
+                '////////////////////////////////////////////////////////
+                '//更新処理開始時刻を保管、このデータを元に取り込み元を削除する
+                Dim startTimeSQL As String = ""
+                startTimeSQL = startTimeSQL & " AND CIINDT = TO_TIMESTAMP('" & cboImpDate.Text & "','yyyy/mm/dd hh24:mi:ss')::timestamp without time zone " & vbCrLf
+                startTimeSQL = startTimeSQL & " AND (CiITKB,CiKYCD,CiHGCD) IN(" & vbCrLf
+                startTimeSQL = startTimeSQL & " SELECT CaITKB,CaKYCD,CaHGCD FROM tcHogoshaMaster" & vbCrLf
+                startTimeSQL = startTimeSQL & " WHERE CaUPDT >= TO_TIMESTAMP('" & gdDBS.SQLsysDate("yyyy/mm/dd hh24:mi:ss", cmd) & "','yyyy/mm/dd hh24:mi:ss')::timestamp without time zone " & vbCrLf
+                startTimeSQL = startTimeSQL & "   AND CaUSID = " & gdDBS.ColumnDataSet((MainModule.gcImportHogoshaUser), vEnd:=True) & vbCrLf
+                startTimeSQL = startTimeSQL & ")"
+
+                'fraProgressBar.Visible = True
+                pgrProgressBar.Show()
+                pgrProgressBar.Maximum = recCnt
+                Dim currentRowIndex As Integer = 0
+                For index As Integer = 0 To dt.Rows.Count - 1
+                    currentRowIndex = index + 1
+                    System.Windows.Forms.Application.DoEvents()
+                    If mAbort Then
+                        Throw New Exception
+                    End If
+                    stbStatus.Items.Item(stbStatus.Items.Count - 1).Text = "残り" & VB.Right(New String(" ", 7) & VB6.Format(recCnt - currentRowIndex, "#,##0"), 7) & " 件"
+                    pgrProgressBar.Value = currentRowIndex
+                    sql = "SELECT b.* "
+                    sql = sql & " FROM tcHogoshaMaster b "
+                    sql = sql & " WHERE CAITKB = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIITKB"), vEnd:=True)
+                    sql = sql & "   AND CAKYCD = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIKYCD"), vEnd:=True)
+                    'sql = sql & "   AND CAKSCD = " & gdDBS.ColumnDataSet(dyn.Fields("CIKSCD"), vEnd:=True)
+                    sql = sql & "   AND CAHGCD = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIHGCD"), vEnd:=True)
+                    sql = sql & " ORDER BY CASQNO DESC" '//最終レコードのみが更新対象                    
+                    updDt = gdDBS.ExecuteDataTable(cmd, sql)
+                    If IsNothing(updDt) Then
+                        If False = pHogoshaInsert(dt.Rows(index), cmd) Then
+                            Throw New Exception
+                        End If
+                    Else
+                        If False = pHogoshaUpdate(updDt.Rows(0), dt.Rows(index), cmd, mUpdateMode) Then
+                            Throw New Exception
+                        End If
+                        modoriCnt = modoriCnt + 1
+                    End If
+                Next
+                '//マスタ反映時にも同じ事をするので共通化
+                If pMoveTempRecords(startTimeSQL, gcFurikaeImportToMaster, cmd) <= 0 Then
+                    Throw New Exception
+                End If
+                transaction.Commit()
+                '//2007/06/11 先頭で停止しているのでトリガを再開
+                '//2015/02/12 TriggerControl() はコメントかされているので紛らわしいのでコメント化
+                '// Call gdDBS.TriggerControl("tcHogoshaMaster")
+
+                pgrProgressBar.Maximum = pgrProgressBar.Maximum
+                'fraProgressBar.Visible = False
+                pgrProgressBar.Hide()
+
+                '//ステータス行の整列・調整
+                stbStatus.Items.Item(stbStatus.Items.Count - 1).Text = "反映完了"
+                Call MsgBox("マスタ反映対象 = [" & cboImpDate.Text & "]" & vbCrLf & vbCrLf & recCnt & " 件がマスタ反映されました." & vbCrLf & vbCrLf & "内、口座戻りの件数は " & modoriCnt & " 件です。", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, mCaption)
+
+                lblResult.Text = "マスタ反映対象 = [" & cboImpDate.Text & "]" & vbCrLf & vbCrLf & recCnt & " 件がマスタ反映されました." & vbCrLf & vbCrLf & "内、口座戻りの件数は " & modoriCnt & " 件です。"
+
+                Call gdDBS.AutoLogOut(mCaption, "[" & cboImpDate.Text & "] の " & recCnt & " 件の反映が完了しました。内、口座戻りの件数は " & modoriCnt & " 件です。")
+                '//リストを再設定
+                Call pMakeComboBox()
+                '//ボタンを戻す
+                cmdUpdate.Text = cBtnUpdate
+                '//コマンド・ボタン制御
+                Call pLockedControl(True)
+                Exit Sub
+
+            Catch ex As Exception
+                If Not IsNothing(transaction) Then
+                    If Not transaction.IsCompleted Then
+                        transaction.Rollback()
+                    End If
+                End If
+                '//2007/06/11 先頭で停止しているのでトリガを再開
+                Call gdDBS.TriggerControl("tcHogoshaMaster")
+                Dim errCode As Integer
+                Dim errMsg As String
+                If Err.Number Then
+                    If Err.GetException().GetType().Name = "NpgsqlException" Then
+                        errCode = CType(Err.GetException(), Npgsql.NpgsqlException).ErrorCode
+                        'errMsg = CType(Err.GetException(), Npgsql.NpgsqlException).MessageText
+                    Else
+                        errCode = Err.Number
+                        errMsg = ErrorToString()
+                    End If
+                    'fraProgressBar.Visible = False
+                    pgrProgressBar.Hide()
+                    stbStatus.Items.Item(stbStatus.Items.Count - 1).Text = "反映エラー(" & errCode & ")"
+                    Call gdDBS.AutoLogOut(mCaption, "マスタ反映対象 = [" & cboImpDate.Text & "] はエラーが発生したためマスタ反映は中止されました。(Error=" & errMsg & ")")
+                    Call MsgBox("マスタ反映対象 = [" & cboImpDate.Text & "]" & vbCrLf & "はエラーが発生したためマスタ反映は中止されました。" & vbCrLf & errMsg, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, mCaption)
+                    lblResult.Text = "マスタ反映対象 = [" & cboImpDate.Text & "]" & vbCrLf & "はエラーが発生したためマスタ反映は中止されました。"
+                Else
+                    stbStatus.Items.Item(stbStatus.Items.Count - 1).Text = "反映中断"
+                    Call gdDBS.AutoLogOut(mCaption, "マスタ反映対象 = [" & cboImpDate.Text & "]" & vbCrLf & "のマスタ反映は中止されました。")
+                End If
+                '//ボタンを戻す
+                cmdUpdate.Text = cBtnUpdate
+                '//コマンド・ボタン制御
+                Call pLockedControl(True)
+            End Try
+        End Using
     End Sub
 
     '//金融機関＆支店名のマッチング用
@@ -1035,7 +1339,7 @@ SetErrorStatusError:
                     '//////////////////////////////////////////
                     '//保護者名(漢字)チェック
                     If IsDBNull(dt.Rows(index)("CIKJNM")) Or dt.Rows(index)("CIKJNM").ToString.Trim = "" Then
-                        Call pSetErrorStatus("CIKJNME", (mRimp.errInvalid), "保護者名(漢字)が未入力です.")
+                        Call pSetErrorStatus("CIKJNME", (mRimp.errNormal), "保護者名(漢字)が未入力です.")
                     End If
                     '//////////////////////////////////////////
                     '//保護者名(カナ)チェック
@@ -1044,32 +1348,32 @@ SetErrorStatusError:
                     End If
                     '//////////////////////////////////////////
                     '//過去/今回 振替依頼書・取込データとのチェック
-                    sql = "SELECT MAX(DupCode) DUPCODE FROM(" & vbCrLf
-                    sql = sql & " SELECT " & gdDBS.ColumnDataSet("過去", vEnd:=True) & " DupCode " & vbCrLf
-                    sql = sql & " FROM " & mRimp.TcHogoshaImport & " a " & vbCrLf
-                    sql = sql & " WHERE CIINDT <>TO_TIMESTAMP('" & vImpDate & "','yyyy/mm/dd hh24:mi:ss')" & vbCrLf
-                    sql = sql & "   AND CIITKB = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIITKB"), vEnd:=True) & vbCrLf
-                    sql = sql & "   AND CIKYCD = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIKYCD"), vEnd:=True) & vbCrLf
-                    'sql = sql & "   AND CIKSCD = " & gdDBS.ColumnDataSet(dynM.Fields("CIKSCD"), vEnd:=True) & vbCrLf
-                    sql = sql & "   AND CIHGCD = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIHGCD"), vEnd:=True) & vbCrLf
-                    sql = sql & " UNION " & vbCrLf
-                    sql = sql & " SELECT " & gdDBS.ColumnDataSet("今回", vEnd:=True) & " DupCode " & vbCrLf
-                    sql = sql & " FROM " & mRimp.TcHogoshaImport & " a " & vbCrLf
-                    sql = sql & " WHERE CIINDT = TO_TIMESTAMP('" & vImpDate & "','yyyy/mm/dd hh24:mi:ss')" & vbCrLf
-                    '//自分自身以外
-                    sql = sql & "   AND CISEQN <>" & gdDBS.ColumnDataSet(dt.Rows(index)("CISEQN"), "I", vEnd:=True) & vbCrLf
-                    sql = sql & "   AND CIITKB = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIITKB"), vEnd:=True) & vbCrLf
-                    sql = sql & "   AND CIKYCD = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIKYCD"), vEnd:=True) & vbCrLf
-                    'sql = sql & "   AND CIKSCD = " & gdDBS.ColumnDataSet(dynM.Fields("CIKSCD"), vEnd:=True) & vbCrLf
-                    sql = sql & "   AND CIHGCD = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIHGCD"), vEnd:=True) & vbCrLf
-                    sql = sql & ") as t"
-                    dt1 = gdDBS.ExecuteDataTable(cmd, sql)
-                    '//MAX() でしているので必ず存在する
-                    If Not IsNothing(dt1) Then
-                        If Not IsDBNull(dt1.Rows(0)("DupCode")) Then
-                            Call pSetErrorStatus("CIHGCDE", (mRimp.errWarning), dt1.Rows(0)("DupCode") & "の取込データに存在します.")
-                        End If
-                    End If
+                    'sql = "SELECT MAX(DupCode) DUPCODE FROM(" & vbCrLf
+                    'sql = sql & " SELECT " & gdDBS.ColumnDataSet("過去", vEnd:=True) & " DupCode " & vbCrLf
+                    'sql = sql & " FROM " & mRimp.TcHogoshaImport & " a " & vbCrLf
+                    'sql = sql & " WHERE CIINDT <>TO_TIMESTAMP('" & vImpDate & "','yyyy/mm/dd hh24:mi:ss')" & vbCrLf
+                    'sql = sql & "   AND CIITKB = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIITKB"), vEnd:=True) & vbCrLf
+                    'sql = sql & "   AND CIKYCD = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIKYCD"), vEnd:=True) & vbCrLf
+                    ''sql = sql & "   AND CIKSCD = " & gdDBS.ColumnDataSet(dynM.Fields("CIKSCD"), vEnd:=True) & vbCrLf
+                    'sql = sql & "   AND CIHGCD = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIHGCD"), vEnd:=True) & vbCrLf
+                    'sql = sql & " UNION " & vbCrLf
+                    'sql = sql & " SELECT " & gdDBS.ColumnDataSet("今回", vEnd:=True) & " DupCode " & vbCrLf
+                    'sql = sql & " FROM " & mRimp.TcHogoshaImport & " a " & vbCrLf
+                    'sql = sql & " WHERE CIINDT = TO_TIMESTAMP('" & vImpDate & "','yyyy/mm/dd hh24:mi:ss')" & vbCrLf
+                    ''//自分自身以外
+                    'sql = sql & "   AND CISEQN <>" & gdDBS.ColumnDataSet(dt.Rows(index)("CISEQN"), "I", vEnd:=True) & vbCrLf
+                    'sql = sql & "   AND CIITKB = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIITKB"), vEnd:=True) & vbCrLf
+                    'sql = sql & "   AND CIKYCD = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIKYCD"), vEnd:=True) & vbCrLf
+                    ''sql = sql & "   AND CIKSCD = " & gdDBS.ColumnDataSet(dynM.Fields("CIKSCD"), vEnd:=True) & vbCrLf
+                    'sql = sql & "   AND CIHGCD = " & gdDBS.ColumnDataSet(dt.Rows(index)("CIHGCD"), vEnd:=True) & vbCrLf
+                    'sql = sql & ") as t"
+                    'dt1 = gdDBS.ExecuteDataTable(cmd, sql)
+                    ''//MAX() でしているので必ず存在する
+                    'If Not IsNothing(dt1) Then
+                    '    If Not IsDBNull(dt1.Rows(0)("DupCode")) Then
+                    '        Call pSetErrorStatus("CIHGCDE", (mRimp.errWarning), dt1.Rows(0)("DupCode") & "の取込データに存在します.")
+                    '    End If
+                    'End If
 
                     '//////////////////////////////////////////
                     '//保護者マスタとのチェック
@@ -1099,8 +1403,10 @@ SetErrorStatusError:
                         End If
                         '//////////////////////////////////////////
                         '//保護者名(漢字)チェック
-                        If Replace(Replace(dt.Rows(index)("CIKJNM"), "　", ""), " ", "") <> Replace(Replace(dt1.Rows(0)("CAKJNM"), "　", ""), " ", "") Then
-                            Call pSetErrorStatus("CIKJNME", (mRimp.errWarning), "既存の保護者名(漢字)との相違があります.")
+                        If Not IsDBNull(dt.Rows(index)("CIKJNM")) Then
+                            If Replace(Replace(dt.Rows(index)("CIKJNM"), "　", ""), " ", "") <> Replace(Replace(dt1.Rows(0)("CAKJNM"), "　", ""), " ", "") Then
+                                Call pSetErrorStatus("CIKJNME", (mRimp.errWarning), "既存の保護者名(漢字)との相違があります.")
+                            End If
                         End If
                         '//////////////////////////////////////////
                         '//保護者名(カナ)チェック
@@ -1926,20 +2232,20 @@ gDataCheckError:
         lblModoriCount.Text = "【 口座戻り件数： " & Strings.Format(0, "#,0") & " 件 】"
         lblModoriCount.Refresh()
         '//Spreadの列調整
-        Dim ix As Integer
-        With sprMeisai
-            Call sprMeisai_Leave(sprMeisai, New System.EventArgs()) '//ToolTip を設定
-            .ActiveSheet.ColumnCount = eSprCol.eMaxCols
-            '//エラー列もあるので表示列(eUseCol)以降は非表示にする
-            For ix = eSprCol.eUseCols To eSprCol.eMaxCols - 1
-                '.set_ColWidth(ix, 0)
-                If ix > eSprCol.eUseCols Then
-                    .ActiveSheet.Columns(ix).Width = 0
-                End If
-            Next ix
-            '.ColWidth(eSprCol.eImpDate) = 0
-            '.ColWidth(eSprCol.eImpSEQ) = 0
-        End With
+        'Dim ix As Integer
+        'With sprMeisai
+        '    Call sprMeisai_Leave(sprMeisai, New System.EventArgs()) '//ToolTip を設定
+        '    .ActiveSheet.ColumnCount = eSprCol.eMaxCols
+        '    '//エラー列もあるので表示列(eUseCol)以降は非表示にする
+        '    For ix = eSprCol.eUseCols To eSprCol.eMaxCols - 1
+        '        '.set_ColWidth(ix, 0)
+        '        If ix > eSprCol.eUseCols Then
+        '            .ActiveSheet.Columns(ix).Width = 0
+        '        End If
+        '    Next ix
+        '    '.ColWidth(eSprCol.eImpDate) = 0
+        '    '.ColWidth(eSprCol.eImpSEQ) = 0
+        'End With
         '//ステータス行の整列・調整
         stbStatus.Items.Item(stbStatus.Items.Count - 1).Text = ""
         'pgrProgressBar.Left = VB6.TwipsToPixelsX(15)
@@ -2260,5 +2566,103 @@ gDataCheckError:
         mSpread.Redraw = True
         '//コマンド・ボタン制御
         Call pLockedControl(True)
+    End Sub
+
+    Private Sub cmdExportCSV_ERR_Click(sender As Object, e As EventArgs) Handles cmdExportCSV_ERR.Click
+        On Error GoTo cmdExport_ClickError
+        Dim sql As String
+        Dim dyn As DataTable
+
+        sql = "SELECT a.* " & vbCrLf
+        sql = sql & " FROM " & mRimp.TcHogoshaImport & " a " & vbCrLf
+        sql = sql & " WHERE 1 = 1" & vbCrLf
+        sql = sql & " AND CIINDT = TO_TIMESTAMP('" & cboImpDate.Text & "','yyyy/mm/dd hh24:mi:ss')::timestamp without time zone" & vbCrLf
+        sql = sql & " ORDER BY CIKYCD,CIHGCD"
+        dyn = gdDBS.ExecuteDataForBinding(sql)
+
+        If IsNothing(dyn) Then
+            Call MsgBox("No have Record Error", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, mCaption)
+            Exit Sub
+        End If
+        Dim st As New StructureClass
+        Dim tmp As String
+        Dim reg As New RegistryClass
+        Dim mFile As New FileClass
+        Dim TmpFname As String
+
+        dlgFileSave.Title = "名前を付けて保存(" & mCaption & ")"
+        dlgFileSave.FileName = reg.OutputFileNameErr(mCaption & "_ERR")
+        If CType(mFile.SaveDialogCsv(dlgFileSave), DialogResult) = DialogResult.Cancel Then
+            Exit Sub
+        End If
+
+        Dim ms As New MouseClass
+        Call ms.Start()
+
+        reg.OutputFileName(mCaption) = dlgFileSave.FileName
+        Call st.SelectStructure(st.Keiyakusha)
+
+        '//取り敢えずテンポラリに書く
+        Dim fp As Short
+        Dim cnt As Integer
+        fp = FreeFile()
+        TmpFname = mFile.MakeTempFile
+        FileOpen(fp, TmpFname, OpenMode.Append)
+        cnt = 0
+
+        Dim tmpTitle As String = "ＤＣＳ持込日,校番号,生徒番号,生徒氏名,開始年月日,預金者名・フリガナ,金融機関コード・銀行コード,金融機関コード・支店コード,預金種目,口座番号" & vbLf
+
+        For Each row As DataRow In dyn.Rows
+            System.Windows.Forms.Application.DoEvents()
+            If mAbort Then
+                GoTo cmdExport_ClickError
+            End If
+            tmp = tmp
+            tmp = tmp & row("CIMCDT").ToString & "," '持込日
+            tmp = tmp & row("CIKYCD").ToString & ","
+            tmp = tmp & row("CIHGCD").ToString & ","
+            tmp = tmp & row("CISTNM").ToString & ","
+            tmp = tmp & VB.Left(row("CIFKST").ToString, 6) & ","
+            tmp = tmp & row("CIKNNM").ToString & ","
+
+            tmp = tmp & row("CIBANK").ToString & ","
+
+            tmp = tmp & row("CISITN").ToString & ","
+
+            tmp = tmp & row("CIKZSB").ToString & ","
+            tmp = tmp & row("CIKZNO").ToString
+
+
+            tmp = tmp & "  ==> Error: "
+            If (row("CIWMSG").ToString.Trim() = "") Then
+                tmp = tmp & "保護者コード have't in 保護者マスタ" & ","
+            End If
+
+            If (row("CIWMSG").ToString.Contains(vbLf)) Then
+                tmp = tmp & row("CIWMSG").ToString.Replace(vbLf, "  ").Replace(vbCr, "  ").Replace(".", "")
+            End If
+
+            tmp = tmp & vbLf
+
+            cnt = cnt + 1
+        Next
+
+        Print(fp, tmpTitle & tmp)
+
+        Me.Refresh()
+
+        FileClose(fp)
+
+        Call MoveFileEx(TmpFname, reg.OutputFileName(mCaption), MOVEFILE_REPLACE_EXISTING + MOVEFILE_COPY_ALLOWED)
+
+        Call gdDBS.AutoLogOut(mCaption, "Export CSV Error (" & mCaption & " : " & cnt & " 件)")
+
+        Call MsgBox("Finish!", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, mCaption)
+
+        Exit Sub
+cmdExport_ClickError:
+        Call gdDBS.ErrorCheck() '//エラートラップ
+        Call MsgBox("Export Error !!!", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
+        mFile = Nothing
     End Sub
 End Class
