@@ -1,6 +1,7 @@
 Option Strict Off
 Option Explicit On
 Imports System.Configuration
+Imports System.IO
 
 Friend Class FileClass
 
@@ -157,6 +158,28 @@ SaveDialogError:
         End Get
     End Property
 
+    Public ReadOnly Property SaveDialogCsv(ByVal vDlg As Object) As Object
+        Get
+            Dim Result As Short
+            On Error GoTo SaveDialogError
+SaveDialogTop:
+            With vDlg
+                '.Flags = MSComDlg.FileOpenConstants.cdlOFNOverwritePrompt ''//上書き確認を要求thach
+                '.CancelError = True
+                .Filter = "ﾃｷｽﾄﾌｧｲﾙ(*.csv)|*.csv|すべてのﾌｧｲﾙ (*.*)|*.*"
+                'Call .ShowDialog()
+                .FileName = Trim(.FileName) '//前後の空白は削除
+                If .FileName <> "" Then
+                    If UCase(Right(.FileName, 4)) <> UCase(".csv") Then
+                        .FileName = .FileName & ".csv"
+                    End If
+                    SaveDialogCsv = .ShowDialog()
+                End If
+            End With
+SaveDialogError:
+        End Get
+    End Property
+
     Public Function MakeTempFile(Optional ByVal path As String = "D:\", Optional ByVal FileID As String = "~@") As Object
         Dim tmpFile As New VB6.FixedLengthString(256)
         path = ConfigurationManager.AppSettings.Item("tempfilepath")
@@ -213,4 +236,40 @@ SaveDialogError:
         Next i
         StrTrim = Trim(tmp)
     End Function
+
+    Public Function ReadCSVFileToArray(ByVal fname As String) As Object
+        Dim num_rows As Long
+        Dim num_cols As Long
+        Dim x As Integer
+        Dim y As Integer
+        Dim strarray(1, 1) As String
+
+        'Check if file exist
+        If File.Exists(fname) Then
+            Dim tmpstream As StreamReader = File.OpenText(fname)
+            Dim strlines() As String
+            Dim strline() As String
+
+            'Load content of file to strLines array
+            strlines = tmpstream.ReadToEnd().Split(Environment.NewLine)
+
+            ' Redimension the array.
+            num_rows = UBound(strlines)
+            strline = strlines(0).Split(",")
+            num_cols = UBound(strline)
+            ReDim strarray(num_rows, num_cols)
+
+            ' Copy the data into the array.
+            For x = 0 To num_rows
+                strline = strlines(x).Split(",")
+                If (strline(0) <> vbLf) Then
+                    For y = 0 To num_cols
+                        strarray(x, y) = strline(y).Replace("""", "")
+                    Next
+                End If
+            Next
+        End If
+        ReadCSVFileToArray = strarray
+    End Function
+
 End Class
