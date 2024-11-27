@@ -80,10 +80,12 @@
         Me._cmdMenu_7 = New System.Windows.Forms.Button()
         Me._cmdMenu_8 = New System.Windows.Forms.Button()
         Me._tabMenu_TabPage1 = New System.Windows.Forms.TabPage()
+        Me._cmdMenu_110 = New System.Windows.Forms.Button()
         Me._cmdMenu_9 = New System.Windows.Forms.Button()
         Me._cmdMenu_6 = New System.Windows.Forms.Button()
         Me._cmdMenu_2 = New System.Windows.Forms.Button()
         Me._tabMenu_TabPage2 = New System.Windows.Forms.TabPage()
+        Me._cmdMenu_109 = New System.Windows.Forms.Button()
         Me._cmdMenu_103 = New System.Windows.Forms.Button()
         Me._cmdMenu_102 = New System.Windows.Forms.Button()
         Me._cmdMenu_104 = New System.Windows.Forms.Button()
@@ -101,7 +103,6 @@
         Me.Label2 = New System.Windows.Forms.Label()
         Me.lblLoginUserName = New System.Windows.Forms.Label()
         Me.cmdMenu = New Microsoft.VisualBasic.Compatibility.VB6.ButtonArray(Me.components)
-        Me._cmdMenu_109 = New System.Windows.Forms.Button()
         Me.MainMenu1.SuspendLayout()
         Me.fraSysDate.SuspendLayout()
         Me.tabMenu.SuspendLayout()
@@ -307,6 +308,7 @@
         '
         '_tabMenu_TabPage1
         '
+        Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_110)
         Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_9)
         Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_6)
         Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_2)
@@ -315,6 +317,20 @@
         Me._tabMenu_TabPage1.Size = New System.Drawing.Size(429, 248)
         Me._tabMenu_TabPage1.TabIndex = 1
         Me._tabMenu_TabPage1.Text = "取込処理"
+        '
+        '_cmdMenu_110
+        '
+        Me._cmdMenu_110.BackColor = System.Drawing.SystemColors.Control
+        Me._cmdMenu_110.Cursor = System.Windows.Forms.Cursors.Default
+        Me._cmdMenu_110.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.cmdMenu.SetIndex(Me._cmdMenu_110, CType(110, Short))
+        Me._cmdMenu_110.Location = New System.Drawing.Point(229, 29)
+        Me._cmdMenu_110.Name = "_cmdMenu_110"
+        Me._cmdMenu_110.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me._cmdMenu_110.Size = New System.Drawing.Size(162, 36)
+        Me._cmdMenu_110.TabIndex = 17
+        Me._cmdMenu_110.Text = "口座振替(保護者)マスタ取込"
+        Me._cmdMenu_110.UseVisualStyleBackColor = False
         '
         '_cmdMenu_9
         '
@@ -374,6 +390,20 @@
         Me._tabMenu_TabPage2.Size = New System.Drawing.Size(429, 248)
         Me._tabMenu_TabPage2.TabIndex = 2
         Me._tabMenu_TabPage2.Text = "メンテナンス"
+        '
+        '_cmdMenu_109
+        '
+        Me._cmdMenu_109.BackColor = System.Drawing.SystemColors.Control
+        Me._cmdMenu_109.Cursor = System.Windows.Forms.Cursors.Default
+        Me._cmdMenu_109.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.cmdMenu.SetIndex(Me._cmdMenu_109, CType(109, Short))
+        Me._cmdMenu_109.Location = New System.Drawing.Point(232, 159)
+        Me._cmdMenu_109.Name = "_cmdMenu_109"
+        Me._cmdMenu_109.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me._cmdMenu_109.Size = New System.Drawing.Size(157, 36)
+        Me._cmdMenu_109.TabIndex = 29
+        Me._cmdMenu_109.Text = "保護者マスタ移行"
+        Me._cmdMenu_109.UseVisualStyleBackColor = False
         '
         '_cmdMenu_103
         '
@@ -597,20 +627,6 @@
         'cmdMenu
         '
         '
-        '_cmdMenu_109
-        '
-        Me._cmdMenu_109.BackColor = System.Drawing.SystemColors.Control
-        Me._cmdMenu_109.Cursor = System.Windows.Forms.Cursors.Default
-        Me._cmdMenu_109.ForeColor = System.Drawing.SystemColors.ControlText
-        Me._cmdMenu_109.Location = New System.Drawing.Point(232, 159)
-        Me._cmdMenu_109.Name = "_cmdMenu_109"
-        Me._cmdMenu_109.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_109.Size = New System.Drawing.Size(157, 36)
-        Me._cmdMenu_109.TabIndex = 29
-        Me._cmdMenu_109.Text = "保護者マスタ移行"
-        Me._cmdMenu_109.UseVisualStyleBackColor = False
-        Me.cmdMenu.SetIndex(Me._cmdMenu_109, CType(109, Short))
-        '
         'frmMainMenu
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -649,5 +665,6 @@
     End Sub
 
     Public WithEvents _cmdMenu_109 As Button
+    Public WithEvents _cmdMenu_110 As Button
 #End Region
 End Class

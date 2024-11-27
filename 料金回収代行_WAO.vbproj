@@ -482,6 +482,12 @@
     <Compile Include="振替予定表累積.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="口座振替%28保護者%29マスタ取込.Designer.vb">
+      <DependentUpon>口座振替%28保護者%29マスタ取込.vb</DependentUpon>
+    </Compile>
+    <Compile Include="口座振替%28保護者%29マスタ取込.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="振替依頼書取込.Designer.vb">
       <SubType>Code</SubType>
       <DependentUpon>振替依頼書取込.vb</DependentUpon>
@@ -602,6 +608,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="振替予定表累積.resX">
       <DependentUpon>振替予定表累積.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="口座振替%28保護者%29マスタ取込.resX">
+      <DependentUpon>口座振替%28保護者%29マスタ取込.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="振替依頼書取込.resX">
       <DependentUpon>振替依頼書取込.vb</DependentUpon>

@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> Partial Class frmFurikaeReqImport
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> Partial Class frmFurikaeReqImportAuto
 #Region "Windows Form Designer generated code "
     <System.Diagnostics.DebuggerNonUserCode()> Public Sub New()
         MyBase.New()
@@ -48,7 +48,7 @@
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmFurikaeReqImport))
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmFurikaeReqImportAuto))
         Dim TipAppearance1 As FarPoint.Win.Spread.TipAppearance = New FarPoint.Win.Spread.TipAppearance()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.MainMenu1 = New System.Windows.Forms.MenuStrip()
@@ -79,6 +79,10 @@
         Me.sprMeisai_Sheet1 = New FarPoint.Win.Spread.SheetView()
         Me.sprMeisai = New FarPoint.Win.Spread.FpSpread()
         Me.pgrProgressBar = New System.Windows.Forms.ProgressBar()
+        Me.cmdExportCSV_ERR = New System.Windows.Forms.Button()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.lblResultERR = New System.Windows.Forms.Label()
+        Me.lblResult = New System.Windows.Forms.Label()
         Me.MainMenu1.SuspendLayout()
         CType(Me.dbcImport, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.stbStatus.SuspendLayout()
@@ -125,13 +129,14 @@
         Me.cmdDelete.BackColor = System.Drawing.SystemColors.Control
         Me.cmdDelete.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdDelete.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdDelete.Location = New System.Drawing.Point(356, 484)
+        Me.cmdDelete.Location = New System.Drawing.Point(356, 444)
         Me.cmdDelete.Name = "cmdDelete"
         Me.cmdDelete.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdDelete.Size = New System.Drawing.Size(93, 29)
+        Me.cmdDelete.Size = New System.Drawing.Size(93, 31)
         Me.cmdDelete.TabIndex = 7
         Me.cmdDelete.Text = "廃棄(&D)"
         Me.cmdDelete.UseVisualStyleBackColor = False
+        Me.cmdDelete.Visible = False
         '
         'cboSort
         '
@@ -140,37 +145,40 @@
         Me.cboSort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboSort.ForeColor = System.Drawing.SystemColors.WindowText
         Me.cboSort.Items.AddRange(New Object() {"取込順", "契約者・保護者順", "金融機関順"})
-        Me.cboSort.Location = New System.Drawing.Point(300, 28)
+        Me.cboSort.Location = New System.Drawing.Point(300, 30)
         Me.cboSort.Name = "cboSort"
         Me.cboSort.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cboSort.Size = New System.Drawing.Size(113, 20)
+        Me.cboSort.Size = New System.Drawing.Size(113, 21)
         Me.cboSort.TabIndex = 2
+        Me.cboSort.Visible = False
         '
         'cmdUpdate
         '
         Me.cmdUpdate.BackColor = System.Drawing.SystemColors.Control
         Me.cmdUpdate.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdUpdate.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdUpdate.Location = New System.Drawing.Point(456, 484)
+        Me.cmdUpdate.Location = New System.Drawing.Point(456, 444)
         Me.cmdUpdate.Name = "cmdUpdate"
         Me.cmdUpdate.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdUpdate.Size = New System.Drawing.Size(93, 29)
+        Me.cmdUpdate.Size = New System.Drawing.Size(93, 31)
         Me.cmdUpdate.TabIndex = 8
         Me.cmdUpdate.Text = "マスタ反映(&U)"
         Me.cmdUpdate.UseVisualStyleBackColor = False
+        Me.cmdUpdate.Visible = False
         '
         'cmdErrList
         '
         Me.cmdErrList.BackColor = System.Drawing.SystemColors.Control
         Me.cmdErrList.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdErrList.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdErrList.Location = New System.Drawing.Point(232, 484)
+        Me.cmdErrList.Location = New System.Drawing.Point(232, 444)
         Me.cmdErrList.Name = "cmdErrList"
         Me.cmdErrList.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdErrList.Size = New System.Drawing.Size(93, 29)
+        Me.cmdErrList.Size = New System.Drawing.Size(93, 31)
         Me.cmdErrList.TabIndex = 6
         Me.cmdErrList.Text = "エラーリスト(&P)"
         Me.cmdErrList.UseVisualStyleBackColor = False
+        Me.cmdErrList.Visible = False
         '
         'cboImpDate
         '
@@ -178,34 +186,36 @@
         Me.cboImpDate.Cursor = System.Windows.Forms.Cursors.Default
         Me.cboImpDate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboImpDate.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.cboImpDate.Location = New System.Drawing.Point(81, 28)
+        Me.cboImpDate.Location = New System.Drawing.Point(81, 30)
         Me.cboImpDate.Name = "cboImpDate"
         Me.cboImpDate.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cboImpDate.Size = New System.Drawing.Size(129, 20)
+        Me.cboImpDate.Size = New System.Drawing.Size(129, 21)
         Me.cboImpDate.TabIndex = 1
+        Me.cboImpDate.Visible = False
         '
         'cmdCheck
         '
         Me.cmdCheck.BackColor = System.Drawing.SystemColors.Control
         Me.cmdCheck.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdCheck.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdCheck.Location = New System.Drawing.Point(132, 484)
+        Me.cmdCheck.Location = New System.Drawing.Point(132, 444)
         Me.cmdCheck.Name = "cmdCheck"
         Me.cmdCheck.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdCheck.Size = New System.Drawing.Size(93, 29)
+        Me.cmdCheck.Size = New System.Drawing.Size(93, 31)
         Me.cmdCheck.TabIndex = 5
         Me.cmdCheck.Text = "チェック(&C)"
         Me.cmdCheck.UseVisualStyleBackColor = False
+        Me.cmdCheck.Visible = False
         '
         'cmdImport
         '
         Me.cmdImport.BackColor = System.Drawing.SystemColors.Control
         Me.cmdImport.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdImport.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdImport.Location = New System.Drawing.Point(32, 484)
+        Me.cmdImport.Location = New System.Drawing.Point(32, 487)
         Me.cmdImport.Name = "cmdImport"
         Me.cmdImport.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdImport.Size = New System.Drawing.Size(93, 29)
+        Me.cmdImport.Size = New System.Drawing.Size(93, 31)
         Me.cmdImport.TabIndex = 4
         Me.cmdImport.Text = "取込(&I)"
         Me.cmdImport.UseVisualStyleBackColor = False
@@ -215,10 +225,10 @@
         Me.cmdEnd.BackColor = System.Drawing.SystemColors.Control
         Me.cmdEnd.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdEnd.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdEnd.Location = New System.Drawing.Point(624, 484)
+        Me.cmdEnd.Location = New System.Drawing.Point(624, 487)
         Me.cmdEnd.Name = "cmdEnd"
         Me.cmdEnd.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdEnd.Size = New System.Drawing.Size(89, 29)
+        Me.cmdEnd.Size = New System.Drawing.Size(89, 31)
         Me.cmdEnd.TabIndex = 0
         Me.cmdEnd.Text = "終了(&X)"
         Me.cmdEnd.UseVisualStyleBackColor = False
@@ -227,7 +237,7 @@
         '
         Me.stbStatus.Font = New System.Drawing.Font("MS PMincho", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
         Me.stbStatus.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._stbStatus_Panel1})
-        Me.stbStatus.Location = New System.Drawing.Point(0, 533)
+        Me.stbStatus.Location = New System.Drawing.Point(0, 579)
         Me.stbStatus.Name = "stbStatus"
         Me.stbStatus.Size = New System.Drawing.Size(730, 22)
         Me.stbStatus.TabIndex = 11
@@ -251,46 +261,49 @@
         Me.lblModoriCount.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblModoriCount.Font = New System.Drawing.Font("MS PMincho", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
         Me.lblModoriCount.ForeColor = System.Drawing.Color.Blue
-        Me.lblModoriCount.Location = New System.Drawing.Point(436, 32)
+        Me.lblModoriCount.Location = New System.Drawing.Point(436, 35)
         Me.lblModoriCount.Name = "lblModoriCount"
         Me.lblModoriCount.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblModoriCount.Size = New System.Drawing.Size(177, 17)
+        Me.lblModoriCount.Size = New System.Drawing.Size(177, 18)
         Me.lblModoriCount.TabIndex = 15
         Me.lblModoriCount.Text = "【 口座戻り件数： 9,999 件 】"
+        Me.lblModoriCount.Visible = False
         '
         'Label1
         '
         Me.Label1.BackColor = System.Drawing.SystemColors.Control
         Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label1.Location = New System.Drawing.Point(252, 31)
+        Me.Label1.Location = New System.Drawing.Point(252, 34)
         Me.Label1.Name = "Label1"
         Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label1.Size = New System.Drawing.Size(47, 12)
+        Me.Label1.Size = New System.Drawing.Size(47, 13)
         Me.Label1.TabIndex = 14
         Me.Label1.Text = "表示順"
+        Me.Label1.Visible = False
         '
         'Label8
         '
         Me.Label8.BackColor = System.Drawing.SystemColors.Control
         Me.Label8.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label8.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label8.Location = New System.Drawing.Point(24, 31)
+        Me.Label8.Location = New System.Drawing.Point(24, 34)
         Me.Label8.Name = "Label8"
         Me.Label8.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label8.Size = New System.Drawing.Size(64, 16)
+        Me.Label8.Size = New System.Drawing.Size(64, 17)
         Me.Label8.TabIndex = 10
         Me.Label8.Text = "取込日時"
+        Me.Label8.Visible = False
         '
         'lblSysDate
         '
         Me.lblSysDate.BackColor = System.Drawing.SystemColors.Control
         Me.lblSysDate.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblSysDate.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblSysDate.Location = New System.Drawing.Point(636, 24)
+        Me.lblSysDate.Location = New System.Drawing.Point(636, 26)
         Me.lblSysDate.Name = "lblSysDate"
         Me.lblSysDate.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblSysDate.Size = New System.Drawing.Size(85, 13)
+        Me.lblSysDate.Size = New System.Drawing.Size(85, 14)
         Me.lblSysDate.TabIndex = 9
         Me.lblSysDate.Text = "Label26"
         '
@@ -317,11 +330,11 @@
         Me.sprMeisai.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.sprMeisai.ButtonDrawMode = FarPoint.Win.Spread.ButtonDrawModes.CurrentRow
         Me.sprMeisai.ColumnSplitBoxPolicy = FarPoint.Win.Spread.SplitBoxPolicy.Never
-        Me.sprMeisai.Location = New System.Drawing.Point(26, 54)
+        Me.sprMeisai.Location = New System.Drawing.Point(14, 353)
         Me.sprMeisai.Name = "sprMeisai"
         Me.sprMeisai.RowSplitBoxPolicy = FarPoint.Win.Spread.SplitBoxPolicy.Never
         Me.sprMeisai.Sheets.AddRange(New FarPoint.Win.Spread.SheetView() {Me.sprMeisai_Sheet1})
-        Me.sprMeisai.Size = New System.Drawing.Size(687, 424)
+        Me.sprMeisai.Size = New System.Drawing.Size(687, 85)
         Me.sprMeisai.TabIndex = 17
         TipAppearance1.BackColor = System.Drawing.SystemColors.Info
         TipAppearance1.Font = New System.Drawing.Font("MS PGothic", 9.0!)
@@ -330,23 +343,78 @@
         Me.sprMeisai.VerticalScrollBar.Buttons = New FarPoint.Win.Spread.FpScrollBarButtonCollection("BackwardHomeButton,BackwardPageButton,BackwardLineButton,ThumbTrack,ForwardLineBu" &
         "tton,ForwardPageButton,ForwardEndButton")
         Me.sprMeisai.VerticalScrollBar.Name = ""
+        Me.sprMeisai.Visible = False
         Me.sprMeisai.SetViewportLeftColumn(0, 0, 6)
         Me.sprMeisai.SetActiveViewport(0, 0, -1)
         '
         'pgrProgressBar
         '
-        Me.pgrProgressBar.Location = New System.Drawing.Point(132, 535)
+        Me.pgrProgressBar.Location = New System.Drawing.Point(132, 580)
         Me.pgrProgressBar.Name = "pgrProgressBar"
-        Me.pgrProgressBar.Size = New System.Drawing.Size(469, 17)
+        Me.pgrProgressBar.Size = New System.Drawing.Size(469, 18)
         Me.pgrProgressBar.TabIndex = 13
         '
-        'frmFurikaeReqImport
+        'cmdExportCSV_ERR
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
+        Me.cmdExportCSV_ERR.BackColor = System.Drawing.SystemColors.Control
+        Me.cmdExportCSV_ERR.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cmdExportCSV_ERR.ForeColor = System.Drawing.Color.Red
+        Me.cmdExportCSV_ERR.Location = New System.Drawing.Point(132, 487)
+        Me.cmdExportCSV_ERR.Name = "cmdExportCSV_ERR"
+        Me.cmdExportCSV_ERR.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmdExportCSV_ERR.Size = New System.Drawing.Size(140, 31)
+        Me.cmdExportCSV_ERR.TabIndex = 18
+        Me.cmdExportCSV_ERR.Text = "Export CSV (Error)"
+        Me.cmdExportCSV_ERR.UseVisualStyleBackColor = False
+        Me.cmdExportCSV_ERR.Visible = False
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(24, 269)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(0, 13)
+        Me.Label2.TabIndex = 19
+        '
+        'lblResultERR
+        '
+        Me.lblResultERR.BackColor = System.Drawing.SystemColors.Control
+        Me.lblResultERR.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lblResultERR.Font = New System.Drawing.Font("MS PMincho", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.lblResultERR.ForeColor = System.Drawing.Color.Red
+        Me.lblResultERR.Location = New System.Drawing.Point(30, 204)
+        Me.lblResultERR.Name = "lblResultERR"
+        Me.lblResultERR.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblResultERR.Size = New System.Drawing.Size(683, 78)
+        Me.lblResultERR.TabIndex = 20
+        Me.lblResultERR.Text = "Total CSV Records: 0 Error"
+        Me.lblResultERR.Visible = False
+        '
+        'lblResult
+        '
+        Me.lblResult.BackColor = System.Drawing.SystemColors.Control
+        Me.lblResult.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lblResult.Font = New System.Drawing.Font("MS PMincho", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.lblResult.ForeColor = System.Drawing.Color.Blue
+        Me.lblResult.Location = New System.Drawing.Point(30, 94)
+        Me.lblResult.Name = "lblResult"
+        Me.lblResult.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblResult.Size = New System.Drawing.Size(680, 91)
+        Me.lblResult.TabIndex = 21
+        Me.lblResult.Text = "Result import CSV records"
+        Me.lblResult.Visible = False
+        '
+        'frmFurikaeReqImportAuto
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(730, 555)
+        Me.ClientSize = New System.Drawing.Size(730, 601)
         Me.ControlBox = False
+        Me.Controls.Add(Me.lblResult)
+        Me.Controls.Add(Me.lblResultERR)
+        Me.Controls.Add(Me.Label2)
+        Me.Controls.Add(Me.cmdExportCSV_ERR)
         Me.Controls.Add(Me.pgrProgressBar)
         Me.Controls.Add(Me.sprMeisai)
         Me.Controls.Add(Me.cmdDelete)
@@ -367,10 +435,10 @@
         Me.Location = New System.Drawing.Point(163, 158)
         Me.MaximizeBox = False
         Me.MinimizeBox = False
-        Me.Name = "frmFurikaeReqImport"
+        Me.Name = "frmFurikaeReqImportAuto"
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
-        Me.Text = "振替依頼書(取込)"
+        Me.Text = "口座振替(保護者)マスタ取込"
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
         CType(Me.dbcImport, System.ComponentModel.ISupportInitialize).EndInit()
@@ -385,5 +453,9 @@
     Friend WithEvents sprMeisai_Sheet1 As FarPoint.Win.Spread.SheetView
     Friend WithEvents sprMeisai As FarPoint.Win.Spread.FpSpread
     Public WithEvents pgrProgressBar As ProgressBar
+    Public WithEvents cmdExportCSV_ERR As Button
+    Friend WithEvents Label2 As Label
+    Public WithEvents lblResultERR As Label
+    Public WithEvents lblResult As Label
 #End Region
 End Class

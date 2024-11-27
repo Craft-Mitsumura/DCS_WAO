@@ -33,6 +33,7 @@ Friend Class frmMainMenu
 		eFrmKeiyakushaCheckList = 107 '//オーナーマスタチェックリスト：2007/02/05 追加 ＷＡＯ
         efrmHogoshaMasterRireki = 108 '//保護者履歴：照会 2012/07/09
         efrmHogoshaChangeId = 109 '//保護者マスタ移行 2021/09
+        eFrmFurikaeReqImportAuto = 110 '//口座振替(保護者)マスタ取込
     End Enum
 	
 	Private Sub cmdMenu_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdMenu.Click
@@ -81,6 +82,8 @@ Friend Class frmMainMenu
                 frm = frmHogoshaMasterRireki
             Case eButton.efrmHogoshaChangeId '//保護者マスタ移行 2021/09
                 frm = frmHogoshaChangeId
+            Case eButton.eFrmFurikaeReqImportAuto '//口座振替(保護者)マスタ取込
+                frm = frmFurikaeReqImportAuto
         End Select
         '//ボタンを押した時のみ記憶する
         mReg.MenuButton = Index
