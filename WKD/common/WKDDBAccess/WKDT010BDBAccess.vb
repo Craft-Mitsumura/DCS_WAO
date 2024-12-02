@@ -94,8 +94,8 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("      , fritesu") ' 振込手数料
         sql.AppendLine("      , nencho_flg") ' 年調資料出力フラグ
         sql.AppendLine(") fin")
-        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd)")
-        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd)")
+        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd and own.bakome is not null and own.bakyfg = '0')")
+        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null and own2.bakyfg = '0')")
         sql.AppendLine(")")
 
         Dim params As New List(Of NpgsqlParameter) From {
@@ -111,7 +111,7 @@ Public Class WKDT010BDBAccess
 
     End Function
 
-    Public Function GetTNencho(shoriNendo As String) As DataTable
+    Public Function GetTNencho(shoriNendo As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -151,13 +151,31 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("    t_nencho")
         sql.AppendLine("where sakuhyokbn = '1'")
         sql.AppendLine("and substr(dtnengetu,1,4) = @shoriNendo")
-        sql.AppendLine("order by")
-        sql.AppendLine("    ownerno") ' 顧客番号（オーナーＮｏ）
-        sql.AppendLine("  , instno") ' 顧客番号（インストラクターＮｏ）
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNendo", shoriNendo)
         }
+
+        If Not targetList Is Nothing Then
+            Dim i As Integer = 0
+            Dim sqlIn As New StringBuilder()
+
+            For Each target As TNenchoEntity In targetList
+                i += 1
+                params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
+                sqlIn.Append("@ownerno" & i.ToString & ",")
+            Next
+
+            If 0 < sqlIn.Length Then
+                '最後の余計なカンマを削除
+                sqlIn.Remove(sqlIn.Length - 1, 1)
+                sql.AppendLine("and ownerno in (" & sqlIn.ToString & ")")
+            End If
+        End If
+
+        sql.AppendLine("order by")
+        sql.AppendLine("    ownerno") ' 顧客番号（オーナーＮｏ）
+        sql.AppendLine("  , instno") ' 顧客番号（インストラクターＮｏ）
 
         dt = dbc.GetData(sql.ToString(), params)
 
@@ -180,6 +198,63 @@ Public Class WKDT010BDBAccess
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
 
         Return ret
+
+    End Function
+
+    Public Function GetOwner(bakycd As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select")
+        sql.AppendLine("    baitkb")
+        sql.AppendLine("  , bakycd")
+        sql.AppendLine("  , basqno")
+        sql.AppendLine("  , bakjnm")
+        sql.AppendLine("  , baknnm")
+        sql.AppendLine("  , bakome")
+        sql.AppendLine("  , bazpc1")
+        sql.AppendLine("  , bazpc2")
+        sql.AppendLine("  , baadj1")
+        sql.AppendLine("  , baadj2")
+        sql.AppendLine("  , baadj3")
+        sql.AppendLine("  , batele")
+        sql.AppendLine("  , batelj")
+        sql.AppendLine("  , bakkrn")
+        sql.AppendLine("  , bafaxi")
+        sql.AppendLine("  , bafaxj")
+        sql.AppendLine("  , bakkbn")
+        sql.AppendLine("  , babank")
+        sql.AppendLine("  , basitn")
+        sql.AppendLine("  , bakzsb")
+        sql.AppendLine("  , bakzno")
+        sql.AppendLine("  , baybtk")
+        sql.AppendLine("  , baybtn")
+        sql.AppendLine("  , bakznm")
+        sql.AppendLine("  , bakyst")
+        sql.AppendLine("  , bakyed")
+        sql.AppendLine("  , bafkst")
+        sql.AppendLine("  , bafked")
+        sql.AppendLine("  , bakyfg")
+        sql.AppendLine("  , basofu")
+        sql.AppendLine("  , bascnt")
+        sql.AppendLine("  , bausid")
+        sql.AppendLine("  , baaddt")
+        sql.AppendLine("  , baupdt")
+        sql.AppendLine("  , bahjno")
+        sql.AppendLine("  , bakyny")
+        sql.AppendLine("from")
+        sql.AppendLine("    tbkeiyakushamaster")
+        sql.AppendLine("where bakycd = @bakycd and bakome is not null and bakyfg = '0'")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@bakycd", bakycd)
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
 
     End Function
 

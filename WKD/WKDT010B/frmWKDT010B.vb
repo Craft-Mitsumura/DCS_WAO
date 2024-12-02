@@ -25,23 +25,83 @@ Public Class frmWKDT010B
 
     Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click
 
+        Dim targetFilePath As String = String.Empty
+        Dim targetList As New List(Of TNenchoEntity)
         Dim dba As New WKDT010BDBAccess
 
-        ' 年調作表データ削除
-        If Not dba.DeleteTNencho(txtShoriNendo.Text) Then
-            Return
+        ' 処理区分=再出力
+        If rdoShoriKubun_1.Checked Then
+            Using frmFileDialog As New OpenFileDialog
+                frmFileDialog.FileName = "出力対象指定.csv"
+                frmFileDialog.Filter = "CSV ファイル(*.csv)|*.csv"
+                frmFileDialog.Title = "ファイルを選択してください"
+                ' ダイアログを表示する
+                If frmFileDialog.ShowDialog() = DialogResult.OK Then
+                    targetFilePath = frmFileDialog.FileName
+                Else
+                    Return
+                End If
+            End Using
+
+            ' TextFieldParserを使ってCSVファイルを読み込む（Shift-JIS指定）
+            Using parser As New TextFieldParser(targetFilePath, Encoding.GetEncoding("Shift_JIS"))
+                parser.TextFieldType = FieldType.Delimited
+                parser.SetDelimiters(",") '区切り文字はカンマ
+                While Not parser.EndOfData
+                    Dim fields As String() = parser.ReadFields
+                    Dim target As New TNenchoEntity
+                    target.ownerno = fields(0) ' 顧客番号（オーナーＮｏ）
+                    targetList.Add(target)
+                End While
+            End Using
+
+            For Each target As TNenchoEntity In targetList
+                ' オーナーマスタ存在チェック
+                Dim dtOwn As DataTable = dba.GetOwner(target.ownerno)
+                If dtOwn.Rows.Count <= 0 Then
+                    MessageBox.Show("オーナーが存在しません。（" & target.ownerno & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Return
+                End If
+            Next
         End If
 
-        ' 年調作表データ作成
-        If Not dba.InsertTNencho(txtShoriNendo.Text, Me.ProductName) Then
-            Return
-        End If
+        Dim dt As DataTable = Nothing
 
         ' 年調作表データ取得
-        Dim dt As DataTable = dba.GetTNencho(txtShoriNendo.Text)
+        dt = dba.GetTNencho(txtShoriNendo.Text, targetList)
         If dt.Rows.Count <= 0 Then
-            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Return
+            ' 処理区分=再出力
+            If rdoShoriKubun_1.Checked Then
+                MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
+            End If
+        Else
+            ' 処理区分=新規
+            If rdoShoriKubun_0.Checked Then
+                If MessageBox.Show("データが既に存在します。処理を継続しますか？", "", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) = DialogResult.Cancel Then
+                    Return
+                End If
+            End If
+        End If
+
+        ' 処理区分=新規
+        If rdoShoriKubun_0.Checked Then
+            ' 年調作表データ削除
+            If Not dba.DeleteTNencho(txtShoriNendo.Text) Then
+                Return
+            End If
+
+            ' 年調作表データ作成
+            If Not dba.InsertTNencho(txtShoriNendo.Text, Me.ProductName) Then
+                Return
+            End If
+
+            ' 年調作表データ取得
+            dt = dba.GetTNencho(txtShoriNendo.Text)
+            If dt.Rows.Count <= 0 Then
+                MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
+            End If
         End If
 
         ' ＣＳＶファイル出力
