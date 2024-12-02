@@ -149,6 +149,10 @@ Public Class WKDMenu
     ''' <param name="e"></param>
     Private Sub btnWKDT020BExecute_Click(sender As Object, e As EventArgs) Handles btnWKDT020BExecute.Click
 
+        Using frm = New frmWKDT020B
+            frm.ShowDialog()
+        End Using
+
     End Sub
 
     ''' <summary>

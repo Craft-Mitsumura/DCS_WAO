@@ -132,6 +132,10 @@
       <Project>{3e758582-b020-4f14-b6c1-3110ab00c87e}</Project>
       <Name>WKDT010B</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\WKDT020B\WKDT020B.vbproj">
+      <Project>{4ea2595f-adcc-49f1-884d-783bb620da9b}</Project>
+      <Name>WKDT020B</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
