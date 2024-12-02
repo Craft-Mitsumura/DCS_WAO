@@ -19,7 +19,6 @@ Public Class frmWKDC010B
 
     End Sub
 
-    <Obsolete>
     Private Sub btnInput_Click(sender As Object, e As EventArgs) Handles btnInput.Click
 
         Dim filePath As String = String.Empty
