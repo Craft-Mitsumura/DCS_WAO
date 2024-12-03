@@ -37,7 +37,7 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("      , itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("      , ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("      , instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("      , fkinzem") ' 振込金額（税引前）
+        sql.AppendLine("      , sum(fkinzem) fkinzem") ' 振込金額（税引前）
         sql.AppendLine("      , bankcd") ' 銀行コード
         sql.AppendLine("      , sitencd") ' 支店コード
         sql.AppendLine("      , syumok") ' 預金種目
@@ -67,11 +67,10 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("    where substr(dtnengetu,1,4) = @shoriNendo")
         sql.AppendLine("    and   coalesce(nencho_flg,'0') <> '1'")
         sql.AppendLine("    group by")
-        sql.AppendLine("        dtnengetu") ' データ年月
+        sql.AppendLine("        substr(dtnengetu,1,4) || '12'") ' データ年月
         sql.AppendLine("      , itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("      , ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("      , instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("      , fkinzem") ' 振込金額（税引前）
         sql.AppendLine("      , bankcd") ' 銀行コード
         sql.AppendLine("      , sitencd") ' 支店コード
         sql.AppendLine("      , syumok") ' 預金種目
@@ -167,7 +166,7 @@ Public Class WKDT010BDBAccess
             Next
 
             If 0 < sqlIn.Length Then
-                '最後の余計なカンマを削除
+                ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
                 sql.AppendLine("and ownerno in (" & sqlIn.ToString & ")")
             End If
