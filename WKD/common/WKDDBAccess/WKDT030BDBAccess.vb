@@ -142,8 +142,6 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("  , upd_user_id = @upd_user_id")
         sql.AppendLine("  , upd_user_dtm = @upd_user_dtm")
         sql.AppendLine("  , upd_user_pg_id = @upd_user_pg_id")
-        'sql.AppendLine("where ownerno = @ownerno")
-        'sql.AppendLine("  and dtnengetu = @shime")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
@@ -159,17 +157,13 @@ Public Class WKDT030BDBAccess
                 i += 1
                 params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
                 params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
-                'sqlIn.Append("(@ownerno" & i.ToString & ", case when dtnengetu <= @sime" & i.ToString & " then 1 else 0 end),")
                 sqlIn.Append("(@ownerno" & i.ToString & ", @sime" & i.ToString & "),")
-                'sqlIn.Append("(@ownerno" & i.ToString & ", case when dtnengetu <= @sime" & i.ToString & " then true else false end),")
             Next
 
             If 0 < sqlIn.Length Then
                 ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
-                'sql.AppendLine("and (ownerno, 1) in (" & sqlIn.ToString & ")")
                 sql.AppendLine("where (ownerno, dtnengetu) in (" & sqlIn.ToString & ")")
-                'sql.AppendLine("and (ownerno, true) in (" & sqlIn.ToString & ")")
             End If
         End If
 
