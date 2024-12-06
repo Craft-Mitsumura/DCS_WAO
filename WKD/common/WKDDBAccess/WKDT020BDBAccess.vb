@@ -12,7 +12,7 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("insert into t_nencho")
         sql.AppendLine("(")
         sql.AppendLine("select")
-        sql.AppendLine("    '1' sakuhyokbn") ' 作表区分
+        sql.AppendLine("    '2' sakuhyokbn") ' 作表区分
         sql.AppendLine("  , fin.*")
         sql.AppendLine("  , own.bakyny") ' 名寄先オーナーＮｏ
         sql.AppendLine("  , coalesce(own2.bakjnm,own.bakjnm) bakjnm") ' オーナー名（漢字）
@@ -37,7 +37,7 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("      , itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("      , ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("      , instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("      , fkinzem") ' 振込金額（税引前）
+        sql.AppendLine("      , sum(fkinzem) fkinzem") ' 振込金額（税引前）
         sql.AppendLine("      , bankcd") ' 銀行コード
         sql.AppendLine("      , sitencd") ' 支店コード
         sql.AppendLine("      , syumok") ' 預金種目
@@ -70,7 +70,6 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("        itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("      , ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("      , instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("      , fkinzem") ' 振込金額（税引前）
         sql.AppendLine("      , bankcd") ' 銀行コード
         sql.AppendLine("      , sitencd") ' 支店コード
         sql.AppendLine("      , syumok") ' 預金種目
@@ -93,8 +92,8 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("      , fritesu") ' 振込手数料
         sql.AppendLine("      , nencho_flg") ' 年調資料出力フラグ
         sql.AppendLine(") fin")
-        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd)")
-        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd)")
+        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd and own.bakome is not null and own.bakyfg = '0')")
+        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null and own2.bakyfg = '0')")
         sql.AppendLine(")")
 
         Dim params As New List(Of NpgsqlParameter) From {
@@ -129,20 +128,20 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("  , '年末調整未済'") ' 摘要欄
         sql.AppendLine("  , '＊'") ' 乙欄
         sql.AppendLine("  , case") ' 就職欄
-        sql.AppendLine("        when substring(dtnengetu, 1 , 4) = nyunen then '＊'")
+        sql.AppendLine("        when substring(dtnengetu,1,4) = nyunen then '＊'")
         sql.AppendLine("        else ''")
         sql.AppendLine("    end shushokuran")
         sql.AppendLine("  , case") ' 退職欄
-        sql.AppendLine("        when substring(dtnengetu, 1 , 4) = tainen then '＊'")
+        sql.AppendLine("        when substring(dtnengetu,1,4) = tainen then '＊'")
         sql.AppendLine("        else ''")
         sql.AppendLine("    end taishokuran")
         sql.AppendLine("  , case") ' 入社/退職年月日（和暦）
-        sql.AppendLine("        when substring(dtnengetu, 1 , 4) = tainen then tainen || taituki || taihi")
+        sql.AppendLine("        when substring(dtnengetu,1,4) = tainen then tainen || taituki || taihi")
         sql.AppendLine("        else ")
-        sql.AppendLine("         case")
-        sql.AppendLine("            when substring(dtnengetu, 1 , 4) = nyunen then nyunen || nyutuki || nyuhi")
-        sql.AppendLine("            else ''")
-        sql.AppendLine("         end")
+        sql.AppendLine("            case")
+        sql.AppendLine("                when substring(dtnengetu,1,4) = nyunen then nyunen || nyutuki || nyuhi")
+        sql.AppendLine("                else ''")
+        sql.AppendLine("            end")
         sql.AppendLine("    end nyutaishabi")
         sql.AppendLine("  , seiyyyy") ' 生年月日元号
         sql.AppendLine("  , seiyyyy || seimm || seidd seiyyyymmdd") ' 生年月日（和暦）
@@ -156,7 +155,7 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("  , rerunno") ' リラン№
         sql.AppendLine("from")
         sql.AppendLine("    t_nencho")
-        sql.AppendLine("where sakuhyokbn = '1'")
+        sql.AppendLine("where sakuhyokbn = '2'")
         sql.AppendLine("and dtnengetu = @shoriNengetsu")
         sql.AppendLine("order by")
         sql.AppendLine("    ownerno") ' 顧客番号（オーナーＮｏ）
@@ -178,7 +177,7 @@ Public Class WKDT020BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("delete from t_nencho where sakuhyokbn = '1' and dtnengetu = @shoriNengetsu")
+        sql.AppendLine("delete from t_nencho where sakuhyokbn = '2' and dtnengetu = @shoriNengetsu")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengetsu", shoriNengetsu)

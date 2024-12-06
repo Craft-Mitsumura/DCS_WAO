@@ -117,8 +117,8 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("      , fritesu") ' 振込手数料
         sql.AppendLine("      , nencho_flg") ' 年調資料出力フラグ
         sql.AppendLine(") fin")
-        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd)")
-        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd)")
+        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd and own.bakome is not null and own.bakyfg = '0')")
+        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null and own2.bakyfg = '0')")
         sql.AppendLine(")")
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
