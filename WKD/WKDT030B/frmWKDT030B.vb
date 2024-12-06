@@ -29,22 +29,20 @@ Public Class frmWKDT030B
         Dim targetList As New List(Of TNenchoEntity)
         Dim dba As New WKDT030BDBAccess
 
-        ' 処理区分=再出力
-        If rdoShoriKubun_1.Checked Then
-            Using frmFileDialog As New OpenFileDialog
-                frmFileDialog.FileName = "出力対象指定.csv"
-                frmFileDialog.Filter = "CSV ファイル(*.csv)|*.csv"
-                frmFileDialog.Title = "ファイルを選択してください"
-                ' ダイアログを表示する
-                If frmFileDialog.ShowDialog() = DialogResult.OK Then
-                    targetFilePath = frmFileDialog.FileName
-                Else
-                    Return
-                End If
-            End Using
+        Using frmFileDialog As New OpenFileDialog
+            frmFileDialog.FileName = "出力対象指定.csv"
+            frmFileDialog.Filter = "CSV ファイル(*.csv)|*.csv"
+            frmFileDialog.Title = "ファイルを選択してください"
+            ' ダイアログを表示する
+            If frmFileDialog.ShowDialog() = DialogResult.OK Then
+                targetFilePath = frmFileDialog.FileName
+            Else
+                Return
+            End If
+        End Using
 
-            ' TextFieldParserを使ってCSVファイルを読み込む（Shift-JIS指定）
-            Using parser As New TextFieldParser(targetFilePath, Encoding.GetEncoding("Shift_JIS"))
+        ' TextFieldParserを使ってCSVファイルを読み込む（Shift-JIS指定）
+        Using parser As New TextFieldParser(targetFilePath, Encoding.GetEncoding("Shift_JIS"))
                 parser.TextFieldType = FieldType.Delimited
                 parser.SetDelimiters(",") '区切り文字はカンマ
                 While Not parser.EndOfData
@@ -56,15 +54,44 @@ Public Class frmWKDT030B
                 End While
             End Using
 
-            For Each target As TNenchoEntity In targetList
-                ' オーナーマスタ存在チェック
-                Dim dtOwn As DataTable = dba.GetOwner(target.ownerno)
-                If dtOwn.Rows.Count <= 0 Then
-                    MessageBox.Show("オーナーが存在しません。（" & target.ownerno & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    Return
-                End If
-            Next
-        End If
+        For Each target As TNenchoEntity In targetList
+            ' オーナーマスタ存在チェック
+            Dim dtOwn As DataTable = dba.GetOwner(target.ownerno)
+            If dtOwn.Rows.Count <= 0 Then
+                MessageBox.Show("オーナーが存在しません。（" & target.ownerno & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
+            End If
+
+            ' 締年月のチェック（フォーマットおよび範囲）
+            Dim nengetuDate As Date
+
+            ' 日付形式の確認
+            If Not Date.TryParseExact(target.dtnengetu, "yyyyMM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+                MessageBox.Show("締年月が正しくありません。（" & target.dtnengetu & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
+            End If
+
+            '月が1〜12の範囲にあるか確認
+            Dim month As Integer = Integer.Parse(target.dtnengetu.Substring(4, 2))
+            If month < 1 Or month > 12 Then
+                MessageBox.Show("締年月が正しくありません。（" & target.dtnengetu & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
+            End If
+
+            ' 範囲の確認（処理年1月～処理月まで）
+            Dim targetYear As Integer = CInt(target.dtnengetu.Substring(0, 4)) ' 年
+            Dim targetMonth As Integer = CInt(target.dtnengetu.Substring(4, 2)) ' 月
+            Dim currentYear As Integer = Now.Year
+            Dim currentMonth As Integer = Now.Month
+
+            ' 処理年が一致し、月が1月から当月までの範囲内か確認
+            If targetYear < currentYear OrElse
+                (targetYear = currentYear AndAlso targetMonth < 1) OrElse
+                (targetYear = currentYear AndAlso targetMonth > currentMonth) Then
+                MessageBox.Show("締年月が1月～当月までの範囲外です。（" & target.dtnengetu & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
+            End If
+        Next
 
         Dim dt As DataTable = Nothing
 
