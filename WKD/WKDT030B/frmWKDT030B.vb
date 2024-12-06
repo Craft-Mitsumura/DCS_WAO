@@ -71,13 +71,6 @@ Public Class frmWKDT030B
                 Return
             End If
 
-            '月が1〜12の範囲にあるか確認
-            Dim month As Integer = Integer.Parse(target.dtnengetu.Substring(4, 2))
-            If month < 1 Or month > 12 Then
-                MessageBox.Show("締年月が正しくありません。（" & target.dtnengetu & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                Return
-            End If
-
             ' 範囲の確認（処理年1月～処理月まで）
             Dim targetYear As Integer = CInt(target.dtnengetu.Substring(0, 4)) ' 年
             Dim targetMonth As Integer = CInt(target.dtnengetu.Substring(4, 2)) ' 月
