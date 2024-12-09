@@ -162,7 +162,7 @@ Public Class frmWKDT030B
         Next
 
         ' ＣＳＶファイル出力
-        Dim fileName As String = "解約源泉徴収票.csv"
+        Dim fileName As String = "解約先分源泉徴収票.csv"
         Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
         MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
