@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class frmWKDT030B
     Inherits System.Windows.Forms.Form
 
     'フォームがコンポーネントの一覧をクリーンアップするために dispose をオーバーライドします。
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class frmWKDT030B
     'メモ: 以下のプロシージャは Windows フォーム デザイナーで必要です。
     'Windows フォーム デザイナーを使用して変更できます。  
     'コード エディターを使って変更しないでください。
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.fraShoriKubun = New System.Windows.Forms.GroupBox()
         Me.rdoShoriKubun_1 = New System.Windows.Forms.RadioButton()
@@ -33,8 +33,6 @@ Partial Class frmWKDT030B
         Me.mnuVersion = New System.Windows.Forms.ToolStripMenuItem()
         Me.btnClose = New System.Windows.Forms.Button()
         Me.btnOutput = New System.Windows.Forms.Button()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.txtShoriNendo = New System.Windows.Forms.TextBox()
         Me.fraShoriKubun.SuspendLayout()
         Me.MainMenu1.SuspendLayout()
         Me.SuspendLayout()
@@ -107,14 +105,14 @@ Partial Class frmWKDT030B
         Me.MainMenu1.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu1.Name = "MainMenu1"
         Me.MainMenu1.Padding = New System.Windows.Forms.Padding(10, 3, 0, 3)
-        Me.MainMenu1.Size = New System.Drawing.Size(777, 35)
+        Me.MainMenu1.Size = New System.Drawing.Size(777, 36)
         Me.MainMenu1.TabIndex = 0
         '
         'mnuFile
         '
         Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuEnd})
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(83, 29)
+        Me.mnuFile.Size = New System.Drawing.Size(83, 30)
         Me.mnuFile.Text = "ﾌｧｲﾙ(&F)"
         '
         'mnuEnd
@@ -127,7 +125,7 @@ Partial Class frmWKDT030B
         '
         Me.mnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuVersion})
         Me.mnuHelp.Name = "mnuHelp"
-        Me.mnuHelp.Size = New System.Drawing.Size(87, 29)
+        Me.mnuHelp.Size = New System.Drawing.Size(87, 30)
         Me.mnuHelp.Text = "ﾍﾙﾌﾟ(&H)"
         '
         'mnuVersion
@@ -164,36 +162,11 @@ Partial Class frmWKDT030B
         Me.btnOutput.Text = "出力(&O)"
         Me.btnOutput.UseVisualStyleBackColor = False
         '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(90, 147)
-        Me.Label1.Margin = New System.Windows.Forms.Padding(5, 0, 5, 0)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(80, 18)
-        Me.Label1.TabIndex = 3
-        Me.Label1.Text = "処理年度"
-        '
-        'txtShoriNendo
-        '
-        Me.txtShoriNendo.ImeMode = System.Windows.Forms.ImeMode.Disable
-        Me.txtShoriNendo.Location = New System.Drawing.Point(192, 142)
-        Me.txtShoriNendo.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
-        Me.txtShoriNendo.MaxLength = 4
-        Me.txtShoriNendo.Name = "txtShoriNendo"
-        Me.txtShoriNendo.RightToLeft = System.Windows.Forms.RightToLeft.Yes
-        Me.txtShoriNendo.Size = New System.Drawing.Size(66, 25)
-        Me.txtShoriNendo.TabIndex = 4
-        Me.txtShoriNendo.Text = "9999"
-        Me.txtShoriNendo.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-        '
         'frmWKDT030B
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(777, 500)
-        Me.Controls.Add(Me.txtShoriNendo)
-        Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnOutput)
         Me.Controls.Add(Me.btnClose)
         Me.Controls.Add(Me.fraShoriKubun)
@@ -221,6 +194,4 @@ Partial Class frmWKDT030B
     Public WithEvents mnuVersion As Windows.Forms.ToolStripMenuItem
     Public WithEvents btnClose As Windows.Forms.Button
     Public WithEvents btnOutput As Windows.Forms.Button
-    Friend WithEvents Label1 As Windows.Forms.Label
-    Friend WithEvents txtShoriNendo As Windows.Forms.TextBox
 End Class
