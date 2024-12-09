@@ -71,6 +71,7 @@ Public Class frmWKDT030B
 
             ' 処理年が一致し、月が1月から当月までの範囲内か確認
             If targetYear < currentYear OrElse
+                 targetYear > currentYear OrElse
                 (targetYear = currentYear AndAlso targetMonth < 1) OrElse
                 (targetYear = currentYear AndAlso targetMonth > currentMonth) Then
                 MessageBox.Show("締年月が1月～当月までの範囲外です。（" & target.dtnengetu & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
