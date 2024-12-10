@@ -26,6 +26,7 @@ Public Class frmWKDC010B
 
         Dim filePath As String = String.Empty
         Dim inputDirectory As String = String.Empty
+        Dim fileName As String = String.Empty
 
         Using frmFileDialog As New OpenFileDialog
             frmFileDialog.FileName = "確定データ.txt"
@@ -140,7 +141,8 @@ Public Class frmWKDC010B
         Next
 
         If errorRecords.Count > 0 Then
-            Dim csvFilePath As String = inputDirectory & "\error_log.csv"
+            fileName = System.IO.Path.GetFileName(filePath)
+            Dim csvFilePath As String = inputDirectory & "\" & fileName.Substring(0, fileName.Length - 4) & "_エラーリスト.csv"
 
             Using writer As New StreamWriter(csvFilePath, False, Encoding.UTF8)
                 For Each record As String In errorRecords
