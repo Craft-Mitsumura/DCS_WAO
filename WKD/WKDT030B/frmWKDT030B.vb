@@ -117,7 +117,7 @@ Public Class frmWKDT030B
                 Return
             End If
 
-            ' 年調作表データ作成
+            ' 年調作表データ更新
             If Not dba.UpdateTInstructorFurikomi(Me.ProductName, targetList) Then
                 Return
             End If
