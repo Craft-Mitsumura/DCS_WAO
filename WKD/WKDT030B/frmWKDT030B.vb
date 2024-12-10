@@ -161,10 +161,28 @@ Public Class frmWKDT030B
             End If
         Next
 
+         Dim msg As New StringBuilder()
+
         ' ＣＳＶファイル出力
         Dim fileName As String = "解約先分源泉徴収票.csv"
         Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
         MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        ' 給与支払報告書に不要な行を削除
+        Dim rows As DataRow() = dt.Select("chohyoshurui <> '受給者交付用'")
+        For Each row As DataRow In rows
+            row.Delete()
+        Next
+
+        ' 給与支払報告書に不要な列を削除
+        dt.Columns.Remove("dtnengetu")
+        dt.Columns.Remove("chohyoshurui")
+
+        Dim fileName2 As String = "解約先分給与支払報告書.csv"
+        Dim filePath2 As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
+        msg.AppendLine("「" & filePath2 & "」が出力されました。")
+
+        MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
