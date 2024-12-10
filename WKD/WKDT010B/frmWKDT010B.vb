@@ -149,6 +149,13 @@ Public Class frmWKDT010B
         Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
         msg.AppendLine("「" & filePath & "」が出力されました。")
 
+        ' 給与支払報告書に不要な行を削除
+        Dim rows As DataRow() = dt.Select("chohyoshurui <> '受給者交付用'")
+        For Each row As DataRow In rows
+            row.Delete()
+        Next
+
+        ' 給与支払報告書に不要な列を削除
         dt.Columns.Remove("dtnengetu")
         dt.Columns.Remove("chohyoshurui")
 
