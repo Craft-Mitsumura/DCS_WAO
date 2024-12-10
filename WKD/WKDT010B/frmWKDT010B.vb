@@ -142,11 +142,21 @@ Public Class frmWKDT010B
             End If
         Next
 
+        Dim msg As New StringBuilder()
+
         ' ＣＳＶファイル出力
         Dim fileName As String = "源泉徴収票_" & txtShoriNendo.Text & ".csv"
         Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+        msg.AppendLine("「" & filePath & "」が出力されました。")
 
-        MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        dt.Columns.Remove("dtnengetu")
+        dt.Columns.Remove("chohyoshurui")
+
+        Dim fileName2 As String = "給与支払報告書_" & txtShoriNendo.Text & ".csv"
+        Dim filePath2 As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
+        msg.AppendLine("「" & filePath2 & "」が出力されました。")
+
+        MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
 

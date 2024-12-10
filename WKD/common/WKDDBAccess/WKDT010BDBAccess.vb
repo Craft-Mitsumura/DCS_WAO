@@ -149,7 +149,7 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("  , houjinno") ' 法人番号
         sql.AppendLine("  , addr1 || addr2 addr") ' オーナー様住所
         sql.AppendLine("  , name") ' オーナー様氏名
-        sql.AppendLine("  , '受給者交付用'") ' 帳票種類
+        sql.AppendLine("  , '受給者交付用' chohyoshurui") ' 帳票種類
         sql.AppendLine("  , 'ＷＡＯ'") ' 業者コード
         sql.AppendLine("  , nys_ownerno") ' 名寄オーナーNo
         sql.AppendLine("  , 1") ' 名寄オーナー№毎ページ数
