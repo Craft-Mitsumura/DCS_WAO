@@ -104,6 +104,44 @@ Public Class frmWKDT010B
             End If
         End If
 
+        Dim ci As New System.Globalization.CultureInfo("ja-JP", False)
+        ci.DateTimeFormat.Calendar = New System.Globalization.JapaneseCalendar()
+        Dim jpCalendar As New System.Globalization.JapaneseCalendar()
+
+        dt.Columns("dtnengetu").ReadOnly = False
+        dt.Columns("dtnen").ReadOnly = False
+        dt.Columns("seiyyyy").ReadOnly = False
+        dt.Columns("seiyyyymmdd").ReadOnly = False
+        dt.Columns("nyutaishabi").ReadOnly = False
+
+        For Each row As DataRow In dt.Rows
+            If CnvStr(row("dtnengetu")).Length = 6 Then
+                Dim days As Date = CnvDat(row("dtnengetu").ToString & "01")
+                Dim gengou As String = days.ToString("gg", ci)
+                Dim wareki As Integer = jpCalendar.GetYear(days)
+                Dim dtnen As String = (wareki Mod 100).ToString("00")
+                row("dtnengetu") = gengou
+                row("dtnen") = dtnen
+            End If
+
+            If CnvStr(row("seiyyyymmdd")).Length = 8 Then
+                Dim seiday As Date = CnvDat(row("seiyyyymmdd").ToString)
+                Dim seigengou As String = seiday.ToString("gg", ci)
+                Dim seiwareki As Integer = jpCalendar.GetYear(seiday)
+                Dim seinen As String = (seiwareki Mod 100).ToString("00")
+                row("seiyyyy") = seigengou
+                row("seiyyyymmdd") = seinen
+            End If
+
+            If CnvStr(row("nyutaishabi")).Length = 8 Then
+                Dim nyutaishabi As String = row("nyutaishabi").ToString()
+                Dim nyutaishayear As Integer = Integer.Parse(nyutaishabi.Substring(0, 4))
+                Dim nyutaiwareki As Integer = jpCalendar.GetYear(New DateTime(nyutaishayear, 1, 1))
+                Dim nyutainen As String = (nyutaiwareki Mod 100).ToString("00")
+                row("nyutaishabi") = nyutainen & nyutaishabi.Substring(4, 4)
+            End If
+        Next
+
         ' ＣＳＶファイル出力
         Dim fileName As String = "源泉徴収票_" & txtShoriNendo.Text & ".csv"
         Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
