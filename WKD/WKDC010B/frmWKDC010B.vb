@@ -130,15 +130,39 @@ Public Class frmWKDC010B
 
         Dim errorList As New List(Of String)
         Dim errorRecords As New List(Of String)
-        Dim row As Integer = 1
+        Dim row As Integer = 2
+        Dim skingakuSumAll As Decimal = entityList _
+                                        .Where(Function(entity) entity.skingaku.HasValue) _
+                                        .Sum(Function(entity) entity.skingaku.Value)
+
+        Dim nyukaikinSumAll As Decimal = entityList _
+                                        .Where(Function(entity) entity.nyukaikin.HasValue) _
+                                        .Sum(Function(entity) entity.nyukaikin.Value)
+
+        Dim jugyoryoSumAll As Decimal = entityList _
+                                        .Where(Function(entity) entity.jugyoryo.HasValue) _
+                                        .Sum(Function(entity) entity.jugyoryo.Value)
 
         For Each entity As TKakuteiEntity In entityList
-            Dim errors = ValidateEntity(entity, row, skingakuSum, nyukaikinSum, jugyoryoSum)
+            Dim errors = ValidateEntity(entity, row)
             If errors.Count > 0 Then
                 errorRecords.AddRange(errors)
             End If
             row += 1
         Next
+
+        '⑤ 該当項目について　で判断された明細レコードの各合計と合計レコードの各合計一致しない場合はエラーとする。																																			
+        If skingakuSumAll.ToString() <> skingakuSum.ToString() Then
+            errorRecords.Add(row.ToString() & ",金額,合計金額が一致しません。")
+        End If
+
+        If nyukaikinSumAll.ToString() <> nyukaikinSum.ToString() Then
+            errorRecords.Add(row.ToString() & ",入会金,入会金の合計金額が一致しません。")
+        End If
+
+        If jugyoryoSumAll.ToString() <> jugyoryoSum.ToString() Then
+            errorRecords.Add(row.ToString() & ",授業料,授業料の合計金額が一致しません。")
+        End If
 
         If errorRecords.Count > 0 Then
             fileName = System.IO.Path.GetFileName(filePath)
@@ -173,10 +197,12 @@ Public Class frmWKDC010B
         Me.Close()
     End Sub
 
-    Private Function ValidateEntity(entity As TKakuteiEntity, row As Integer, skingakuSum As Decimal, nyukaikinSum As Decimal, jugyoryoSum As Decimal) As List(Of String)
+    Private Function ValidateEntity(entity As TKakuteiEntity, row As Integer) As List(Of String)
         Dim errors As New List(Of String)
 
         Dim propertiesList As List(Of propertiesInput) = setPropertiesList(entity)
+
+
         For Each propertiesInput As propertiesInput In propertiesList
 
             '① 項目データの半角チェック
@@ -196,13 +222,13 @@ Public Class frmWKDC010B
 
             '③ 項目データの数字チェック
             If {"顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号（生徒Ｎｏ）", "顧客番号内ＳＥＱ番号",
-                "処理区分", "金額", "入会金", "授業料", "施設関連諸費", "テキスト費", "差出人郵便番号"}.Contains(propertiesInput.name) Then
+                "処理区分", "金額", "入会金", "授業料", "施設関連諸費", "テキスト費"}.Contains(propertiesInput.name) Then
                 If (IsNumericData(propertiesInput, row) <> "") Then
                     errors.Add(IsNumericData(propertiesInput, row))
                 End If
             End If
 
-            If {"郵便番号"}.Contains(propertiesInput.name) Then
+            If {"郵便番号,差出人郵便番号"}.Contains(propertiesInput.name) Then
                 If (IsNumericDataByFormat(propertiesInput, row) <> "") Then
                     errors.Add(IsNumericDataByFormat(propertiesInput, row))
                 End If
@@ -214,22 +240,8 @@ Public Class frmWKDC010B
                     errors.Add(ValidateDateMatch(propertiesInput, row))
                 End If
             End If
-
-            '⑤ 該当項目について　で判断された明細レコードの各合計と合計レコードの各合計一致しない場合はエラーとする。																																			
-            If {"金額", "入会金", "授業料"}.Contains(propertiesInput.name) Then
-                If propertiesInput.name = "金額" AndAlso propertiesInput.value <> skingakuSum.ToString() Then
-                    errors.Add(row.ToString() & "," & propertiesInput.name & "," & "合計金額が一致しません。")
-                End If
-
-                If propertiesInput.name = "入会金" AndAlso propertiesInput.value <> skingakuSum.ToString() Then
-                    errors.Add(row.ToString() & "," & propertiesInput.name & "," & "入会金の合計金額が一致しません。")
-                End If
-
-                If propertiesInput.name = "授業料" AndAlso propertiesInput.value <> skingakuSum.ToString() Then
-                    errors.Add(row.ToString() & "," & propertiesInput.name & "," & "授業料の合計金額が一致しません。")
-                End If
-            End If
         Next
+
         Return errors
     End Function
 
