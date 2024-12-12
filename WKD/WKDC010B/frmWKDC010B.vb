@@ -228,7 +228,7 @@ Public Class frmWKDC010B
                 End If
             End If
 
-            If {"郵便番号,差出人郵便番号"}.Contains(propertiesInput.name) Then
+            If {"郵便番号", "差出人郵便番号"}.Contains(propertiesInput.name) Then
                 If (IsNumericDataByFormat(propertiesInput, row) <> "") Then
                     errors.Add(IsNumericDataByFormat(propertiesInput, row))
                 End If
