@@ -34,7 +34,7 @@ Partial Class frmWKDT020B
         Me.btnClose = New System.Windows.Forms.Button()
         Me.btnOutput = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.txtShoriNendo = New System.Windows.Forms.TextBox()
+        Me.txtShoriNengetsu = New System.Windows.Forms.TextBox()
         Me.fraShoriKubun.SuspendLayout()
         Me.MainMenu1.SuspendLayout()
         Me.SuspendLayout()
@@ -172,27 +172,27 @@ Partial Class frmWKDT020B
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(80, 18)
         Me.Label1.TabIndex = 3
-        Me.Label1.Text = "処理年度"
+        Me.Label1.Text = "処理年月"
         '
-        'txtShoriNendo
+        'txtShoriNengetsu
         '
-        Me.txtShoriNendo.ImeMode = System.Windows.Forms.ImeMode.Disable
-        Me.txtShoriNendo.Location = New System.Drawing.Point(192, 142)
-        Me.txtShoriNendo.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
-        Me.txtShoriNendo.MaxLength = 4
-        Me.txtShoriNendo.Name = "txtShoriNendo"
-        Me.txtShoriNendo.RightToLeft = System.Windows.Forms.RightToLeft.Yes
-        Me.txtShoriNendo.Size = New System.Drawing.Size(66, 25)
-        Me.txtShoriNendo.TabIndex = 4
-        Me.txtShoriNendo.Text = "9999"
-        Me.txtShoriNendo.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtShoriNengetsu.ImeMode = System.Windows.Forms.ImeMode.Disable
+        Me.txtShoriNengetsu.Location = New System.Drawing.Point(192, 142)
+        Me.txtShoriNengetsu.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me.txtShoriNengetsu.MaxLength = 4
+        Me.txtShoriNengetsu.Name = "txtShoriNengetsu"
+        Me.txtShoriNengetsu.RightToLeft = System.Windows.Forms.RightToLeft.Yes
+        Me.txtShoriNengetsu.Size = New System.Drawing.Size(96, 25)
+        Me.txtShoriNengetsu.TabIndex = 4
+        Me.txtShoriNengetsu.Text = "9999"
+        Me.txtShoriNengetsu.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'frmWKDT020B
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(777, 500)
-        Me.Controls.Add(Me.txtShoriNendo)
+        Me.Controls.Add(Me.txtShoriNengetsu)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnOutput)
         Me.Controls.Add(Me.btnClose)
@@ -222,5 +222,5 @@ Partial Class frmWKDT020B
     Public WithEvents btnClose As Windows.Forms.Button
     Public WithEvents btnOutput As Windows.Forms.Button
     Friend WithEvents Label1 As Windows.Forms.Label
-    Friend WithEvents txtShoriNendo As Windows.Forms.TextBox
+    Friend WithEvents txtShoriNengetsu As Windows.Forms.TextBox
 End Class

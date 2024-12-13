@@ -264,7 +264,7 @@ SaveDialogError:
                 strline = strlines(x).Split(",")
                 If (strline(0) <> vbLf) Then
                     For y = 0 To num_cols
-                        strarray(x, y) = strline(y).Replace("""", "")
+                        strarray(x, y) = strline(y).Replace("""", "").Replace(vbLf, "")
                     Next
                 End If
             Next
