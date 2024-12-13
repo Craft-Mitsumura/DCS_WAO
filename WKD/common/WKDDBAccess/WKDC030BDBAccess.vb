@@ -43,24 +43,13 @@ Public Class WKDC030BDBAccess
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
-
         Dim sql As New StringBuilder()
-        sql.AppendLine("select public.getdaypushback('@processingDate')")
 
-        Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@processingDate", processingDate)
-        }
-
-        dt = dbc.GetData(sql.ToString(), params)
-
-        Dim transferDate As String = dt.Rows(0)("getdaypushback").ToString()
-
-        dbc = New DBClient
-        sql = New StringBuilder()
         sql.AppendLine("select ownerno ")
+        sql.AppendLine(", bakome ")
         sql.AppendLine(", TO_CHAR(CURRENT_DATE , 'YYYYMM') ")
-        sql.AppendLine(", @transferDate ")
-        sql.AppendLine(", @transferDate ")
+        sql.AppendLine(", public.getdaypushback(@processingDate) ")
+        sql.AppendLine(", public.getdaypushback(@processingDate) ")
         sql.AppendLine(", seitono ")
         sql.AppendLine(", syokbn ")
         sql.AppendLine(", skingaku ")
@@ -88,12 +77,12 @@ Public Class WKDC030BDBAccess
         sql.AppendLine("left join")
         sql.AppendLine("    public.tbkeiyakushamaster own on (ytd.ownerno = own.bakyny)")
         sql.AppendLine("left join")
-        sql.AppendLine("    public.tchogoshamaster hog on (ytd.ownerno = hog.cakycd and ytd.seitono = hog.cahgcd and hog.cafkst <= CAST(@transferDate AS INTEGER) and hog.cafked >= CAST(@transferDate AS INTEGER)) ")
+        sql.AppendLine("    public.tchogoshamaster hog on (ytd.ownerno = hog.cakycd and ytd.seitono = hog.cahgcd and hog.cafkst <= CAST(public.getdaypushback(@processingDate) AS INTEGER) and hog.cafked >= CAST(public.getdaypushback(@processingDate) AS INTEGER)) ")
         sql.AppendLine("where ytd.dtnengetu = @conditionDate")
 
-        params = New List(Of NpgsqlParameter) From {
+        Dim params = New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@conditionDate", conditionDate),
-            New NpgsqlParameter("@transferDate", transferDate)
+            New NpgsqlParameter("@processingDate", processingDate)
         }
 
         dt = dbc.GetData(sql.ToString(), params)
