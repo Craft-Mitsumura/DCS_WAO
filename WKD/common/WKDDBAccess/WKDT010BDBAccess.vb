@@ -14,16 +14,16 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("select")
         sql.AppendLine("    '1' sakuhyokbn") ' 作表区分
         sql.AppendLine("  , fin.*")
-        sql.AppendLine("  , own.bakyny") ' 名寄先オーナーＮｏ
+        sql.AppendLine("  , coalesce(case own.bakyny when '' then null else own.bakyny end,own.bakycd) bakyny") ' 名寄先オーナーＮｏ
         sql.AppendLine("  , coalesce(own2.bakjnm,own.bakjnm) bakjnm") ' オーナー名（漢字）
-        sql.AppendLine("  , coalesce(own2.bazpc1,own.bazpc1) || '-' || coalesce(own2.bazpc1,own.bazpc2) bazpc") ' オーナー郵便番号
+        sql.AppendLine("  , coalesce(own2.bazpc1,own.bazpc1) || '-' || coalesce(own2.bazpc2,own.bazpc2) bazpc") ' オーナー郵便番号
         sql.AppendLine("  , coalesce(own2.baadj1,own.baadj1) baadj1") ' オーナー住所１（漢字）
         sql.AppendLine("  , coalesce(own2.baadj2,own.baadj2) baadj2") ' オーナー住所２（漢字）
         sql.AppendLine("  , coalesce(own2.batele,own.batele) batele") ' オーナー電話番号１
         sql.AppendLine("  , coalesce(own2.bakkrn,own.bakkrn) bakkrn") ' オーナー電話番号２
         sql.AppendLine("  , coalesce(own2.bakome,own.bakome) bakome") ' 校名（漢字）
         sql.AppendLine("  , coalesce(own2.bahjno,own.bahjno) bahjno") ' 法人番号
-        sql.AppendLine("  , 1 rerunno") ' リランＮｏ
+        sql.AppendLine("  , null rerunno") ' リランＮｏ
         sql.AppendLine("  , @crt_user_id")
         sql.AppendLine("  , @crt_user_dtm")
         sql.AppendLine("  , @crt_user_pg_id")
@@ -124,10 +124,10 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("  , namekn") ' インストラクター様氏名（カナ）
         sql.AppendLine("  , namekj") ' インストラクター様氏名（漢字）
         sql.AppendLine("  , '給与・賞与'") ' 種別
-        sql.AppendLine("  , fkinzeg") ' 支払金額
+        sql.AppendLine("  , fkinzem") ' 支払金額
         sql.AppendLine("  , zeigak") ' 源泉徴収税額
         sql.AppendLine("  , '年末調整未済'") ' 摘要欄
-        sql.AppendLine("  , '＊'") ' 乙欄
+        sql.AppendLine("  , nm.otsuran") ' 乙欄
         sql.AppendLine("  , case") ' 就職欄
         sql.AppendLine("        when substring(dtnengetu,1,4) = nyunen then '＊'")
         sql.AppendLine("        else ''")
@@ -147,15 +147,33 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("  , seiyyyy") ' 生年月日元号
         sql.AppendLine("  , seiyyyy || seimm || seidd seiyyyymmdd") ' 生年月日（和暦）
         sql.AppendLine("  , houjinno") ' 法人番号
-        sql.AppendLine("  , addr1 || addr2 addr") ' オーナー様住所
-        sql.AppendLine("  , name") ' オーナー様氏名
-        sql.AppendLine("  , '受給者交付用' chohyoshurui") ' 帳票種類
+        sql.AppendLine("  , postno") ' オーナー郵便番号
+        sql.AppendLine("  , addr1 || addr2 addr") ' オーナー住所
+        sql.AppendLine("  , name") ' オーナー氏名
+        sql.AppendLine("  , nm.chohyoshurui") ' 帳票種類
         sql.AppendLine("  , 'ＷＡＯ'") ' 業者コード
         sql.AppendLine("  , nys_ownerno") ' 名寄オーナーNo
-        sql.AppendLine("  , 1") ' 名寄オーナー№毎ページ数
+        sql.AppendLine("  , count(*) over(partition by nys_ownerno,gs order by nys_ownerno,gs) cnt") ' 名寄オーナー№毎ページ数
         sql.AppendLine("  , rerunno") ' リラン№
         sql.AppendLine("from")
         sql.AppendLine("    t_nencho")
+        sql.AppendLine("  , (")
+        sql.AppendLine("    select")
+        sql.AppendLine("        gs") ' 帳票種類番号
+        sql.AppendLine("      , case gs")
+        sql.AppendLine("            when 1 then '＊'")
+        sql.AppendLine("            when 2 then ''")
+        sql.AppendLine("            when 3 then ''")
+        sql.AppendLine("            when 4 then ''")
+        sql.AppendLine("        end otsuran") ' 乙欄
+        sql.AppendLine("      , case gs")
+        sql.AppendLine("            when 1 then '受給者交付用'")
+        sql.AppendLine("            when 2 then '保存用'")
+        sql.AppendLine("            when 3 then '税務署提出用'")
+        sql.AppendLine("            when 4 then '給与支払報告書'")
+        sql.AppendLine("        end chohyoshurui") ' 帳票種類
+        sql.AppendLine("    from generate_series(1, 4) gs")
+        sql.AppendLine("    ) nm")
         sql.AppendLine("where sakuhyokbn = '1'")
         sql.AppendLine("and dtnengetu = @shoriNendo || '12'")
 
@@ -180,9 +198,13 @@ Public Class WKDT010BDBAccess
             End If
         End If
 
+        ' 支払金額が500000以上の場合のみ税務署提出用を出力
+        sql.AppendLine("and (nm.gs <> 3 or coalesce(fkinzem,0) >= 500000 and nm.gs = 3)")
+
         sql.AppendLine("order by")
         sql.AppendLine("    ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("  , instno") ' 顧客番号（インストラクターＮｏ）
+        sql.AppendLine("  , nm.gs") ' 帳票種類番号
 
         dt = dbc.GetData(sql.ToString(), params)
 
