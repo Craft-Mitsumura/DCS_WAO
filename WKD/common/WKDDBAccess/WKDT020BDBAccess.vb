@@ -3,7 +3,7 @@ Imports System.Text
 
 Public Class WKDT020BDBAccess
 
-    Public Function InsertTNencho(shoriNengetsu As String, pgid As String) As Boolean
+    Public Function InsertTNencho(shoriNengetsu As String, pgid As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As Boolean
 
         Dim ret As Boolean = False
         Dim dbc As New DBClient
@@ -66,6 +66,32 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("        t_instructor_furikomi")
         sql.AppendLine("    where dtnengetu = @shoriNengetsu")
         sql.AppendLine("    and   coalesce(nencho_flg,'0') <> '1'")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@shoriNengetsu", shoriNengetsu),
+            New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
+            New NpgsqlParameter("@crt_user_dtm", Now),
+            New NpgsqlParameter("@crt_user_pg_id", pgid)
+        }
+
+        If Not targetList Is Nothing Then
+            Dim i As Integer = 0
+            Dim sqlIn As New StringBuilder()
+
+            For Each target As TNenchoEntity In targetList
+                i += 1
+                params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
+                params.Add(New NpgsqlParameter("@instno" & i.ToString, target.instno))
+                sqlIn.Append("(@ownerno" & i.ToString & ", @instno" & i.ToString & "),")
+            Next
+
+            If 0 < sqlIn.Length Then
+                ' 最後の余計なカンマを削除
+                sqlIn.Remove(sqlIn.Length - 1, 1)
+                sql.AppendLine("and (ownerno, instno) in (" & sqlIn.ToString & ")")
+            End If
+        End If
+
         sql.AppendLine("    group by")
         sql.AppendLine("        itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("      , ownerno") ' 顧客番号（オーナーＮｏ）
@@ -96,20 +122,13 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null and own2.bakyfg = '0')")
         sql.AppendLine(")")
 
-        Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@shoriNengetsu", shoriNengetsu),
-            New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_dtm", Now),
-            New NpgsqlParameter("@crt_user_pg_id", pgid)
-        }
-
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
 
         Return ret
 
     End Function
 
-    Public Function GetTNencho(shoriNengetsu As String) As DataTable
+    Public Function GetTNencho(shoriNengetsu As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -157,12 +176,88 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("    t_nencho")
         sql.AppendLine("where sakuhyokbn = '2'")
         sql.AppendLine("and dtnengetu = @shoriNengetsu")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@shoriNengetsu", shoriNengetsu)
+        }
+
+        If Not targetList Is Nothing Then
+            Dim i As Integer = 0
+            Dim sqlIn As New StringBuilder()
+
+            For Each target As TNenchoEntity In targetList
+                i += 1
+                params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
+                params.Add(New NpgsqlParameter("@instno" & i.ToString, target.instno))
+                sqlIn.Append("(@ownerno" & i.ToString & ", @instno" & i.ToString & "),")
+            Next
+
+            If 0 < sqlIn.Length Then
+                ' 最後の余計なカンマを削除
+                sqlIn.Remove(sqlIn.Length - 1, 1)
+                sql.AppendLine("and (ownerno, instno) in (" & sqlIn.ToString & ")")
+            End If
+        End If
+
         sql.AppendLine("order by")
         sql.AppendLine("    ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("  , instno") ' 顧客番号（インストラクターＮｏ）
 
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
+
+    Public Function GetOwner(bakycd As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select")
+        sql.AppendLine("    baitkb")
+        sql.AppendLine("  , bakycd")
+        sql.AppendLine("  , basqno")
+        sql.AppendLine("  , bakjnm")
+        sql.AppendLine("  , baknnm")
+        sql.AppendLine("  , bakome")
+        sql.AppendLine("  , bazpc1")
+        sql.AppendLine("  , bazpc2")
+        sql.AppendLine("  , baadj1")
+        sql.AppendLine("  , baadj2")
+        sql.AppendLine("  , baadj3")
+        sql.AppendLine("  , batele")
+        sql.AppendLine("  , batelj")
+        sql.AppendLine("  , bakkrn")
+        sql.AppendLine("  , bafaxi")
+        sql.AppendLine("  , bafaxj")
+        sql.AppendLine("  , bakkbn")
+        sql.AppendLine("  , babank")
+        sql.AppendLine("  , basitn")
+        sql.AppendLine("  , bakzsb")
+        sql.AppendLine("  , bakzno")
+        sql.AppendLine("  , baybtk")
+        sql.AppendLine("  , baybtn")
+        sql.AppendLine("  , bakznm")
+        sql.AppendLine("  , bakyst")
+        sql.AppendLine("  , bakyed")
+        sql.AppendLine("  , bafkst")
+        sql.AppendLine("  , bafked")
+        sql.AppendLine("  , bakyfg")
+        sql.AppendLine("  , basofu")
+        sql.AppendLine("  , bascnt")
+        sql.AppendLine("  , bausid")
+        sql.AppendLine("  , baaddt")
+        sql.AppendLine("  , baupdt")
+        sql.AppendLine("  , bahjno")
+        sql.AppendLine("  , bakyny")
+        sql.AppendLine("from")
+        sql.AppendLine("    tbkeiyakushamaster")
+        sql.AppendLine("where bakycd = @bakycd and bakome is not null and bakyfg = '0'")
+
         Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@shoriNengetsu", shoriNengetsu)
+            New NpgsqlParameter("@bakycd", bakycd)
         }
 
         dt = dbc.GetData(sql.ToString(), params)
@@ -171,7 +266,7 @@ Public Class WKDT020BDBAccess
 
     End Function
 
-    Public Function DeleteTNencho(shoriNengetsu As String) As Boolean
+    Public Function DeleteTNencho(shoriNengetsu As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As Boolean
 
         Dim ret As Boolean = False
         Dim dbc As New DBClient
@@ -181,6 +276,59 @@ Public Class WKDT020BDBAccess
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengetsu", shoriNengetsu)
+        }
+
+        If Not targetList Is Nothing Then
+            Dim i As Integer = 0
+            Dim sqlIn As New StringBuilder()
+
+            For Each target As TNenchoEntity In targetList
+                i += 1
+                params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
+                params.Add(New NpgsqlParameter("@instno" & i.ToString, target.instno))
+                sqlIn.Append("(@ownerno" & i.ToString & ", @instno" & i.ToString & "),")
+            Next
+
+            If 0 < sqlIn.Length Then
+                ' 最後の余計なカンマを削除
+                sqlIn.Remove(sqlIn.Length - 1, 1)
+                sql.AppendLine("and (ownerno, instno) in (" & sqlIn.ToString & ")")
+            End If
+        End If
+
+        ret = dbc.ExecuteNonQuery(sql.ToString(), params)
+
+        Return ret
+
+    End Function
+
+
+    Public Function UpdateTInstructorFurikomi(pgid As String, shoriNengetsu As String, ownerno As String, instno As String, tainen As String, taituki As String, taihi As String) As Boolean
+
+        Dim ret As Boolean = False
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("update t_instructor_furikomi set")
+        sql.AppendLine("    tainen = @tainen")
+        sql.AppendLine("  , taituki = @taituki")
+        sql.AppendLine("  , taihi = @taihi")
+        sql.AppendLine("  , upd_user_id = @upd_user_id")
+        sql.AppendLine("  , upd_user_dtm = @upd_user_dtm")
+        sql.AppendLine("  , upd_user_pg_id = @upd_user_pg_id")
+        sql.AppendLine("where coalesce(nencho_flg,'0') <> '1'")
+        sql.AppendLine("  and ownerno = @ownerno")
+        sql.AppendLine("  and instno = @instno")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
+            New NpgsqlParameter("@upd_user_dtm", Now),
+            New NpgsqlParameter("@upd_user_pg_id", pgid),
+            New NpgsqlParameter("@tainen", tainen),
+            New NpgsqlParameter("@taituki", taituki),
+            New NpgsqlParameter("@taihi", taihi),
+            New NpgsqlParameter("@ownerno", ownerno),
+            New NpgsqlParameter("@instno", instno)
         }
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)

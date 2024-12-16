@@ -73,7 +73,6 @@ Partial Class frmWKDT020B
         'rdoShoriKubun_0
         '
         Me.rdoShoriKubun_0.BackColor = System.Drawing.SystemColors.Control
-        Me.rdoShoriKubun_0.Checked = True
         Me.rdoShoriKubun_0.Cursor = System.Windows.Forms.Cursors.Default
         Me.rdoShoriKubun_0.ForeColor = System.Drawing.SystemColors.ControlText
         Me.rdoShoriKubun_0.Location = New System.Drawing.Point(27, 22)
@@ -82,7 +81,6 @@ Partial Class frmWKDT020B
         Me.rdoShoriKubun_0.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.rdoShoriKubun_0.Size = New System.Drawing.Size(110, 24)
         Me.rdoShoriKubun_0.TabIndex = 0
-        Me.rdoShoriKubun_0.TabStop = True
         Me.rdoShoriKubun_0.Text = "新規"
         Me.rdoShoriKubun_0.UseVisualStyleBackColor = False
         '
@@ -179,7 +177,7 @@ Partial Class frmWKDT020B
         Me.txtShoriNengetsu.ImeMode = System.Windows.Forms.ImeMode.Disable
         Me.txtShoriNengetsu.Location = New System.Drawing.Point(192, 142)
         Me.txtShoriNengetsu.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
-        Me.txtShoriNengetsu.MaxLength = 4
+        Me.txtShoriNengetsu.MaxLength = 7
         Me.txtShoriNengetsu.Name = "txtShoriNengetsu"
         Me.txtShoriNengetsu.RightToLeft = System.Windows.Forms.RightToLeft.Yes
         Me.txtShoriNengetsu.Size = New System.Drawing.Size(96, 25)
