@@ -45,7 +45,9 @@ Public Class WKDMenu
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
     Private Sub btnWKDC030BExecute_Click(sender As Object, e As EventArgs) Handles btnWKDC030BExecute.Click
-
+        Using frm = New frmWKDC030B
+            frm.ShowDialog()
+        End Using
     End Sub
 
     ''' <summary>

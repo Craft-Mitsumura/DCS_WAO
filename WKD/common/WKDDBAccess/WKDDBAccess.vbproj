@@ -153,6 +153,7 @@
     <Compile Include="WKDC010BDBAccess.vb" />
     <Compile Include="WKDC040BDBAccess.vb" />
     <Compile Include="WKDT010BDBAccess.vb" />
+    <Compile Include="WKDC030BDBAccess.vb" />
     <Compile Include="WKDT020BDBAccess.vb" />
     <Compile Include="WKDT030BDBAccess.vb" />
   </ItemGroup>
