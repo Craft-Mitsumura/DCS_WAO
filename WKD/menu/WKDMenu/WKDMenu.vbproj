@@ -128,6 +128,10 @@
       <Project>{57df8ceb-347a-4dd9-b381-e5bd013d8f10}</Project>
       <Name>WKDC010B</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\WKDC040B\WKDC040B.vbproj">
+      <Project>{90d6bd87-d9e9-45fc-9b3c-b0614e2cb4c9}</Project>
+      <Name>WKDC040B</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\WKDT010B\WKDT010B.vbproj">
       <Project>{3e758582-b020-4f14-b6c1-3110ab00c87e}</Project>
       <Name>WKDT010B</Name>
