@@ -166,7 +166,7 @@ Public Class frmWKDT030B
 
         ' 解約先分源泉徴収票に出力する行を抽出
         Dim query1 = From row In dt.AsEnumerable()
-                     Where Not row.Field(Of String)("chohyoshurui") = "解約先分給与支払報告書"
+                     Where Not row.Field(Of String)("chohyoshurui") = "給与支払報告書"
                      Select row
 
         ' 結果を新しいDataTableに格納
@@ -185,7 +185,7 @@ Public Class frmWKDT030B
 
         ' 解約先分給与支払報告書に出力する行を抽出
         Dim query2 = From row In dt.AsEnumerable()
-                     Where row.Field(Of String)("chohyoshurui") = "解約先分給与支払報告書"
+                     Where row.Field(Of String)("chohyoshurui") = "給与支払報告書"
                      Select row
 
         ' 結果を新しいDataTableに格納
