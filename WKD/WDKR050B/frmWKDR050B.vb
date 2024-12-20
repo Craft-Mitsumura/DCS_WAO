@@ -39,7 +39,7 @@ Public Class frmWKDR050B
         '①初期処理で振込日パラメータのチェックとして
         Dim day As String = txtShoriNengetsu.Text
 
-        If String.IsNullOrWhiteSpace(day) Or day.Length > 2 Then
+        If String.IsNullOrWhiteSpace(day) Or day.Length > 2 Or DateTime.TryParseExact(day & "/" & DateTime.Now.Month.ToString("D2") & "/" & DateTime.Now.Year, "dd/MM/yyyy", Nothing, Globalization.DateTimeStyles.None, Nothing) = False Then
             MessageBox.Show("振込日が正しくありません。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
