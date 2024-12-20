@@ -152,6 +152,7 @@
     <Compile Include="TableEntities\TZeiEntity.vb" />
     <Compile Include="WKDC010BDBAccess.vb" />
     <Compile Include="WKDC040BDBAccess.vb" />
+    <Compile Include="WKDR050BDBAccess.vb" />
     <Compile Include="WKDT010BDBAccess.vb" />
     <Compile Include="WKDC030BDBAccess.vb" />
     <Compile Include="WKDT020BDBAccess.vb" />
@@ -166,6 +167,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
