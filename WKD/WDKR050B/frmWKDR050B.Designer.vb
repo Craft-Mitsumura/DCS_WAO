@@ -30,7 +30,7 @@ Partial Class frmWKDR050B
         Me.mnuVersion = New System.Windows.Forms.ToolStripMenuItem()
         Me.txtShoriNengetsu = New System.Windows.Forms.TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.btnInput = New System.Windows.Forms.Button()
+        Me.btnOutput = New System.Windows.Forms.Button()
         Me.btnClose = New System.Windows.Forms.Button()
         Me.MainMenu1.SuspendLayout()
         Me.SuspendLayout()
@@ -65,7 +65,7 @@ Partial Class frmWKDR050B
         'mnuEnd
         '
         Me.mnuEnd.Name = "mnuEnd"
-        Me.mnuEnd.Size = New System.Drawing.Size(115, 22)
+        Me.mnuEnd.Size = New System.Drawing.Size(114, 22)
         Me.mnuEnd.Text = "終了(&X)"
         '
         'mnuHelp
@@ -103,18 +103,18 @@ Partial Class frmWKDR050B
         Me.Label1.TabIndex = 16
         Me.Label1.Text = "振込日パラメータ"
         '
-        'btnInput
+        'btnOutput
         '
-        Me.btnInput.BackColor = System.Drawing.SystemColors.Control
-        Me.btnInput.Cursor = System.Windows.Forms.Cursors.Default
-        Me.btnInput.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnInput.Location = New System.Drawing.Point(223, 322)
-        Me.btnInput.Name = "btnInput"
-        Me.btnInput.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.btnInput.Size = New System.Drawing.Size(89, 36)
-        Me.btnInput.TabIndex = 17
-        Me.btnInput.Text = "取込(&I)"
-        Me.btnInput.UseVisualStyleBackColor = False
+        Me.btnOutput.BackColor = System.Drawing.SystemColors.Control
+        Me.btnOutput.Cursor = System.Windows.Forms.Cursors.Default
+        Me.btnOutput.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.btnOutput.Location = New System.Drawing.Point(223, 322)
+        Me.btnOutput.Name = "btnOutput"
+        Me.btnOutput.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.btnOutput.Size = New System.Drawing.Size(89, 36)
+        Me.btnOutput.TabIndex = 17
+        Me.btnOutput.Text = "出力(&O)"
+        Me.btnOutput.UseVisualStyleBackColor = False
         '
         'btnClose
         '
@@ -129,7 +129,7 @@ Partial Class frmWKDR050B
         Me.btnClose.Text = "終了(&X)"
         Me.btnClose.UseVisualStyleBackColor = False
         '
-        'Form1
+        'frmWKDR050B
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -138,9 +138,9 @@ Partial Class frmWKDR050B
         Me.Controls.Add(Me.MainMenu1)
         Me.Controls.Add(Me.txtShoriNengetsu)
         Me.Controls.Add(Me.Label1)
-        Me.Controls.Add(Me.btnInput)
+        Me.Controls.Add(Me.btnOutput)
         Me.Controls.Add(Me.btnClose)
-        Me.Name = "Form1"
+        Me.Name = "frmWKDR050B"
         Me.Text = "インストラクター向け口座振込データ作成"
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
@@ -157,6 +157,6 @@ Partial Class frmWKDR050B
     Public WithEvents mnuVersion As ToolStripMenuItem
     Friend WithEvents txtShoriNengetsu As TextBox
     Friend WithEvents Label1 As Label
-    Public WithEvents btnInput As Button
+    Public WithEvents btnOutput As Button
     Public WithEvents btnClose As Button
 End Class

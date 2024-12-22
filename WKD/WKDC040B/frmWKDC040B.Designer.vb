@@ -30,7 +30,7 @@ Partial Class frmWKDC040B
         Me.mnuVersion = New System.Windows.Forms.ToolStripMenuItem()
         Me.txtShoriNengetsu = New System.Windows.Forms.TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.btnInput = New System.Windows.Forms.Button()
+        Me.btnOutput = New System.Windows.Forms.Button()
         Me.btnClose = New System.Windows.Forms.Button()
         Me.MainMenu1.SuspendLayout()
         Me.SuspendLayout()
@@ -65,7 +65,7 @@ Partial Class frmWKDC040B
         'mnuEnd
         '
         Me.mnuEnd.Name = "mnuEnd"
-        Me.mnuEnd.Size = New System.Drawing.Size(115, 22)
+        Me.mnuEnd.Size = New System.Drawing.Size(114, 22)
         Me.mnuEnd.Text = "終了(&X)"
         '
         'mnuHelp
@@ -103,18 +103,18 @@ Partial Class frmWKDC040B
         Me.Label1.TabIndex = 10
         Me.Label1.Text = "処理年月"
         '
-        'btnInput
+        'btnOutput
         '
-        Me.btnInput.BackColor = System.Drawing.SystemColors.Control
-        Me.btnInput.Cursor = System.Windows.Forms.Cursors.Default
-        Me.btnInput.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnInput.Location = New System.Drawing.Point(239, 321)
-        Me.btnInput.Name = "btnInput"
-        Me.btnInput.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.btnInput.Size = New System.Drawing.Size(89, 36)
-        Me.btnInput.TabIndex = 11
-        Me.btnInput.Text = "取込(&I)"
-        Me.btnInput.UseVisualStyleBackColor = False
+        Me.btnOutput.BackColor = System.Drawing.SystemColors.Control
+        Me.btnOutput.Cursor = System.Windows.Forms.Cursors.Default
+        Me.btnOutput.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.btnOutput.Location = New System.Drawing.Point(239, 321)
+        Me.btnOutput.Name = "btnOutput"
+        Me.btnOutput.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.btnOutput.Size = New System.Drawing.Size(89, 36)
+        Me.btnOutput.TabIndex = 11
+        Me.btnOutput.Text = "出力(&O)"
+        Me.btnOutput.UseVisualStyleBackColor = False
         '
         'btnClose
         '
@@ -138,7 +138,7 @@ Partial Class frmWKDC040B
         Me.Controls.Add(Me.MainMenu1)
         Me.Controls.Add(Me.txtShoriNengetsu)
         Me.Controls.Add(Me.Label1)
-        Me.Controls.Add(Me.btnInput)
+        Me.Controls.Add(Me.btnOutput)
         Me.Controls.Add(Me.btnClose)
         Me.Name = "frmWKDC040B"
         Me.Text = "コンビニ振込用紙作表データ作成"
@@ -157,6 +157,6 @@ Partial Class frmWKDC040B
     Public WithEvents mnuVersion As ToolStripMenuItem
     Friend WithEvents txtShoriNengetsu As TextBox
     Friend WithEvents Label1 As Label
-    Public WithEvents btnInput As Button
+    Public WithEvents btnOutput As Button
     Public WithEvents btnClose As Button
 End Class

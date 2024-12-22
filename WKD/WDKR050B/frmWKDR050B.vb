@@ -21,7 +21,7 @@ Public Class frmWKDR050B
 
     End Sub
 
-    Private Sub btnInput_Click(sender As Object, e As EventArgs) Handles btnInput.Click
+    Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click
 
         ' システム日付
         Dim sysDate As Date = Now
