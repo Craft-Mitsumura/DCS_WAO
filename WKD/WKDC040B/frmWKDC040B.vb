@@ -20,7 +20,7 @@ Public Class frmWKDC040B
 
     End Sub
 
-    Private Sub btnInput_Click(sender As Object, e As EventArgs) Handles btnInput.Click
+    Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click
 
         Dim tZeiList As New DataTable
         Dim tConveniFurikomiList As New DataTable
