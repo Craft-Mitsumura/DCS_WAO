@@ -187,9 +187,7 @@ Public Class frmWKDR010B
         Dim bErr As Boolean = False
 
         For Each dtrow As DataRow In tbCheckDetail.Rows
-            If IsDBNull(dtrow("kakutei_dtnengetu")) Then
-                bErr = True
-            ElseIf dtrow("shrikgn").ToString().Substring(4, 2) <> "24" Then
+            If IsDBNull(dtrow("kakutei_dtnengetu")) Or dtrow("skbt") <> "02" Or dtrow("shrikgn").ToString().Substring(4, 2) <> "24" Then
                 bErr = True
             End If
         Next
