@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AC82C3E6-9B15-4978-9961-B9E991CFDBA9}</ProjectGuid>
+    <ProjectGuid>{15625B07-63EA-446F-80A2-3404EE41017D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Com.Wao.KDS</RootNamespace>
-    <AssemblyName>WKDMenu</AssemblyName>
+    <AssemblyName>WKDR020B</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -18,8 +18,8 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>..\..\bin\</OutputPath>
-    <DocumentationFile>WKDMenu.xml</DocumentationFile>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>WKDR020B.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -27,8 +27,8 @@
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>..\bin\</OutputPath>
-    <DocumentationFile>WKDMenu.xml</DocumentationFile>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>WKDR020B.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -66,6 +66,13 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class1.vb" />
+    <Compile Include="frmWKDR020B.Designer.vb">
+      <DependentUpon>frmWKDR020B.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmWKDR020B.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -82,26 +89,19 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="WKDMenu.Designer.vb">
-      <DependentUpon>WKDMenu.vb</DependentUpon>
-    </Compile>
-    <Compile Include="WKDMenu.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="frmWKDR020B.resx">
+      <DependentUpon>frmWKDR020B.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="WKDMenu.resx">
-      <DependentUpon>WKDMenu.vb</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -113,56 +113,18 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{94E38DFF-614B-4CBD-B67C-F211BB35CE8B}" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\common\WKDSetting\WKDSetting.vbproj">
+    <ProjectReference Include="..\common\WKDDBAccess\WKDDBAccess.vbproj">
+      <Project>{7e47a3a3-f384-499e-bf45-64fdf3f067bc}</Project>
+      <Name>WKDDBAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\common\WKDSetting\WKDSetting.vbproj">
       <Project>{7bdafc8a-0473-4535-8148-a8aaadfb3499}</Project>
       <Name>WKDSetting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\common\WKDUtility\WKDUtility.vbproj">
+    <ProjectReference Include="..\common\WKDUtility\WKDUtility.vbproj">
       <Project>{c50140a6-bb55-44b0-8bc4-03491b98da9c}</Project>
       <Name>WKDUtility</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\WDKR050B\WKDR050B.vbproj">
-      <Project>{cc4035c8-0741-4bf7-a2ca-56edc1bc4fe9}</Project>
-      <Name>WKDR050B</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WKDC010B\WKDC010B.vbproj">
-      <Project>{57df8ceb-347a-4dd9-b381-e5bd013d8f10}</Project>
-      <Name>WKDC010B</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WKDC030B\WKDC030B.vbproj">
-      <Project>{fad7664a-11d9-4efa-9656-81a54437ff89}</Project>
-      <Name>WKDC030B</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WKDC040B\WKDC040B.vbproj">
-      <Project>{90d6bd87-d9e9-45fc-9b3c-b0614e2cb4c9}</Project>
-      <Name>WKDC040B</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WKDR020B\WKDR020B.vbproj">
-      <Project>{15625b07-63ea-446f-80a2-3404ee41017d}</Project>
-      <Name>WKDR020B</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WKDR030B\WKDR030B.vbproj">
-      <Project>{f916bf6d-4442-455e-88e2-5684871cf70a}</Project>
-      <Name>WKDR030B</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WKDT010B\WKDT010B.vbproj">
-      <Project>{3e758582-b020-4f14-b6c1-3110ab00c87e}</Project>
-      <Name>WKDT010B</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WKDT020B\WKDT020B.vbproj">
-      <Project>{4ea2595f-adcc-49f1-884d-783bb620da9b}</Project>
-      <Name>WKDT020B</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WKDT030B\WKDT030B.vbproj">
-      <Project>{e88aa8d6-b918-4071-b764-f04c0e76f1b3}</Project>
-      <Name>WKDT030B</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

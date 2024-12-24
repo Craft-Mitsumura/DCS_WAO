@@ -150,6 +150,7 @@
     <Compile Include="TableEntities\TOwnerKensuKingakuEntity.vb" />
     <Compile Include="TableEntities\TYoteihyoEntity.vb" />
     <Compile Include="TableEntities\TZeiEntity.vb" />
+    <Compile Include="WKDR020BDBAccess.vb" />
     <Compile Include="WKDR030BDBAccess.vb" />
     <Compile Include="WKDC010BDBAccess.vb" />
     <Compile Include="WKDC040BDBAccess.vb" />
