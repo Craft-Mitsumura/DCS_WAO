@@ -65,7 +65,7 @@ Partial Class frmWKDR040B
         'mnuEnd
         '
         Me.mnuEnd.Name = "mnuEnd"
-        Me.mnuEnd.Size = New System.Drawing.Size(115, 22)
+        Me.mnuEnd.Size = New System.Drawing.Size(114, 22)
         Me.mnuEnd.Text = "終了(&X)"
         '
         'mnuHelp
@@ -141,7 +141,7 @@ Partial Class frmWKDR040B
         Me.Controls.Add(Me.btnOutput)
         Me.Controls.Add(Me.btnClose)
         Me.Name = "frmWKDR040B"
-        Me.Text = "ワオ確定データ取込"
+        Me.Text = "オーナー向け口座振込データ作成"
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
         Me.ResumeLayout(False)
