@@ -143,6 +143,7 @@
     <ProjectReference Include="..\..\WKDR010B\WKDR010B.vbproj">
       <Project>{b331cc32-80cd-404f-82dc-769c1086951e}</Project>
       <Name>WKDR010B</Name>
+	</ProjectReference>
     <ProjectReference Include="..\..\WKDR040B\WKDR040B.vbproj">
       <Project>{83aab8cf-1d88-42c3-ad3f-950ddc01c88f}</Project>
       <Name>WKDR040B</Name>
@@ -163,9 +164,6 @@
       <Project>{e88aa8d6-b918-4071-b764-f04c0e76f1b3}</Project>
       <Name>WKDT030B</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
