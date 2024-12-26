@@ -197,10 +197,14 @@ Public Class frmWKDR070B
         '集計部csv
 
         dtTs = dba.GetWTutisyoSyukeibu(Now.ToString("yyyyMM"), Now.AddMonths(-1).ToString("yyyyMM"), ngn, ngnpushback)
-        ' ＣＳＶファイル出力
-        Dim fileName5 As String = "通知書（集計部）.csv"
-        Dim filePath5 As String = WriteCsvData(dtTs, SettingManager.GetInstance.OutputDirectory, fileName5,,, True)
-        msg.AppendLine("「" & filePath5 & "」が出力されました。")
+        If dtTs.Rows.Count > 0 Then
+            ' ＣＳＶファイル出力
+            Dim fileName5 As String = "通知書（集計部）.csv"
+            Dim filePath5 As String = WriteCsvData(dtTs, SettingManager.GetInstance.OutputDirectory, fileName5,,, True)
+            msg.AppendLine("「" & filePath5 & "」が出力されました。")
+        End If
+
+        MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
 

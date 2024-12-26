@@ -140,14 +140,14 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , seitono")
         sql.AppendLine("  , kseqno")
         'sql.AppendLine("  , '2' syokbn") ' 確定データのために固定値をセット
-        sql.AppendLine("  , '1' syokbn") ' 確定データのために固定値をセット
+        sql.AppendLine("  , '2' syokbn") ' 確定データのために固定値をセット
         'sql.AppendLine("  , '' funocd")
-        sql.AppendLine("  , '3' funocd")
+        sql.AppendLine("  , '' funocd")
         sql.AppendLine("  , '1' syuunou")
         sql.AppendLine("  , '0' h_hkdate")
         sql.AppendLine("  , skingaku fkkin") ' 確定データの金額をセット
         'sql.AppendLine("  , 0 tesur")
-        sql.AppendLine("  , 1 tesur")
+        sql.AppendLine("  , 0 tesur")
         sql.AppendLine("  , '' bankcd")
         sql.AppendLine("  , '' banmnm")
         sql.AppendLine("  , '' sitencd")
