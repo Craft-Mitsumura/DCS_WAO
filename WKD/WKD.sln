@@ -25,6 +25,8 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WKDT020B", "WKDT020B\WKDT02
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WKDT030B", "WKDT030B\WKDT030B.vbproj", "{E88AA8D6-B918-4071-B764-F04C0E76F1B3}"
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WKDR060B", "WKDR060B\WKDR060B.vbproj", "{96B31284-EA0A-4335-B904-69CB75CF86ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{E88AA8D6-B918-4071-B764-F04C0E76F1B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E88AA8D6-B918-4071-B764-F04C0E76F1B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E88AA8D6-B918-4071-B764-F04C0E76F1B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96B31284-EA0A-4335-B904-69CB75CF86ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96B31284-EA0A-4335-B904-69CB75CF86ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96B31284-EA0A-4335-B904-69CB75CF86ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96B31284-EA0A-4335-B904-69CB75CF86ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
