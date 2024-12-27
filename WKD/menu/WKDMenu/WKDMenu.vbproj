@@ -136,11 +136,10 @@
       <Project>{57df8ceb-347a-4dd9-b381-e5bd013d8f10}</Project>
       <Name>WKDC010B</Name>
     </ProjectReference>
-<<<<<<< HEAD
     <ProjectReference Include="..\..\WKDR060B\WKDR060B.vbproj">
       <Project>{96b31284-ea0a-4335-b904-69cb75cf86ed}</Project>
       <Name>WKDR060B</Name>
-=======
+	</ProjectReference>
     <ProjectReference Include="..\..\WKDC030B\WKDC030B.vbproj">
       <Project>{fad7664a-11d9-4efa-9656-81a54437ff89}</Project>
       <Name>WKDC030B</Name>
@@ -168,7 +167,6 @@
     <ProjectReference Include="..\..\WKDR070B\WKDR070B.vbproj">
       <Project>{e37c76d2-0056-45f5-ae40-ca5fbd2070e9}</Project>
       <Name>WKDR070B</Name>
->>>>>>> 0f98a4ed6d914a7faae0fb1a1923ea9f66228c3e
     </ProjectReference>
     <ProjectReference Include="..\..\WKDT010B\WKDT010B.vbproj">
       <Project>{3e758582-b020-4f14-b6c1-3110ab00c87e}</Project>
