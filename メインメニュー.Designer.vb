@@ -80,7 +80,6 @@
         Me._cmdMenu_7 = New System.Windows.Forms.Button()
         Me._cmdMenu_8 = New System.Windows.Forms.Button()
         Me._tabMenu_TabPage1 = New System.Windows.Forms.TabPage()
-        Me._cmdMenu_111 = New System.Windows.Forms.Button()
         Me._cmdMenu_110 = New System.Windows.Forms.Button()
         Me._cmdMenu_9 = New System.Windows.Forms.Button()
         Me._cmdMenu_6 = New System.Windows.Forms.Button()
@@ -309,7 +308,6 @@
         '
         '_tabMenu_TabPage1
         '
-        Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_111)
         Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_110)
         Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_9)
         Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_6)
@@ -319,20 +317,6 @@
         Me._tabMenu_TabPage1.Size = New System.Drawing.Size(429, 248)
         Me._tabMenu_TabPage1.TabIndex = 1
         Me._tabMenu_TabPage1.Text = "取込処理"
-        '
-        '_cmdMenu_111
-        '
-        Me._cmdMenu_111.BackColor = System.Drawing.SystemColors.Control
-        Me._cmdMenu_111.Cursor = System.Windows.Forms.Cursors.Default
-        Me._cmdMenu_111.ForeColor = System.Drawing.SystemColors.ControlText
-        Me._cmdMenu_111.Location = New System.Drawing.Point(229, 203)
-        Me._cmdMenu_111.Name = "_cmdMenu_111"
-        Me._cmdMenu_111.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_111.Size = New System.Drawing.Size(162, 36)
-        Me._cmdMenu_111.TabIndex = 18
-        Me._cmdMenu_111.Text = "WKDM020B_金融機関マスタ取込"
-        Me._cmdMenu_111.UseVisualStyleBackColor = False
-        Me.cmdMenu.SetIndex(Me._cmdMenu_111, CType(111, Short))
         '
         '_cmdMenu_110
         '
@@ -682,6 +666,5 @@
 
     Public WithEvents _cmdMenu_109 As Button
     Public WithEvents _cmdMenu_110 As Button
-    Public WithEvents _cmdMenu_111 As Button
 #End Region
 End Class

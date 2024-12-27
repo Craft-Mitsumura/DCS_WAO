@@ -1,196 +1,309 @@
 Option Strict Off
 Option Explicit On
-Imports System.IO
+Imports System.Linq
 
 Friend Class frmBankDataImport
     Inherits System.Windows.Forms.Form
 
-    '//////////////////////////////////////////////////////////////
-    '//どうしても半角・全角混在のトリミングが出来ないのでこうする.
-    Private Structure tpBank '//金融機関
-        Public BankCode() As Char '銀行コード 4
-        Public ShitenCode() As Char '支店コード 3
-        Public SeqCode() As Char 'SEQ-CODE       '銀行=':#@,=' / 支店='ｱ～ﾝ','A～Z','0～9' 1
-        Public KanaName() As Char '銀行名_カナ 15
-        Public KanjiName() As Char '銀行名_漢字 30
-        Public HaitenInfo() As Char '廃店情報       'Blank=営業中,1～9=廃店中 4
-        Public CrLf() As Char 'CR + LF 2
-    End Structure
-
     Private mCaption As String
-    Private Const mExeMsg As String = "取込処理をします." & vbCrLf & vbCrLf & "取込結果が表示されますので内容に従ってください." & vbCrLf & vbCrLf
+    Private mAbort As Boolean
     Private mForm As New FormClass
     Private mReg As New RegistryClass
-    Private mAbort As Boolean
+
+    'Check 1 byte    
+    Private Function IsHalfWidth(input As String) As Boolean
+        Return input.All(Function(c) AscW(c) < 256)
+    End Function
+
+    'Check 2 byte
+    Private Function IsFullWidth(input As String) As Boolean
+        Return input.All(Function(c) AscW(c) >= 256)
+    End Function
+
+    'Check Numeric
+    Private Function IsNumericData(input As String) As Boolean
+        Dim result As Integer
+        Return Integer.TryParse(input, result)
+    End Function
+
+    'Check Length
+    Private Function IsLengthFormat(input As String) As Boolean
+        Dim result As Boolean = False
+        Dim length As Integer = 0
+        Select Case input    ' 
+            Case "金融機関区分" Or "SEQ-CODE"
+                length = 1
+            Case "銀行コード" Or "廃店情報"
+                length = 4
+            Case "支店コード"
+                length = 3
+            Case "銀行名_カナ"
+                length = 15
+            Case "銀行名_漢字"
+                length = 40
+        End Select
+        If Not input.Length > length Then
+            result = True
+        End If
+        Return result
+    End Function
+
+    Private Sub pLockedControl(ByRef blMode As Boolean, Optional ByRef vButton As System.Windows.Forms.Button = Nothing)
+        cmdImport.Enabled = blMode
+        cmdEnd.Enabled = blMode '//処理途中で終了するとおかしくなるので終了も殺す！
+        If Not vButton Is Nothing Then
+            vButton.Enabled = True
+        End If
+    End Sub
+
+    Private Function pCheckSubForm() As Boolean
+        '//修正画面が表示されていたなら閉じてしまう！
+        If Not gdFormSub Is Nothing Then
+            '//効かない？
+            'If gdFormSub.dbcImport.EditMode <> OracleConstantModule.ORADATA_EDITNONE Then
+            If MsgBoxResult.Ok <> MsgBox("修正画面での現在編集中のデータは破棄されます." & vbCrLf & vbCrLf & "よろしいですか？", MsgBoxStyle.OkCancel + MsgBoxStyle.DefaultButton2 + MsgBoxStyle.Information, mCaption) Then
+                Exit Function
+            End If
+
+            gdFormSub = Nothing
+        End If
+        pCheckSubForm = True
+    End Function
 
     Private Sub cmdEnd_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdEnd.Click
         Me.Close()
     End Sub
 
     Private Sub cmdImport_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdImport.Click
-        Dim mFile As New FileClass
+        If False = pCheckSubForm() Then
+            Exit Sub
+        End If
+
+        '//コマンド・ボタン制御
+        Call pLockedControl(False, cmdImport)
+
+        Dim file As New FileClass
 
         dlgFileOpen.Title = "ファイルを開く(" & mCaption & ")"
         dlgFileOpen.FileName = mReg.InputFileName(mCaption)
-        '//LZH ファイルは解凍してからのスタートとする。
-#If 1 Then
-        If CType(mFile.OpenDialog(dlgFileOpen), DialogResult) = DialogResult.Cancel Then
+        If CType(file.OpenDialog(dlgFileOpen, "ﾃｷｽﾄﾌｧｲﾙ (*.csv)|*.csv"), DialogResult) = DialogResult.Cancel Then
+            Call pLockedControl(True)
             Exit Sub
         End If
-#Else
-    		'// 途中までコーディングしたがやめた.....。
-    		If IsEmpty(mFile.OpenDialog(dlgFile, "LZHﾌｧｲﾙ (*.lzh)|*.lzh")) Then
-    		Exit Sub
-    		End If
 
-    		'//ファイル名をドライブ～拡張子まで分解
-    		Dim drv As String, path As String, file As String, ext As String
-    		'//2006/03/13 SplitPath() にバグがあったのでコメント化：使用する時はしっかりデバックする事！
-    		'    Call mFile.SplitPath(mReg.LzhExtractFile, drv, path, file, ext)
-    		'//オプション: e = Extract : 解凍
-    		'//パラメータ: -c 日付チェック無し
-    		'//            -m メッセージ抑止
-    		'//            -n 進捗ダイアログ非表示
-    		Dim ret As Integer, lzhMsg As String * 8192
-    		ret = Unlha(0, "e -c " & dlgFile.FileName & " " & (drv & path), lzhMsg, Len(lzhMsg))
-#End If
-
-        Dim mBank As tpBank
-
-        Dim sql, SvrDate As String
-        Dim insCnt, updCnt, delCnt As Integer
-        Dim fp As Short
         Dim ms As New MouseClass
-        Dim contentarray As String()
-        Dim recordLen, recCnt As Integer
+        Dim contentarray(,) As String
+        Dim x As Integer
         Call ms.Start()
 
-        '//更新前のサーバー日付取得
-        SvrDate = gdDBS.sysDate
-        mReg.InputFileName(mCaption) = dlgFileOpen.FileName
-        'fp = FreeFile()
-        recordLen = 59 'lenght of a record
+        contentarray = file.ReadCSVFileToArray(dlgFileOpen.FileName)
 
-        contentarray = File.ReadAllLines(dlgFileOpen.FileName)
-        Dim contentBytes As Byte() = My.Computer.FileSystem.ReadAllBytes(dlgFileOpen.FileName)
-
-        'pgrProgressBar.Maximum = LOF(fp) / Len(mBank)
-        pgrProgressBar.Maximum = contentarray.Length
-        '//ファイルサイズが違う場合の警告メッセージ
-        'If pgrProgressBar.Maximum <> Int(pgrProgressBar.Maximum) Then
-        'If (LOF(fp) - 1) / Len(mBank) <> Int((LOF(fp) - 1) / Len(mBank)) Then
-        If ((recordLen * contentarray.Length) <> contentBytes.Length) Then
-#If 1 Then
-                '/処理続行するとＤＢがおかしくなるので中止する
-                Call gdDBS.AppMsgBox("指定されたファイル(" & mReg.InputFileName(mCaption) & ")が異常です。" & vbCrLf & vbCrLf & "処理を続行出来ません。", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
-                Exit Sub
-#Else
-				If vbOK <> gdDBS.MsgBox("指定されたファイル(" & mReg.InputFileName(mCaption) & ")が異常です。" & vbCrLf & vbCrLf & "このまま続行しますか？", vbInformation + vbOKCancel + vbDefaultButton2, mCaption) Then
-				Exit Sub
-				End If
-#End If
-            End If
-        'End If
-
-        On Error GoTo cmdImport_ClickError
-        Dim transaction As Npgsql.NpgsqlTransaction
-        Using connection As Npgsql.NpgsqlConnection = New Npgsql.NpgsqlConnection(gdDBS.Database.ConnectionString)
-            Dim cmd As Npgsql.NpgsqlCommand = connection.CreateCommand()
-            cmd.Connection = connection
-            If connection.State = ConnectionState.Closed Then
-                connection.Open()
-            End If
-
-            transaction = connection.BeginTransaction()
-
-            'Do While Loc(fp) < LOF(fp) / Len(mBank)
-            recCnt = 0
-            Dim intLen As Integer = 0
-            Dim encoding As System.Text.Encoding = System.Text.Encoding.GetEncoding("shift-jis")
-            For Each entry As String In contentarray
-                System.Windows.Forms.Application.DoEvents()
-                If mAbort Then
-                    GoTo cmdImport_ClickError
-                End If
-                'FileGet(fp, mBank, Loc(fp) + 1)
-                ReDim mBank.BankCode(3) '銀行コード 4
-                ReDim mBank.ShitenCode(2) '支店コード 3
-                ReDim mBank.SeqCode(0) 'SEQ-CODE      1 '銀行=':#@,=' / 支店='ｱ～ﾝ','A～Z','0～9'
-                ReDim mBank.KanaName(14) '銀行名_カナ 15
-                ReDim mBank.KanjiName(29) '銀行名_漢字 30
-                ReDim mBank.HaitenInfo(3) '廃店情報       4'Blank=営業中,1～9=廃店中
-                ReDim mBank.CrLf(1) 'CR + LF 2
-                With mBank
-                    .BankCode = encoding.GetString(contentBytes, intLen, .BankCode.Length)
-                    intLen = intLen + 4 '.BankCode.Length
-                    .ShitenCode = encoding.GetString(contentBytes, intLen, .ShitenCode.Length)
-                    intLen = intLen + 3 '.ShitenCode.Length
-                    .SeqCode = encoding.GetString(contentBytes, intLen, .SeqCode.Length)
-                    intLen = intLen + 1 '.SeqCode.Length
-                    .KanaName = encoding.GetString(contentBytes, intLen, .KanaName.Length)
-                    intLen = intLen + 15 '.KanaName.Length
-                    .KanjiName = encoding.GetString(contentBytes, intLen, .KanjiName.Length)
-                    intLen = intLen + 30 '.KanjiName.Length
-                    .HaitenInfo = encoding.GetString(contentBytes, intLen, .HaitenInfo.Length)
-                    intLen = intLen + 4 + .CrLf.Length '.HaitenInfo.Length 
-                End With
-                recCnt = recCnt + 1
-                pgrProgressBar.Value = IIf(recCnt <= pgrProgressBar.Maximum, recCnt, pgrProgressBar.Maximum) 'IIf(Loc(fp) <= pgrProgressBar.Maximum, Loc(fp), pgrProgressBar.Maximum)
-                sql = "UPDATE tdBankMaster SET "
-                sql = sql & " DAKJNM = '" & mFile.StrTrim(mBank.KanjiName) & "',"
-                sql = sql & " DAKNNM = '" & mFile.StrTrim(mBank.KanaName) & "',"
-                sql = sql & " DAHTIF = '" & mFile.StrTrim(mBank.HaitenInfo) & "',"
-                sql = sql & " DAUPDT = CURRENT_TIMESTAMP"
-                sql = sql & " WHERE DARKBN = '" & pGetRecordKubun(mBank.SeqCode) & "'"
-                sql = sql & "   AND DABANK = '" & mFile.StrTrim(mBank.BankCode) & "'"
-                sql = sql & "   AND DASITN = '" & mFile.StrTrim(mBank.ShitenCode) & "'"
-                sql = sql & "   AND DASQNO = '" & mFile.StrTrim(mBank.SeqCode) & "'"
-                cmd.CommandText = sql
-                If 0 <> cmd.ExecuteNonQuery() Then
-                    updCnt = updCnt + 1
-                Else
-                    sql = "INSERT INTO tdBankMaster("
-                    sql = sql & "DARKBN,DABANK,DASITN,DASQNO,DAKNNM,DAKJNM,DAHTIF"
-                    sql = sql & ")VALUES("
-                    sql = sql & "'" & pGetRecordKubun(mBank.SeqCode) & "',"
-                    sql = sql & "'" & mFile.StrTrim(mBank.BankCode) & "',"
-                    sql = sql & "'" & mFile.StrTrim(mBank.ShitenCode) & "',"
-                    sql = sql & "'" & mFile.StrTrim(mBank.SeqCode) & "',"
-                    sql = sql & "'" & mFile.StrTrim(mBank.KanaName) & "',"
-                    sql = sql & "'" & mFile.StrTrim(mBank.KanjiName) & "',"
-                    sql = sql & "'" & mFile.StrTrim(mBank.HaitenInfo) & "'"
-                    sql = sql & ")"
-                    cmd.CommandText = sql
-                    cmd.ExecuteNonQuery()
-                    insCnt = insCnt + 1
-                End If
-            Next
-            'FileClose(fp)
-            '//更新対象でなかったレコードを削除する:必ず全件来るのが前提条件！！！
-            sql = "DELETE FROM tdBankMaster "
-            sql = sql & " WHERE DAUPDT < TO_DATE('" & CDate(SvrDate).ToString("yyyy-MM-dd HH:mm:ss") & "','yyyy-mm-dd hh24:mi:ss')"
-            cmd.CommandText = sql
-            delCnt = cmd.ExecuteNonQuery()
-            Dim AddMsg As String
-            AddMsg = "追加=" & insCnt & ":更新=" & updCnt & ":削除=" & delCnt & " 件のデータが取り込まれました。"
-            lblMessage.Text = mExeMsg & AddMsg
-            Call gdDBS.AutoLogOut(mCaption, AddMsg)
-
-            transaction.Commit()
+        If (contentarray.GetLength(1) <> 10) Then
+            Call gdDBS.AppMsgBox("指定されたファイル(" & dlgFileOpen.FileName & ")が異常です。" & vbCrLf & vbCrLf & "項目が不足しています。 ", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
             Exit Sub
-        End Using
-cmdImport_ClickError:
-        If Not transaction.IsCompleted Then
-            transaction.Rollback()
         End If
-        Call gdDBS.ErrorCheck() '//エラートラップ
-        '// gdDBS.ErrorCheck() の上に移動
-        '//    Call gdDBS.Database.Rollback
-        Call gdDBS.AutoLogOut(mCaption, " エラーが発生したため取込処理は中止されました。")
+
+        'Check Validation
+        Dim tmpTitle As String = ""
+        For x = 1 To contentarray.GetLength(0) - 1
+            If (contentarray(x, 0) = Nothing) Then
+                Continue For
+            End If
+
+            'Check 銀行コード
+            pCheck(contentarray(x, 0), "銀行コード", x, {1, 2, 4, 5}, tmpTitle)
+
+            'Check 支店コード
+            pCheck(contentarray(x, 1), "支店コード", x, {1, 2, 4, 5}, tmpTitle)
+
+            'Check 銀行名_カナ
+            pCheck(contentarray(x, 2), "銀行名_カナ", x, {1, 2, 5}, tmpTitle)
+
+            'Check 銀行名_漢字
+            pCheck(contentarray(x, 3), "銀行名_漢字", x, {1, 5}, tmpTitle)
+
+        Next
+
+        If (tmpTitle.Trim() <> "") Then
+            'Export CSV Error
+            SetExportCSVError(tmpTitle, dlgFileOpen.FileName)
+            Call MsgBox("CSVs Error!", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, mCaption)
+            Call pLockedControl(True)
+            Exit Sub
+        End If
+
+        'Update/Insert
+        SetUpdate(contentarray)
     End Sub
 
-    Private Function pGetRecordKubun(ByVal vCode As Object) As Short
-        pGetRecordKubun = System.Math.Abs(CInt(vCode Like "[0-9]" Or vCode Like "[A-Z]" Or vCode Like "[ｱ-ﾝ]"))
+    Private Sub pCheck(content As String, title As String, index_row As Integer, arrCheck As String(), Optional ByRef tmp As String = "")
+        '①項目データの桁数チェック
+        If (arrCheck.Contains("1")) Then
+            If (Not IsLengthFormat(title)) Then
+                tmp = tmp & index_row & "," & title & ",桁数データが含まれています。" & vbLf
+            End If
+        End If
+
+        '②項目データの半角チェック
+        If (arrCheck.Contains("2")) Then
+            If (Not IsHalfWidth(content)) Then
+                tmp = tmp & index_row & "," & title & ",半角項目に全角文字が含まれます。" & vbLf
+            End If
+        End If
+
+        '③項目データの全角チェック
+        If (arrCheck.Contains("3")) Then
+            If (Not IsFullWidth(content)) Then
+                tmp = tmp & index_row & "," & title & ",全角項目に半角文字が含まれます。 " & vbLf
+            End If
+        End If
+
+        '④項目データの数字チェック
+        If (arrCheck.Contains("4")) Then
+            If (Not IsNumericData(content)) Then
+                tmp = tmp & index_row & "," & title & ",桁数が一致しません。" & vbLf
+            End If
+        End If
+
+        '⑤必須項目データのNULLチェック
+        If (arrCheck.Contains("5")) Then
+            If (content.Trim = "NULL") Then
+                tmp = tmp & index_row & "," & title & ",必須項目にNULLが含まれています。 " & vbLf
+            End If
+        End If
+
+    End Sub
+
+    Private Sub SetUpdate(arrContent As String(,))
+        Dim sql As String = ""
+
+        Dim transaction As Npgsql.NpgsqlTransaction
+        Using connection As Npgsql.NpgsqlConnection = New Npgsql.NpgsqlConnection(gdDBS.Database.ConnectionString)
+            Try
+                Dim cmd As New Npgsql.NpgsqlCommand()
+                cmd.Connection = connection
+                If Not cmd.Connection.State = ConnectionState.Open Then
+                    connection.Open()
+                End If
+                transaction = connection.BeginTransaction()
+
+                Dim x As Integer
+                Dim dt As DataTable
+
+                For x = 1 To arrContent.GetLength(0) - 1
+                    If (arrContent(x, 0) = Nothing) Then
+                        Continue For
+                    End If
+
+                    sql = "SELECT b.* "
+                    sql = sql & " FROM tdBankMaster b "
+                    sql = sql & " WHERE DARKBN = " & gdDBS.ColumnDataSet(arrContent(x, 0), vEnd:=True)
+                    sql = sql & "   AND DABANK = " & gdDBS.ColumnDataSet(arrContent(x, 1), vEnd:=True)
+                    sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(x, 2), vEnd:=True)
+                    sql = sql & "   AND DASQNO = " & gdDBS.ColumnDataSet(arrContent(x, 3), vEnd:=True)
+                    dt = gdDBS.ExecuteDataTable(cmd, sql)
+                    If IsNothing(dt) Then
+                        If False = tdBankMasterInsert(arrContent, x, cmd) Then
+                            Throw New Exception
+                        End If
+                    Else
+                        If False = tdBankMasterUpdate(arrContent, x, cmd) Then
+                            Throw New Exception
+                        End If
+                    End If
+                Next
+
+                transaction.Commit()
+                Call MsgBox("Finish!", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, mCaption)
+
+                '//コマンド・ボタン制御
+                Call pLockedControl(True)
+                Exit Sub
+
+            Catch ex As Exception
+                If Not IsNothing(transaction) Then
+                    If Not transaction.IsCompleted Then
+                        transaction.Rollback()
+                    End If
+                End If
+
+                Call MsgBox(ex.Message, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, mCaption)
+                Call gdDBS.TriggerControl("tcHogoshaMaster")
+
+                '//コマンド・ボタン制御
+                Call pLockedControl(True)
+            End Try
+        End Using
+    End Sub
+
+    Private Sub SetExportCSVError(contentErr As String, mPathSaveFolder As String)
+        Dim sql, folderName, fileName, pathName As String
+
+        Dim tmp As String
+        Dim reg As New RegistryClass
+        Dim mFile As New FileClass
+        Dim TmpFname As String
+
+        folderName = System.IO.Path.GetDirectoryName(mPathSaveFolder)
+        fileName = System.IO.Path.GetFileName(mPathSaveFolder)
+        pathName = folderName & "\" & fileName.Substring(0, fileName.Length - 4) & "_エラーリスト.csv"
+        reg.OutputFileName(mCaption) = pathName 'dlgFileSave.FileName
+
+        '//取り敢えずテンポラリに書く
+        Dim fp As Short
+        fp = FreeFile()
+        TmpFname = mFile.MakeTempFile
+        FileOpen(fp, TmpFname, OpenMode.Append)
+
+        Print(fp, contentErr)
+        Me.Refresh()
+        FileClose(fp)
+
+        Call MoveFileEx(TmpFname, reg.OutputFileName(mCaption), MOVEFILE_REPLACE_EXISTING + MOVEFILE_COPY_ALLOWED)
+    End Sub
+
+    Private Function tdBankMasterInsert(ByRef arrContent As String(,), row As Integer, ByRef cmd As Npgsql.NpgsqlCommand) As Boolean
+        Dim sql As String
+        sql = "INSERT INTO tdBankMaster ( " & vbCrLf
+        sql = sql & "DARKBN," & vbCrLf '//金融機関区分					
+        sql = sql & "DABANK," & vbCrLf '//銀行コード					
+        sql = sql & "DASITN," & vbCrLf '//支店コード					
+        sql = sql & "DASQNO," & vbCrLf '//SEQ-CODE					
+        sql = sql & "DAKNNM," & vbCrLf '//銀行名_カナ					
+        sql = sql & "DAKJNM," & vbCrLf '//銀行名_漢字					
+        sql = sql & "DAHTIF," & vbCrLf '//廃店情報					
+        sql = sql & "DAUPDT" & vbCrLf  '//更新日					
+        sql = sql & ") VALUES ( " & vbCrLf
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & "," & vbCrLf '//金融機関区分					
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & "," & vbCrLf '//銀行コード					
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & "," & vbCrLf '//支店コード					
+        sql = sql & "  NULL," & vbCrLf                                                 '//SEQ-CODE					
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf '//銀行名_カナ					
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf '//銀行名_漢字					
+        sql = sql & "  NULL," & vbCrLf                                                 '//廃店情報					
+        sql = sql & "current_timestamp)" & vbCrLf                                      '//更新日					
+
+        cmd.CommandText = sql
+        cmd.ExecuteNonQuery()
+        tdBankMasterInsert = True
+    End Function
+
+    Private Function tdBankMasterUpdate(ByRef arrContent As String(,), row As Integer, ByRef cmd As Npgsql.NpgsqlCommand) As Boolean
+        Dim sql As String = ""
+        Dim result As Integer
+
+        sql = "UPDATE tdBankMaster SET " & vbCrLf
+        sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf
+        sql = sql & " DAKNNM = " & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf
+        sql = sql & " DAUPDT = current_timestamp" & vbCrLf
+        sql = sql & " WHERE DARKBN = " & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & vbCrLf
+        sql = sql & "   AND DABANK = " & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & vbCrLf
+        sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & vbCrLf
+        sql = sql & "   AND DASQNO = " & gdDBS.ColumnDataSet(arrContent(row, 3), vEnd:=True) & vbCrLf
+
+        cmd.CommandText = sql
+        result = cmd.ExecuteNonQuery()
+        tdBankMasterUpdate = True
     End Function
 
     Private Sub cmdRecv_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
@@ -198,9 +311,9 @@ cmdImport_ClickError:
     End Sub
 
     Private Sub frmBankDataImport_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
+        Me.Show()
         mCaption = Me.Text
         Call mForm.Init(Me, gdDBS)
-        lblMessage.Text = mExeMsg
     End Sub
 
     Private Sub frmBankDataImport_Resize(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Resize
