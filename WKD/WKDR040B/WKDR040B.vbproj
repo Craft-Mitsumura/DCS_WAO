@@ -4,36 +4,31 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CC4035C8-0741-4BF7-A2CA-56EDC1BC4FE9}</ProjectGuid>
+    <ProjectGuid>{83AAB8CF-1D88-42C3-AD3F-950DDC01C88F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <StartupObject>
-    </StartupObject>
     <RootNamespace>Com.Wao.KDS</RootNamespace>
-    <AssemblyName>WDKR050B</AssemblyName>
+    <AssemblyName>WKDR040B</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>..\bin\</OutputPath>
-    <DocumentationFile>WDKR050B.xml</DocumentationFile>
+    <DocumentationFile>WKDR040B.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>WDKR050B.xml</DocumentationFile>
+    <OutputPath>..\bin\</OutputPath>
+    <DocumentationFile>WKDR040B.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -51,7 +46,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -59,12 +53,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="WKDSetting">
-      <HintPath>..\bin\WKDSetting.dll</HintPath>
-    </Reference>
-    <Reference Include="WKDUtility">
-      <HintPath>..\bin\WKDUtility.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -72,19 +60,16 @@
     <Import Include="System.Collections" />
     <Import Include="System.Collections.Generic" />
     <Import Include="System.Data" />
-    <Import Include="System.Drawing" />
     <Import Include="System.Diagnostics" />
-    <Import Include="System.Windows.Forms" />
     <Import Include="System.Linq" />
     <Import Include="System.Xml.Linq" />
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="frmWKDR050B.vb">
-      <SubType>Form</SubType>
+    <Compile Include="frmWKDR040B.Designer.vb">
+      <DependentUpon>frmWKDR040B.vb</DependentUpon>
     </Compile>
-    <Compile Include="frmWKDR050B.Designer.vb">
-      <DependentUpon>frmWKDR050B.vb</DependentUpon>
+    <Compile Include="frmWKDR040B.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -105,8 +90,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="frmWKDR050B.resx">
-      <DependentUpon>frmWKDR050B.vb</DependentUpon>
+    <EmbeddedResource Include="frmWKDR040B.resx">
+      <DependentUpon>frmWKDR040B.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -130,6 +115,14 @@
     <ProjectReference Include="..\common\WKDDBAccess\WKDDBAccess.vbproj">
       <Project>{7e47a3a3-f384-499e-bf45-64fdf3f067bc}</Project>
       <Name>WKDDBAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\common\WKDSetting\WKDSetting.vbproj">
+      <Project>{7bdafc8a-0473-4535-8148-a8aaadfb3499}</Project>
+      <Name>WKDSetting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\common\WKDUtility\WKDUtility.vbproj">
+      <Project>{c50140a6-bb55-44b0-8bc4-03491b98da9c}</Project>
+      <Name>WKDUtility</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

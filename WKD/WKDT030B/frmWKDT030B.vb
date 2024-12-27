@@ -161,26 +161,94 @@ Public Class frmWKDT030B
             End If
         Next
 
-         Dim msg As New StringBuilder()
+        Dim msg As New StringBuilder()
+        msg.AppendLine("以下のCSVファイルが出力されました。")
+
+        ' 解約先分源泉徴収票に出力する行を抽出
+        Dim query1 = From row In dt.AsEnumerable()
+                     Where Not row.Field(Of String)("chohyoshurui") = "解約先分給与支払報告書"
+                     Select row
+
+        ' 結果を新しいDataTableに格納
+        Dim dt1 As DataTable = dt.Clone() ' 構造をコピー
+        For Each row In query1
+            dt1.ImportRow(row) ' 行を新しいDataTableに追加
+        Next
+
+        ' 解約先分源泉徴収票に不要な列を削除
+        dt1.Columns.Remove("postno") ' オーナー郵便番号
 
         ' ＣＳＶファイル出力
         Dim fileName As String = "解約先分源泉徴収票.csv"
         Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
         MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-        ' 給与支払報告書に不要な行を削除
-        Dim rows As DataRow() = dt.Select("chohyoshurui <> '受給者交付用'")
-        For Each row As DataRow In rows
-            row.Delete()
+        ' 解約先分給与支払報告書に出力する行を抽出
+        Dim query2 = From row In dt.AsEnumerable()
+                     Where row.Field(Of String)("chohyoshurui") = "解約先分給与支払報告書"
+                     Select row
+
+        ' 結果を新しいDataTableに格納
+        Dim dt2 As DataTable = dt.Clone() ' 構造をコピー
+        For Each row In query2
+            dt2.ImportRow(row) ' 行を新しいDataTableに追加
         Next
 
-        ' 給与支払報告書に不要な列を削除
-        dt.Columns.Remove("dtnengetu")
-        dt.Columns.Remove("chohyoshurui")
+        '解約先分給与支払報告書に不要な列を削除
+        dt2.Columns.Remove("dtnengetu") ' データ年月 支払年度元号
+        dt2.Columns.Remove("postno") ' オーナー郵便番号
+        dt2.Columns.Remove("chohyoshurui") ' 帳票種類
 
         Dim fileName2 As String = "解約先分給与支払報告書.csv"
         Dim filePath2 As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
         msg.AppendLine("「" & filePath2 & "」が出力されました。")
+
+        ' 解約先分送付状に出力する行を抽出
+        Dim query3 = From row In dt.AsEnumerable()
+                     Group row By Ownerno = row.Field(Of String)("nys_ownerno"),
+                                  Postno = row.Field(Of String)("postno"),
+                                  Addr = row.Field(Of String)("addr"),
+                                  Name = row.Field(Of String)("name"),
+                                  Shurui = row.Field(Of String)("chohyoshurui"),
+                                  Count = row.Field(Of Int64)("cnt") Into Grouped = Group
+                     Select New With {
+                    .Ownerno = Ownerno,
+                    .Postno = Postno,
+                    .Addr = Addr,
+                    .Name = Name,
+                    .Shurui = Shurui,
+                    .Count = Count
+                    }
+
+        ' 結果を新しいDataTableに格納
+        Dim dt3 As New DataTable()
+        dt3.Columns.Add("owner", GetType(String))
+        dt3.Columns.Add("postno", GetType(String))
+        dt3.Columns.Add("addr", GetType(String))
+        dt3.Columns.Add("name", GetType(String))
+        dt3.Columns.Add("shiryonm", GetType(String))
+        dt3.Columns.Add("count", GetType(Int64))
+
+        Dim shiryonm As String = String.Empty
+
+        For Each row In query3
+            If Not row.Shurui.Equals("解約先分給与支払報告書") Then
+                shiryonm = String.Format("給与取得の源泉徴収票（{0}）", row.Shurui)
+            Else
+                shiryonm = row.Shurui
+            End If
+            dt3.Rows.Add(row.Ownerno,
+                         row.Postno,
+                         row.Addr,
+                         row.Name,
+                         shiryonm,
+                         row.Count) ' 行を新しいDataTableに追加
+        Next
+
+        ' ＣＳＶファイル出力
+        Dim fileName3 As String = "解約先分送付状.csv"
+        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True)
+        msg.AppendLine("・" & filePath3)
 
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
