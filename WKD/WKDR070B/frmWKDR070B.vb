@@ -114,12 +114,17 @@ Public Class frmWKDR070B
 
         '指導者振込.csv
         dtS = dba.GetShidosyaCsv(Now.ToString("yyyyMM"))
-
         Dim msg As New StringBuilder()
-        ' ＣＳＶファイル出力
-        Dim fileName As String = "指導者振込CSV用データ.csv"
-        Dim filePath As String = WriteCsvData(dtS, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
-        msg.AppendLine("「" & filePath & "」が出力されました。")
+        If dtS.Rows.Count > 0 Then
+            ' ＣＳＶファイル出力
+            Dim fileName As String = "指導者振込CSV用データ.csv"
+            Dim filePath As String = WriteCsvData(dtS, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+            msg.AppendLine("「" & filePath & "」が出力されました。")
+
+            'Else
+            '    MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            '    Return
+        End If
 
         '中間通知書削除
         If Not dba.DeleteWTutisyo(Now.ToString("yyyyMM")) Then
@@ -144,14 +149,18 @@ Public Class frmWKDR070B
         ElseIf dtTa.Rows.Count = 0 Then
             '中間通知書データ登録
             If Not dba.InsertWTutisyo0(Now.ToString("yyyyMM"), Me.ProductName, meisai) Then
-                    Return
-                End If
+                Return
             End If
+        End If
         'Next
 
 
         '振替結果通知書.csv
         dtTu = dba.GetWTutisyokbn(Now.ToString("yyyyMM"))
+        If dtTu.Rows.Count = 0 Then
+            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
 
         ' dtTu の各行を処理
         For Each rowU As DataRow In dtTu.Rows
@@ -198,17 +207,24 @@ Public Class frmWKDR070B
             End If
         Next
 
+        MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
         '集計部csv
 
         dtTs = dba.GetWTutisyoSyukeibu(Now.ToString("yyyyMM"), Now.AddMonths(-1).ToString("yyyyMM"), ngn, ngnpushback)
         If dtTs.Rows.Count > 0 Then
             ' ＣＳＶファイル出力
+            Dim msg2 As New StringBuilder()
             Dim fileName5 As String = "通知書（集計部）.csv"
             Dim filePath5 As String = WriteCsvData(dtTs, SettingManager.GetInstance.OutputDirectory, fileName5,,, True)
-            msg.AppendLine("「" & filePath5 & "」が出力されました。")
+            msg2.AppendLine("「" & filePath5 & "」が出力されました。")
+            MessageBox.Show(msg2.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        Else
+            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
         End If
 
-        MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
 
