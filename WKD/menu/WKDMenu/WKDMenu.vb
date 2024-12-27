@@ -45,7 +45,9 @@ Public Class WKDMenu
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
     Private Sub btnWKDC030BExecute_Click(sender As Object, e As EventArgs) Handles btnWKDC030BExecute.Click
-
+        Using frm = New frmWKDC030B
+            frm.ShowDialog()
+        End Using
     End Sub
 
     ''' <summary>
@@ -55,6 +57,10 @@ Public Class WKDMenu
     ''' <param name="e"></param>
     Private Sub btnWKDC040BExecute_Click(sender As Object, e As EventArgs) Handles btnWKDC040BExecute.Click
 
+        Using frm = New frmWKDC040B
+            frm.ShowDialog()
+        End Using
+
     End Sub
 
     ''' <summary>
@@ -63,6 +69,10 @@ Public Class WKDMenu
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
     Private Sub btnWKDR010BExecute_Click(sender As Object, e As EventArgs) Handles btnWKDR010BExecute.Click
+
+        Using frm = New frmWKDR010B
+            frm.ShowDialog()
+        End Using
 
     End Sub
 
@@ -82,6 +92,10 @@ Public Class WKDMenu
     ''' <param name="e"></param>
     Private Sub btnWKDR030BExecute_Click(sender As Object, e As EventArgs) Handles btnWKDR030BExecute.Click
 
+        Using frm = New frmWKDR030B
+            frm.ShowDialog()
+        End Using
+
     End Sub
 
     ''' <summary>
@@ -91,6 +105,10 @@ Public Class WKDMenu
     ''' <param name="e"></param>
     Private Sub btnWKDR040BExecute_Click(sender As Object, e As EventArgs) Handles btnWKDR040BExecute.Click
 
+        Using frm = New frmWKDR040B
+            frm.ShowDialog()
+        End Using
+
     End Sub
 
     ''' <summary>
@@ -99,6 +117,10 @@ Public Class WKDMenu
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
     Private Sub btnWKDR050BExecute_Click(sender As Object, e As EventArgs) Handles btnWKDR050BExecute.Click
+
+        Using frm = New frmWKDR050B
+            frm.ShowDialog()
+        End Using
 
     End Sub
 
@@ -122,6 +144,10 @@ Public Class WKDMenu
     ''' <param name="e"></param>
     Private Sub btnWKDR070BExecute_Click(sender As Object, e As EventArgs) Handles btnWKDR070BExecute.Click
 
+        Using frm = New frmWKDR070B
+            frm.ShowDialog()
+        End Using
+
     End Sub
 
     ''' <summary>
@@ -130,6 +156,10 @@ Public Class WKDMenu
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
     Private Sub btnWKDR080BExecute_Click(sender As Object, e As EventArgs) Handles btnWKDR080BExecute.Click
+
+        Using frm = New frmWKDR080B
+            frm.ShowDialog()
+        End Using
 
     End Sub
 
