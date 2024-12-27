@@ -46,14 +46,23 @@ Public Class frmWKDR070B
         Dim ngnpushback As Integer
         If dt.Rows.Count > 0 Then
             ngnpushback = dt.Rows(0)(0).ToString()
+        Else
+            ngnpushback = 0
         End If
 
         '手数料マスタ取得
         dtT = dba.GetMTesuryo()
-        If dtT.Rows.Count = 0 Then
-            Dim kouhuri As Integer = 0
-            Dim konbini As Integer = 0
-            Dim inshi As Integer = 0
+        Dim kouhuri As Integer
+        Dim konbini As Integer
+        Dim inshi As Integer
+        If dtT.Rows.Count > 0 Then
+            kouhuri = dtT.Rows(0)("koufuri")
+            konbini = dtT.Rows(0)("konbini")
+            inshi = dtT.Rows(0)("insi31500")
+        Else
+            kouhuri = 0
+            konbini = 0
+            inshi = 0
         End If
 
         dtI = dba.GetTZei(Now.AddMonths(-1).ToString("yyyyMM"))
@@ -150,8 +159,6 @@ Public Class frmWKDR070B
 
             If syokbn = 1 Then
                 ' syokbn = 1 の場合の処理
-
-                Dim kouhuri As Integer = dtT.Rows(0)("koufuri")
                 dtTu1 = dba.GetWTutisyo1(Now.ToString("yyyyMM"), kouhuri, syokbn)
 
                 ' ＣＳＶファイル出力
@@ -161,9 +168,6 @@ Public Class frmWKDR070B
 
             ElseIf syokbn = 2 Then
                 ' syokbn = 2 の場合の処理
-                Dim konbini As Integer = dtT.Rows(0)("konbini")
-                Dim inshi As Integer = dtT.Rows(0)("insi31500")
-
                 dtTu2 = dba.GetWTutisyo2(Now.ToString("yyyyMM"), insiShohiZei, konbini, inshi, syokbn)
                 dtTu4 = dba.GetWTutisyoKaisyu(Now.ToString("yyyyMM"), syokbn)
 
