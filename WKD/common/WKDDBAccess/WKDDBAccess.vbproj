@@ -151,6 +151,7 @@
     <Compile Include="TableEntities\TYoteihyoEntity.vb" />
     <Compile Include="TableEntities\TZeiEntity.vb" />
     <Compile Include="WKDR010BDBAccess.vb" />
+    <Compile Include="WKDR020BDBAccess.vb" />
     <Compile Include="WKDR030BDBAccess.vb" />
     <Compile Include="WKDC010BDBAccess.vb" />
 <<<<<<< HEAD
