@@ -62,8 +62,6 @@ Public Class frmWKDR020B
 
         ' header
         Dim itakuno As String = 0
-        Dim ownerno As String = 0
-        Dim seitono As String = 0
         Dim hkdate As String = 0
 
         Dim entityList As New List(Of TKozafurikaeSeikyuEntity)
@@ -166,7 +164,7 @@ Public Class frmWKDR020B
     Private Function ValidateEntityTKozafurikaeSeikyu(entity As TKozafurikaeSeikyuEntity, row As Integer) As List(Of String)
         Dim errors As New List(Of String)
 
-        Dim propertiesList As List(Of propertiesInput) = setPropertiesListTKahenkomoku(entity)
+        Dim propertiesList As List(Of propertiesInput) = setPropertiesListTKozafurikaeSeikyu(entity)
 
 
         For Each propertiesInput As propertiesInput In propertiesList
@@ -247,7 +245,7 @@ Public Class frmWKDR020B
         Return result
     End Function
 
-    Private Function setPropertiesListTKahenkomoku(entity As TKozafurikaeSeikyuEntity) As List(Of propertiesInput)
+    Private Function setPropertiesListTKozafurikaeSeikyu(entity As TKozafurikaeSeikyuEntity) As List(Of propertiesInput)
         Dim propertiesList As New List(Of propertiesInput) From {
             New propertiesInput With {.name = "データ年月", .value = entity.dtnengetu},
             New propertiesInput With {.name = "顧客番号（委託者Ｎｏ）", .value = entity.itakuno},
