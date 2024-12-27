@@ -103,6 +103,7 @@
         Me.Label2 = New System.Windows.Forms.Label()
         Me.lblLoginUserName = New System.Windows.Forms.Label()
         Me.cmdMenu = New Microsoft.VisualBasic.Compatibility.VB6.ButtonArray(Me.components)
+        Me._cmdMenu_111 = New System.Windows.Forms.Button()
         Me.MainMenu1.SuspendLayout()
         Me.fraSysDate.SuspendLayout()
         Me.tabMenu.SuspendLayout()
@@ -308,6 +309,7 @@
         '
         '_tabMenu_TabPage1
         '
+        Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_111)
         Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_110)
         Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_9)
         Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_6)
@@ -627,6 +629,19 @@
         'cmdMenu
         '
         '
+        '_cmdMenu_111
+        '
+        Me._cmdMenu_111.BackColor = System.Drawing.SystemColors.Control
+        Me._cmdMenu_111.Cursor = System.Windows.Forms.Cursors.Default
+        Me._cmdMenu_111.ForeColor = System.Drawing.SystemColors.ControlText
+        Me._cmdMenu_111.Location = New System.Drawing.Point(229, 73)
+        Me._cmdMenu_111.Name = "_cmdMenu_111"
+        Me._cmdMenu_111.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me._cmdMenu_111.Size = New System.Drawing.Size(162, 36)
+        Me._cmdMenu_111.TabIndex = 18
+        Me._cmdMenu_111.Text = "WKDM020B_金融機関マスタ取込"
+        Me._cmdMenu_111.UseVisualStyleBackColor = False
+        '
         'frmMainMenu
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -666,5 +681,6 @@
 
     Public WithEvents _cmdMenu_109 As Button
     Public WithEvents _cmdMenu_110 As Button
+    Public WithEvents _cmdMenu_111 As Button
 #End Region
 End Class
