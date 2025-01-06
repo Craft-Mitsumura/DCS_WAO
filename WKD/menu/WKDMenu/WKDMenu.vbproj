@@ -139,7 +139,7 @@
     <ProjectReference Include="..\..\WKDR060B\WKDR060B.vbproj">
       <Project>{96b31284-ea0a-4335-b904-69cb75cf86ed}</Project>
       <Name>WKDR060B</Name>
-	</ProjectReference>
+    </ProjectReference>
     <ProjectReference Include="..\..\WKDC030B\WKDC030B.vbproj">
       <Project>{fad7664a-11d9-4efa-9656-81a54437ff89}</Project>
       <Name>WKDC030B</Name>
@@ -151,7 +151,7 @@
     <ProjectReference Include="..\..\WKDR010B\WKDR010B.vbproj">
       <Project>{b331cc32-80cd-404f-82dc-769c1086951e}</Project>
       <Name>WKDR010B</Name>
-	</ProjectReference>
+    </ProjectReference>
     <ProjectReference Include="..\..\WKDR040B\WKDR040B.vbproj">
       <Project>{83aab8cf-1d88-42c3-ad3f-950ddc01c88f}</Project>
       <Name>WKDR040B</Name>

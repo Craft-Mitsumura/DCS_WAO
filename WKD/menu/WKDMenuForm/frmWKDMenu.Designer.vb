@@ -30,17 +30,17 @@ Partial Class frmWKDMenu
         Me.WkdMenu1.Location = New System.Drawing.Point(10, 10)
         Me.WkdMenu1.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.WkdMenu1.Name = "WkdMenu1"
-        Me.WkdMenu1.Size = New System.Drawing.Size(408, 288)
+        Me.WkdMenu1.Size = New System.Drawing.Size(641, 288)
         Me.WkdMenu1.TabIndex = 0
         '
-        'WKDMenuForm
+        'frmWKDMenu
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(432, 313)
+        Me.ClientSize = New System.Drawing.Size(656, 313)
         Me.Controls.Add(Me.WkdMenu1)
         Me.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
-        Me.Name = "WKDMenuForm"
+        Me.Name = "frmWKDMenu"
         Me.Text = "開発用フォーム"
         Me.ResumeLayout(False)
 
