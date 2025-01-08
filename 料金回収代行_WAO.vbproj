@@ -261,6 +261,9 @@
     <Reference Include="System.XML">
       <Name>System.XML</Name>
     </Reference>
+    <Reference Include="WKDMenu">
+      <HintPath>WKD\bin\WKDMenu.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />

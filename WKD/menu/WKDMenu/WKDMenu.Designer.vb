@@ -44,7 +44,7 @@ Partial Class WKDMenu
         Me.btnWKDC010BExecute.Location = New System.Drawing.Point(3, 2)
         Me.btnWKDC010BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDC010BExecute.Name = "btnWKDC010BExecute"
-        Me.btnWKDC010BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDC010BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDC010BExecute.TabIndex = 0
         Me.btnWKDC010BExecute.Text = "ワオ確定データ取込"
         Me.btnWKDC010BExecute.UseVisualStyleBackColor = True
@@ -54,7 +54,7 @@ Partial Class WKDMenu
         Me.btnWKDC020BExecute.Location = New System.Drawing.Point(3, 38)
         Me.btnWKDC020BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDC020BExecute.Name = "btnWKDC020BExecute"
-        Me.btnWKDC020BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDC020BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDC020BExecute.TabIndex = 1
         Me.btnWKDC020BExecute.Text = "口座振替請求データ作成"
         Me.btnWKDC020BExecute.UseVisualStyleBackColor = True
@@ -64,7 +64,7 @@ Partial Class WKDMenu
         Me.btnWKDC030BExecute.Location = New System.Drawing.Point(3, 74)
         Me.btnWKDC030BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDC030BExecute.Name = "btnWKDC030BExecute"
-        Me.btnWKDC030BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDC030BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDC030BExecute.TabIndex = 2
         Me.btnWKDC030BExecute.Text = "予定表還元データ作成"
         Me.btnWKDC030BExecute.UseVisualStyleBackColor = True
@@ -74,117 +74,118 @@ Partial Class WKDMenu
         Me.btnWKDC040BExecute.Location = New System.Drawing.Point(3, 110)
         Me.btnWKDC040BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDC040BExecute.Name = "btnWKDC040BExecute"
-        Me.btnWKDC040BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDC040BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDC040BExecute.TabIndex = 3
         Me.btnWKDC040BExecute.Text = "コンビニ振込用紙作表データ作成"
         Me.btnWKDC040BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDR010BExecute
         '
-        Me.btnWKDR010BExecute.Location = New System.Drawing.Point(138, 2)
+        Me.btnWKDR010BExecute.Location = New System.Drawing.Point(216, 2)
         Me.btnWKDR010BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDR010BExecute.Name = "btnWKDR010BExecute"
-        Me.btnWKDR010BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDR010BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDR010BExecute.TabIndex = 4
         Me.btnWKDR010BExecute.Text = "コンビニ確報データ取込"
         Me.btnWKDR010BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDR020BExecute
         '
-        Me.btnWKDR020BExecute.Location = New System.Drawing.Point(138, 38)
+        Me.btnWKDR020BExecute.Location = New System.Drawing.Point(216, 38)
         Me.btnWKDR020BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDR020BExecute.Name = "btnWKDR020BExecute"
-        Me.btnWKDR020BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDR020BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDR020BExecute.TabIndex = 5
         Me.btnWKDR020BExecute.Text = "口座振替請求結果データ取込"
         Me.btnWKDR020BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDR030BExecute
         '
-        Me.btnWKDR030BExecute.Location = New System.Drawing.Point(138, 74)
+        Me.btnWKDR030BExecute.Location = New System.Drawing.Point(216, 74)
         Me.btnWKDR030BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDR030BExecute.Name = "btnWKDR030BExecute"
-        Me.btnWKDR030BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDR030BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDR030BExecute.TabIndex = 6
         Me.btnWKDR030BExecute.Text = "ワオ結果データ取込"
         Me.btnWKDR030BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDR040BExecute
         '
-        Me.btnWKDR040BExecute.Location = New System.Drawing.Point(138, 110)
+        Me.btnWKDR040BExecute.Location = New System.Drawing.Point(216, 110)
         Me.btnWKDR040BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDR040BExecute.Name = "btnWKDR040BExecute"
-        Me.btnWKDR040BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDR040BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDR040BExecute.TabIndex = 7
         Me.btnWKDR040BExecute.Text = "オーナー向け口座振込データ作成"
         Me.btnWKDR040BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDR050BExecute
         '
-        Me.btnWKDR050BExecute.Location = New System.Drawing.Point(138, 146)
+        Me.btnWKDR050BExecute.Location = New System.Drawing.Point(216, 146)
         Me.btnWKDR050BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDR050BExecute.Name = "btnWKDR050BExecute"
-        Me.btnWKDR050BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDR050BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDR050BExecute.TabIndex = 8
-        Me.btnWKDR050BExecute.Text = "インストラクター向け口座振込データ作成"
+        Me.btnWKDR050BExecute.Text = "ｲﾝｽﾄﾗｸﾀｰ向け口座振込データ作成"
         Me.btnWKDR050BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDR060BExecute
         '
-        Me.btnWKDR060BExecute.Location = New System.Drawing.Point(138, 182)
+        Me.btnWKDR060BExecute.Location = New System.Drawing.Point(216, 182)
         Me.btnWKDR060BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDR060BExecute.Name = "btnWKDR060BExecute"
-        Me.btnWKDR060BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDR060BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDR060BExecute.TabIndex = 9
         Me.btnWKDR060BExecute.Text = "総括書データ作成"
         Me.btnWKDR060BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDR070BExecute
         '
-        Me.btnWKDR070BExecute.Location = New System.Drawing.Point(138, 218)
+        Me.btnWKDR070BExecute.Location = New System.Drawing.Point(216, 218)
         Me.btnWKDR070BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDR070BExecute.Name = "btnWKDR070BExecute"
-        Me.btnWKDR070BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDR070BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDR070BExecute.TabIndex = 10
         Me.btnWKDR070BExecute.Text = "振替結果通知書データ作成"
         Me.btnWKDR070BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDR080BExecute
         '
-        Me.btnWKDR080BExecute.Location = New System.Drawing.Point(138, 254)
+        Me.btnWKDR080BExecute.Location = New System.Drawing.Point(216, 254)
         Me.btnWKDR080BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDR080BExecute.Name = "btnWKDR080BExecute"
-        Me.btnWKDR080BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDR080BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDR080BExecute.TabIndex = 11
         Me.btnWKDR080BExecute.Text = "税額表取込"
         Me.btnWKDR080BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDT010BExecute
         '
-        Me.btnWKDT010BExecute.Location = New System.Drawing.Point(273, 2)
+        Me.btnWKDT010BExecute.Location = New System.Drawing.Point(429, 2)
         Me.btnWKDT010BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDT010BExecute.Name = "btnWKDT010BExecute"
-        Me.btnWKDT010BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDT010BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDT010BExecute.TabIndex = 12
         Me.btnWKDT010BExecute.Text = "法定調書作表データ作成"
         Me.btnWKDT010BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDT020BExecute
         '
-        Me.btnWKDT020BExecute.Location = New System.Drawing.Point(273, 38)
+        Me.btnWKDT020BExecute.Location = New System.Drawing.Point(429, 38)
         Me.btnWKDT020BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDT020BExecute.Name = "btnWKDT020BExecute"
-        Me.btnWKDT020BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDT020BExecute.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.btnWKDT020BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDT020BExecute.TabIndex = 13
         Me.btnWKDT020BExecute.Text = "退職源泉徴収票作表データ作成"
         Me.btnWKDT020BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDT030BExecute
         '
-        Me.btnWKDT030BExecute.Location = New System.Drawing.Point(273, 74)
+        Me.btnWKDT030BExecute.Location = New System.Drawing.Point(429, 74)
         Me.btnWKDT030BExecute.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.btnWKDT030BExecute.Name = "btnWKDT030BExecute"
-        Me.btnWKDT030BExecute.Size = New System.Drawing.Size(130, 31)
+        Me.btnWKDT030BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDT030BExecute.TabIndex = 14
         Me.btnWKDT030BExecute.Text = "解約源泉徴収票作表データ作成"
         Me.btnWKDT030BExecute.UseVisualStyleBackColor = True
@@ -210,7 +211,7 @@ Partial Class WKDMenu
         Me.Controls.Add(Me.btnWKDC010BExecute)
         Me.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.Name = "WKDMenu"
-        Me.Size = New System.Drawing.Size(408, 288)
+        Me.Size = New System.Drawing.Size(644, 288)
         Me.ResumeLayout(False)
 
     End Sub
