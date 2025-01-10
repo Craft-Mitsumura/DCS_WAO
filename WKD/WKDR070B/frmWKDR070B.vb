@@ -120,7 +120,6 @@ Public Class frmWKDR070B
             Dim fileName As String = "指導者振込CSV用データ.csv"
             Dim filePath As String = WriteCsvData(dtS, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
             msg.AppendLine("「" & filePath & "」が出力されました。")
-
             'Else
             '    MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             '    Return
@@ -153,7 +152,6 @@ Public Class frmWKDR070B
             End If
         End If
         'Next
-
 
         '振替結果通知書.csv
         dtTu = dba.GetWTutisyokbn(Now.ToString("yyyyMM"))
@@ -210,7 +208,6 @@ Public Class frmWKDR070B
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         '集計部csv
-
         dtTs = dba.GetWTutisyoSyukeibu(Now.ToString("yyyyMM"), Now.AddMonths(-1).ToString("yyyyMM"), ngn, ngnpushback)
         If dtTs.Rows.Count > 0 Then
             ' ＣＳＶファイル出力
@@ -224,7 +221,6 @@ Public Class frmWKDR070B
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
-
 
     End Sub
 
