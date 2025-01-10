@@ -297,7 +297,7 @@ Friend Class frmWKDM020B
         sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf
         sql = sql & " DAUPDT = current_timestamp" & vbCrLf
         sql = sql & " WHERE DARKBN = " & gdDBS.ColumnDataSet(arrContent(row, 10), vEnd:=True) & vbCrLf
-        sql = sql & "   AND DABANK = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & vbCrLf
+        sql = sql & "   AND DABANK = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(1), vEnd:=True) & vbCrLf
         sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & vbCrLf
 
         cmd.CommandText = sql
