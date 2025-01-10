@@ -35,10 +35,10 @@ Friend Class frmMainMenu
         efrmHogoshaChangeId = 109 '//保護者マスタ移行 2021/09
         eFrmFurikaeReqImportAuto = 110 '//口座振替(保護者)マスタ取込
     End Enum
-	
-	Private Sub cmdMenu_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdMenu.Click
-		Dim Index As Short = cmdMenu.GetIndex(eventSender)
-		Dim frm As System.Windows.Forms.Form
+
+    Private Sub cmdMenu_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdMenu.Click
+        Dim Index As Short = cmdMenu.GetIndex(eventSender)
+        Dim frm As System.Windows.Forms.Form
         Select Case Index
             Case eButton.eEnd
                 Me.Close() 'Unload()にデストラクタあり

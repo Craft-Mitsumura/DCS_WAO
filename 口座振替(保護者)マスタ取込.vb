@@ -7,9 +7,7 @@ Friend Class frmFurikaeReqImportAuto
     Private mCaption As String
     Private mAbort As Boolean
     Private mForm As New FormClass
-    Private mSpread As New SpreadClass
     Private mReg As New RegistryClass
-    Private mRimp As New FurikaeReqImpClass
 
     'Check 1 byte    
     Private Function IsHalfWidth(input As String) As Boolean
@@ -66,6 +64,7 @@ Friend Class frmFurikaeReqImportAuto
         dlgFileOpen.Title = "ファイルを開く(" & mCaption & ")"
         dlgFileOpen.FileName = mReg.InputFileName(mCaption)
         If CType(file.OpenDialog(dlgFileOpen, "ﾃｷｽﾄﾌｧｲﾙ (*.csv)|*.csv"), DialogResult) = DialogResult.Cancel Then
+            Call pLockedControl(True)
             Exit Sub
         End If
 

@@ -95,6 +95,8 @@
         Me._cmdMenu_108 = New System.Windows.Forms.Button()
         Me._tabMenu_TabPage3 = New System.Windows.Forms.TabPage()
         Me._cmdMenu_106 = New System.Windows.Forms.Button()
+        Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.WkdMenu1 = New com.Wao.KDS.WKDMenu()
         Me._cmdMenu_0 = New System.Windows.Forms.Button()
         Me.fraTimer = New System.Windows.Forms.Panel()
         Me.lblClientTime = New System.Windows.Forms.Label()
@@ -110,6 +112,7 @@
         Me._tabMenu_TabPage1.SuspendLayout()
         Me._tabMenu_TabPage2.SuspendLayout()
         Me._tabMenu_TabPage3.SuspendLayout()
+        Me.TabPage1.SuspendLayout()
         Me.fraTimer.SuspendLayout()
         CType(Me.cmdMenu, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -119,33 +122,33 @@
         Me.MainMenu1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuHelp})
         Me.MainMenu1.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu1.Name = "MainMenu1"
-        Me.MainMenu1.Size = New System.Drawing.Size(466, 24)
+        Me.MainMenu1.Size = New System.Drawing.Size(685, 24)
         Me.MainMenu1.TabIndex = 27
         '
         'mnuFile
         '
         Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuEnd})
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(61, 20)
+        Me.mnuFile.Size = New System.Drawing.Size(57, 20)
         Me.mnuFile.Text = "ﾌｧｲﾙ(&F)"
         '
         'mnuEnd
         '
         Me.mnuEnd.Name = "mnuEnd"
-        Me.mnuEnd.Size = New System.Drawing.Size(115, 22)
+        Me.mnuEnd.Size = New System.Drawing.Size(113, 22)
         Me.mnuEnd.Text = "終了(&X)"
         '
         'mnuHelp
         '
         Me.mnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuVersion})
         Me.mnuHelp.Name = "mnuHelp"
-        Me.mnuHelp.Size = New System.Drawing.Size(64, 20)
+        Me.mnuHelp.Size = New System.Drawing.Size(60, 20)
         Me.mnuHelp.Text = "ﾍﾙﾌﾟ(&H)"
         '
         'mnuVersion
         '
         Me.mnuVersion.Name = "mnuVersion"
-        Me.mnuVersion.Size = New System.Drawing.Size(165, 22)
+        Me.mnuVersion.Size = New System.Drawing.Size(156, 22)
         Me.mnuVersion.Text = "ﾊﾞｰｼﾞｮﾝ情報(&A)"
         '
         'tmrTimer
@@ -159,10 +162,10 @@
         Me.fraSysDate.Controls.Add(Me.lblSysDate)
         Me.fraSysDate.Cursor = System.Windows.Forms.Cursors.Default
         Me.fraSysDate.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraSysDate.Location = New System.Drawing.Point(369, 26)
+        Me.fraSysDate.Location = New System.Drawing.Point(599, 24)
         Me.fraSysDate.Name = "fraSysDate"
         Me.fraSysDate.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.fraSysDate.Size = New System.Drawing.Size(77, 27)
+        Me.fraSysDate.Size = New System.Drawing.Size(77, 25)
         Me.fraSysDate.TabIndex = 14
         Me.fraSysDate.Text = "Frame1"
         '
@@ -174,7 +177,7 @@
         Me.lblSysDate.Location = New System.Drawing.Point(3, 4)
         Me.lblSysDate.Name = "lblSysDate"
         Me.lblSysDate.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblSysDate.Size = New System.Drawing.Size(70, 14)
+        Me.lblSysDate.Size = New System.Drawing.Size(70, 13)
         Me.lblSysDate.TabIndex = 15
         Me.lblSysDate.Text = "Label1"
         '
@@ -185,11 +188,12 @@
         Me.tabMenu.Controls.Add(Me._tabMenu_TabPage1)
         Me.tabMenu.Controls.Add(Me._tabMenu_TabPage2)
         Me.tabMenu.Controls.Add(Me._tabMenu_TabPage3)
+        Me.tabMenu.Controls.Add(Me.TabPage1)
         Me.tabMenu.ItemSize = New System.Drawing.Size(42, 18)
-        Me.tabMenu.Location = New System.Drawing.Point(8, 26)
+        Me.tabMenu.Location = New System.Drawing.Point(8, 28)
         Me.tabMenu.Name = "tabMenu"
         Me.tabMenu.SelectedIndex = 2
-        Me.tabMenu.Size = New System.Drawing.Size(437, 274)
+        Me.tabMenu.Size = New System.Drawing.Size(668, 293)
         Me.tabMenu.TabIndex = 1
         '
         '_tabMenu_TabPage0
@@ -203,7 +207,7 @@
         Me._tabMenu_TabPage0.Controls.Add(Me._cmdMenu_8)
         Me._tabMenu_TabPage0.Location = New System.Drawing.Point(4, 22)
         Me._tabMenu_TabPage0.Name = "_tabMenu_TabPage0"
-        Me._tabMenu_TabPage0.Size = New System.Drawing.Size(429, 248)
+        Me._tabMenu_TabPage0.Size = New System.Drawing.Size(476, 267)
         Me._tabMenu_TabPage0.TabIndex = 0
         Me._tabMenu_TabPage0.Text = "月例処理"
         '
@@ -213,10 +217,10 @@
         Me._cmdMenu_11.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_11.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_11, CType(11, Short))
-        Me._cmdMenu_11.Location = New System.Drawing.Point(232, 28)
+        Me._cmdMenu_11.Location = New System.Drawing.Point(232, 26)
         Me._cmdMenu_11.Name = "_cmdMenu_11"
         Me._cmdMenu_11.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_11.Size = New System.Drawing.Size(153, 36)
+        Me._cmdMenu_11.Size = New System.Drawing.Size(153, 33)
         Me._cmdMenu_11.TabIndex = 20
         Me._cmdMenu_11.Text = "口座振替依頼書(履歴)"
         Me._cmdMenu_11.UseVisualStyleBackColor = False
@@ -227,10 +231,10 @@
         Me._cmdMenu_5.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_5.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_5, CType(5, Short))
-        Me._cmdMenu_5.Location = New System.Drawing.Point(232, 115)
+        Me._cmdMenu_5.Location = New System.Drawing.Point(232, 106)
         Me._cmdMenu_5.Name = "_cmdMenu_5"
         Me._cmdMenu_5.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_5.Size = New System.Drawing.Size(153, 36)
+        Me._cmdMenu_5.Size = New System.Drawing.Size(153, 33)
         Me._cmdMenu_5.TabIndex = 18
         Me._cmdMenu_5.Text = "オーナーマスタデータ作成"
         Me._cmdMenu_5.UseVisualStyleBackColor = False
@@ -241,10 +245,10 @@
         Me._cmdMenu_10.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_10.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_10, CType(10, Short))
-        Me._cmdMenu_10.Location = New System.Drawing.Point(44, 28)
+        Me._cmdMenu_10.Location = New System.Drawing.Point(44, 26)
         Me._cmdMenu_10.Name = "_cmdMenu_10"
         Me._cmdMenu_10.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_10.Size = New System.Drawing.Size(153, 36)
+        Me._cmdMenu_10.Size = New System.Drawing.Size(153, 33)
         Me._cmdMenu_10.TabIndex = 17
         Me._cmdMenu_10.Text = "口座振替依頼書(入力)"
         Me._cmdMenu_10.UseVisualStyleBackColor = False
@@ -255,10 +259,10 @@
         Me._cmdMenu_4.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_4.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_4, CType(4, Short))
-        Me._cmdMenu_4.Location = New System.Drawing.Point(232, 202)
+        Me._cmdMenu_4.Location = New System.Drawing.Point(232, 186)
         Me._cmdMenu_4.Name = "_cmdMenu_4"
         Me._cmdMenu_4.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_4.Size = New System.Drawing.Size(153, 36)
+        Me._cmdMenu_4.Size = New System.Drawing.Size(153, 33)
         Me._cmdMenu_4.TabIndex = 11
         Me._cmdMenu_4.Text = "振替予定表(累積)"
         Me._cmdMenu_4.UseVisualStyleBackColor = False
@@ -269,10 +273,10 @@
         Me._cmdMenu_3.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_3.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_3, CType(3, Short))
-        Me._cmdMenu_3.Location = New System.Drawing.Point(44, 115)
+        Me._cmdMenu_3.Location = New System.Drawing.Point(44, 106)
         Me._cmdMenu_3.Name = "_cmdMenu_3"
         Me._cmdMenu_3.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_3.Size = New System.Drawing.Size(153, 36)
+        Me._cmdMenu_3.Size = New System.Drawing.Size(153, 33)
         Me._cmdMenu_3.TabIndex = 10
         Me._cmdMenu_3.Text = "口座振替データ作成"
         Me._cmdMenu_3.UseVisualStyleBackColor = False
@@ -283,10 +287,10 @@
         Me._cmdMenu_7.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_7.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_7, CType(7, Short))
-        Me._cmdMenu_7.Location = New System.Drawing.Point(44, 72)
+        Me._cmdMenu_7.Location = New System.Drawing.Point(44, 66)
         Me._cmdMenu_7.Name = "_cmdMenu_7"
         Me._cmdMenu_7.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_7.Size = New System.Drawing.Size(153, 36)
+        Me._cmdMenu_7.Size = New System.Drawing.Size(153, 33)
         Me._cmdMenu_7.TabIndex = 9
         Me._cmdMenu_7.Text = "口座振替依頼書(印刷)"
         Me._cmdMenu_7.UseVisualStyleBackColor = False
@@ -297,10 +301,10 @@
         Me._cmdMenu_8.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_8.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_8, CType(8, Short))
-        Me._cmdMenu_8.Location = New System.Drawing.Point(44, 158)
+        Me._cmdMenu_8.Location = New System.Drawing.Point(44, 146)
         Me._cmdMenu_8.Name = "_cmdMenu_8"
         Me._cmdMenu_8.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_8.Size = New System.Drawing.Size(153, 36)
+        Me._cmdMenu_8.Size = New System.Drawing.Size(153, 33)
         Me._cmdMenu_8.TabIndex = 8
         Me._cmdMenu_8.Text = "振替予定表(印刷)"
         Me._cmdMenu_8.UseVisualStyleBackColor = False
@@ -314,7 +318,7 @@
         Me._tabMenu_TabPage1.Controls.Add(Me._cmdMenu_2)
         Me._tabMenu_TabPage1.Location = New System.Drawing.Point(4, 22)
         Me._tabMenu_TabPage1.Name = "_tabMenu_TabPage1"
-        Me._tabMenu_TabPage1.Size = New System.Drawing.Size(429, 248)
+        Me._tabMenu_TabPage1.Size = New System.Drawing.Size(476, 267)
         Me._tabMenu_TabPage1.TabIndex = 1
         Me._tabMenu_TabPage1.Text = "取込処理"
         '
@@ -324,10 +328,10 @@
         Me._cmdMenu_110.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_110.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_110, CType(110, Short))
-        Me._cmdMenu_110.Location = New System.Drawing.Point(229, 29)
+        Me._cmdMenu_110.Location = New System.Drawing.Point(229, 27)
         Me._cmdMenu_110.Name = "_cmdMenu_110"
         Me._cmdMenu_110.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_110.Size = New System.Drawing.Size(162, 36)
+        Me._cmdMenu_110.Size = New System.Drawing.Size(162, 33)
         Me._cmdMenu_110.TabIndex = 17
         Me._cmdMenu_110.Text = "口座振替(保護者)マスタ取込"
         Me._cmdMenu_110.UseVisualStyleBackColor = False
@@ -338,10 +342,10 @@
         Me._cmdMenu_9.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_9.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_9, CType(9, Short))
-        Me._cmdMenu_9.Location = New System.Drawing.Point(44, 29)
+        Me._cmdMenu_9.Location = New System.Drawing.Point(44, 27)
         Me._cmdMenu_9.Name = "_cmdMenu_9"
         Me._cmdMenu_9.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_9.Size = New System.Drawing.Size(153, 36)
+        Me._cmdMenu_9.Size = New System.Drawing.Size(153, 33)
         Me._cmdMenu_9.TabIndex = 16
         Me._cmdMenu_9.Text = "振込依頼書(取込)"
         Me._cmdMenu_9.UseVisualStyleBackColor = False
@@ -352,10 +356,10 @@
         Me._cmdMenu_6.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_6.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_6, CType(6, Short))
-        Me._cmdMenu_6.Location = New System.Drawing.Point(44, 203)
+        Me._cmdMenu_6.Location = New System.Drawing.Point(44, 187)
         Me._cmdMenu_6.Name = "_cmdMenu_6"
         Me._cmdMenu_6.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_6.Size = New System.Drawing.Size(153, 36)
+        Me._cmdMenu_6.Size = New System.Drawing.Size(153, 33)
         Me._cmdMenu_6.TabIndex = 13
         Me._cmdMenu_6.Text = "金融機関データ取込"
         Me._cmdMenu_6.UseVisualStyleBackColor = False
@@ -366,10 +370,10 @@
         Me._cmdMenu_2.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_2.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_2, CType(2, Short))
-        Me._cmdMenu_2.Location = New System.Drawing.Point(44, 73)
+        Me._cmdMenu_2.Location = New System.Drawing.Point(44, 67)
         Me._cmdMenu_2.Name = "_cmdMenu_2"
         Me._cmdMenu_2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_2.Size = New System.Drawing.Size(153, 36)
+        Me._cmdMenu_2.Size = New System.Drawing.Size(153, 33)
         Me._cmdMenu_2.TabIndex = 12
         Me._cmdMenu_2.Text = "振替予定表 兼 解約通知書(取込)"
         Me._cmdMenu_2.UseVisualStyleBackColor = False
@@ -387,7 +391,7 @@
         Me._tabMenu_TabPage2.Controls.Add(Me._cmdMenu_108)
         Me._tabMenu_TabPage2.Location = New System.Drawing.Point(4, 22)
         Me._tabMenu_TabPage2.Name = "_tabMenu_TabPage2"
-        Me._tabMenu_TabPage2.Size = New System.Drawing.Size(429, 248)
+        Me._tabMenu_TabPage2.Size = New System.Drawing.Size(476, 267)
         Me._tabMenu_TabPage2.TabIndex = 2
         Me._tabMenu_TabPage2.Text = "メンテナンス"
         '
@@ -397,10 +401,10 @@
         Me._cmdMenu_109.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_109.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_109, CType(109, Short))
-        Me._cmdMenu_109.Location = New System.Drawing.Point(232, 159)
+        Me._cmdMenu_109.Location = New System.Drawing.Point(232, 147)
         Me._cmdMenu_109.Name = "_cmdMenu_109"
         Me._cmdMenu_109.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_109.Size = New System.Drawing.Size(157, 36)
+        Me._cmdMenu_109.Size = New System.Drawing.Size(157, 33)
         Me._cmdMenu_109.TabIndex = 29
         Me._cmdMenu_109.Text = "保護者マスタ移行"
         Me._cmdMenu_109.UseVisualStyleBackColor = False
@@ -411,10 +415,10 @@
         Me._cmdMenu_103.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_103.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_103, CType(103, Short))
-        Me._cmdMenu_103.Location = New System.Drawing.Point(44, 116)
+        Me._cmdMenu_103.Location = New System.Drawing.Point(44, 107)
         Me._cmdMenu_103.Name = "_cmdMenu_103"
         Me._cmdMenu_103.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_103.Size = New System.Drawing.Size(157, 36)
+        Me._cmdMenu_103.Size = New System.Drawing.Size(157, 33)
         Me._cmdMenu_103.TabIndex = 3
         Me._cmdMenu_103.Text = "保護者マスタメンテナンス"
         Me._cmdMenu_103.UseVisualStyleBackColor = False
@@ -425,10 +429,10 @@
         Me._cmdMenu_102.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_102.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_102, CType(102, Short))
-        Me._cmdMenu_102.Location = New System.Drawing.Point(44, 73)
+        Me._cmdMenu_102.Location = New System.Drawing.Point(44, 67)
         Me._cmdMenu_102.Name = "_cmdMenu_102"
         Me._cmdMenu_102.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_102.Size = New System.Drawing.Size(157, 36)
+        Me._cmdMenu_102.Size = New System.Drawing.Size(157, 33)
         Me._cmdMenu_102.TabIndex = 4
         Me._cmdMenu_102.Text = "オーナーマスタメンテナンス"
         Me._cmdMenu_102.UseVisualStyleBackColor = False
@@ -439,10 +443,10 @@
         Me._cmdMenu_104.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_104.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_104, CType(104, Short))
-        Me._cmdMenu_104.Location = New System.Drawing.Point(44, 159)
+        Me._cmdMenu_104.Location = New System.Drawing.Point(44, 147)
         Me._cmdMenu_104.Name = "_cmdMenu_104"
         Me._cmdMenu_104.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_104.Size = New System.Drawing.Size(157, 36)
+        Me._cmdMenu_104.Size = New System.Drawing.Size(157, 33)
         Me._cmdMenu_104.TabIndex = 5
         Me._cmdMenu_104.Text = "金融機関マスタメンテナンス"
         Me._cmdMenu_104.UseVisualStyleBackColor = False
@@ -453,10 +457,10 @@
         Me._cmdMenu_105.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_105.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_105, CType(105, Short))
-        Me._cmdMenu_105.Location = New System.Drawing.Point(44, 203)
+        Me._cmdMenu_105.Location = New System.Drawing.Point(44, 187)
         Me._cmdMenu_105.Name = "_cmdMenu_105"
         Me._cmdMenu_105.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_105.Size = New System.Drawing.Size(157, 36)
+        Me._cmdMenu_105.Size = New System.Drawing.Size(157, 33)
         Me._cmdMenu_105.TabIndex = 6
         Me._cmdMenu_105.Text = "休日マスタメンテナンス"
         Me._cmdMenu_105.UseVisualStyleBackColor = False
@@ -467,10 +471,10 @@
         Me._cmdMenu_101.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_101.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_101, CType(101, Short))
-        Me._cmdMenu_101.Location = New System.Drawing.Point(44, 25)
+        Me._cmdMenu_101.Location = New System.Drawing.Point(44, 23)
         Me._cmdMenu_101.Name = "_cmdMenu_101"
         Me._cmdMenu_101.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_101.Size = New System.Drawing.Size(157, 36)
+        Me._cmdMenu_101.Size = New System.Drawing.Size(157, 33)
         Me._cmdMenu_101.TabIndex = 7
         Me._cmdMenu_101.Text = "委託者マスタメンテナンス"
         Me._cmdMenu_101.UseVisualStyleBackColor = False
@@ -481,10 +485,10 @@
         Me._cmdMenu_107.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_107.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_107, CType(107, Short))
-        Me._cmdMenu_107.Location = New System.Drawing.Point(232, 73)
+        Me._cmdMenu_107.Location = New System.Drawing.Point(232, 67)
         Me._cmdMenu_107.Name = "_cmdMenu_107"
         Me._cmdMenu_107.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_107.Size = New System.Drawing.Size(157, 36)
+        Me._cmdMenu_107.Size = New System.Drawing.Size(157, 33)
         Me._cmdMenu_107.TabIndex = 19
         Me._cmdMenu_107.Text = "オーナーマスタチェックリスト"
         Me._cmdMenu_107.UseVisualStyleBackColor = False
@@ -495,10 +499,10 @@
         Me._cmdMenu_108.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_108.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_108, CType(108, Short))
-        Me._cmdMenu_108.Location = New System.Drawing.Point(232, 116)
+        Me._cmdMenu_108.Location = New System.Drawing.Point(232, 107)
         Me._cmdMenu_108.Name = "_cmdMenu_108"
         Me._cmdMenu_108.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_108.Size = New System.Drawing.Size(157, 36)
+        Me._cmdMenu_108.Size = New System.Drawing.Size(157, 33)
         Me._cmdMenu_108.TabIndex = 27
         Me._cmdMenu_108.Text = "保護者マスタ履歴 照会"
         Me._cmdMenu_108.UseVisualStyleBackColor = False
@@ -508,7 +512,7 @@
         Me._tabMenu_TabPage3.Controls.Add(Me._cmdMenu_106)
         Me._tabMenu_TabPage3.Location = New System.Drawing.Point(4, 22)
         Me._tabMenu_TabPage3.Name = "_tabMenu_TabPage3"
-        Me._tabMenu_TabPage3.Size = New System.Drawing.Size(429, 248)
+        Me._tabMenu_TabPage3.Size = New System.Drawing.Size(759, 267)
         Me._tabMenu_TabPage3.TabIndex = 3
         Me._tabMenu_TabPage3.Text = "システム情報"
         '
@@ -518,13 +522,31 @@
         Me._cmdMenu_106.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_106.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_106, CType(106, Short))
-        Me._cmdMenu_106.Location = New System.Drawing.Point(44, 39)
+        Me._cmdMenu_106.Location = New System.Drawing.Point(44, 36)
         Me._cmdMenu_106.Name = "_cmdMenu_106"
         Me._cmdMenu_106.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_106.Size = New System.Drawing.Size(157, 36)
+        Me._cmdMenu_106.Size = New System.Drawing.Size(157, 33)
         Me._cmdMenu_106.TabIndex = 2
         Me._cmdMenu_106.Text = "基本情報登録"
         Me._cmdMenu_106.UseVisualStyleBackColor = False
+        '
+        'TabPage1
+        '
+        Me.TabPage1.Controls.Add(Me.WkdMenu1)
+        Me.TabPage1.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage1.Name = "TabPage1"
+        Me.TabPage1.Size = New System.Drawing.Size(660, 267)
+        Me.TabPage1.TabIndex = 4
+        Me.TabPage1.Text = "確定・結果・年調"
+        Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'WkdMenu1
+        '
+        Me.WkdMenu1.Location = New System.Drawing.Point(10, 7)
+        Me.WkdMenu1.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.WkdMenu1.Name = "WkdMenu1"
+        Me.WkdMenu1.Size = New System.Drawing.Size(640, 251)
+        Me.WkdMenu1.TabIndex = 0
         '
         '_cmdMenu_0
         '
@@ -532,10 +554,10 @@
         Me._cmdMenu_0.Cursor = System.Windows.Forms.Cursors.Default
         Me._cmdMenu_0.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdMenu.SetIndex(Me._cmdMenu_0, CType(0, Short))
-        Me._cmdMenu_0.Location = New System.Drawing.Point(356, 308)
+        Me._cmdMenu_0.Location = New System.Drawing.Point(587, 330)
         Me._cmdMenu_0.Name = "_cmdMenu_0"
         Me._cmdMenu_0.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdMenu_0.Size = New System.Drawing.Size(89, 36)
+        Me._cmdMenu_0.Size = New System.Drawing.Size(89, 33)
         Me._cmdMenu_0.TabIndex = 0
         Me._cmdMenu_0.Text = "終了(&X)"
         Me._cmdMenu_0.UseVisualStyleBackColor = False
@@ -549,22 +571,22 @@
         Me.fraTimer.Controls.Add(Me.Label2)
         Me.fraTimer.Cursor = System.Windows.Forms.Cursors.Default
         Me.fraTimer.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraTimer.Location = New System.Drawing.Point(8, 290)
+        Me.fraTimer.Location = New System.Drawing.Point(8, 314)
         Me.fraTimer.Name = "fraTimer"
         Me.fraTimer.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.fraTimer.Size = New System.Drawing.Size(233, 44)
+        Me.fraTimer.Size = New System.Drawing.Size(233, 41)
         Me.fraTimer.TabIndex = 21
         '
         'lblClientTime
         '
         Me.lblClientTime.BackColor = System.Drawing.SystemColors.Control
         Me.lblClientTime.Cursor = System.Windows.Forms.Cursors.Default
-        Me.lblClientTime.Font = New System.Drawing.Font("MS PGothic", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.lblClientTime.Font = New System.Drawing.Font("ＭＳ Ｐゴシック", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
         Me.lblClientTime.ForeColor = System.Drawing.Color.Red
-        Me.lblClientTime.Location = New System.Drawing.Point(91, 13)
+        Me.lblClientTime.Location = New System.Drawing.Point(91, 12)
         Me.lblClientTime.Name = "lblClientTime"
         Me.lblClientTime.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblClientTime.Size = New System.Drawing.Size(133, 16)
+        Me.lblClientTime.Size = New System.Drawing.Size(133, 15)
         Me.lblClientTime.TabIndex = 25
         Me.lblClientTime.Text = "2007/06/13 13:58:11"
         '
@@ -572,12 +594,12 @@
         '
         Me.lblServerTime.BackColor = System.Drawing.SystemColors.Control
         Me.lblServerTime.Cursor = System.Windows.Forms.Cursors.Default
-        Me.lblServerTime.Font = New System.Drawing.Font("MS PGothic", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.lblServerTime.Font = New System.Drawing.Font("ＭＳ Ｐゴシック", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
         Me.lblServerTime.ForeColor = System.Drawing.Color.Red
-        Me.lblServerTime.Location = New System.Drawing.Point(91, 28)
+        Me.lblServerTime.Location = New System.Drawing.Point(91, 26)
         Me.lblServerTime.Name = "lblServerTime"
         Me.lblServerTime.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblServerTime.Size = New System.Drawing.Size(133, 16)
+        Me.lblServerTime.Size = New System.Drawing.Size(133, 15)
         Me.lblServerTime.TabIndex = 24
         Me.lblServerTime.Text = "2007/06/13 13:58:11"
         '
@@ -586,9 +608,9 @@
         Me.Label1.AutoSize = True
         Me.Label1.BackColor = System.Drawing.SystemColors.Control
         Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
-        Me.Label1.Font = New System.Drawing.Font("MS PGothic", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.Label1.Font = New System.Drawing.Font("ＭＳ Ｐゴシック", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
         Me.Label1.ForeColor = System.Drawing.Color.Red
-        Me.Label1.Location = New System.Drawing.Point(7, 13)
+        Me.Label1.Location = New System.Drawing.Point(7, 12)
         Me.Label1.Name = "Label1"
         Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label1.Size = New System.Drawing.Size(82, 12)
@@ -601,9 +623,9 @@
         Me.Label2.AutoSize = True
         Me.Label2.BackColor = System.Drawing.SystemColors.Control
         Me.Label2.Cursor = System.Windows.Forms.Cursors.Default
-        Me.Label2.Font = New System.Drawing.Font("MS PGothic", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.Label2.Font = New System.Drawing.Font("ＭＳ Ｐゴシック", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
         Me.Label2.ForeColor = System.Drawing.Color.Red
-        Me.Label2.Location = New System.Drawing.Point(4, 28)
+        Me.Label2.Location = New System.Drawing.Point(4, 26)
         Me.Label2.Name = "Label2"
         Me.Label2.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label2.Size = New System.Drawing.Size(85, 12)
@@ -615,12 +637,12 @@
         '
         Me.lblLoginUserName.BackColor = System.Drawing.SystemColors.Control
         Me.lblLoginUserName.Cursor = System.Windows.Forms.Cursors.Default
-        Me.lblLoginUserName.Font = New System.Drawing.Font("MS PGothic", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.lblLoginUserName.Font = New System.Drawing.Font("ＭＳ Ｐゴシック", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
         Me.lblLoginUserName.ForeColor = System.Drawing.Color.Blue
-        Me.lblLoginUserName.Location = New System.Drawing.Point(8, 334)
+        Me.lblLoginUserName.Location = New System.Drawing.Point(8, 354)
         Me.lblLoginUserName.Name = "lblLoginUserName"
         Me.lblLoginUserName.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblLoginUserName.Size = New System.Drawing.Size(237, 23)
+        Me.lblLoginUserName.Size = New System.Drawing.Size(237, 21)
         Me.lblLoginUserName.TabIndex = 26
         Me.lblLoginUserName.Text = "Label3"
         '
@@ -629,10 +651,10 @@
         '
         'frmMainMenu
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(466, 361)
+        Me.ClientSize = New System.Drawing.Size(685, 378)
         Me.ControlBox = False
         Me.Controls.Add(Me.fraSysDate)
         Me.Controls.Add(Me.tabMenu)
@@ -656,6 +678,7 @@
         Me._tabMenu_TabPage1.ResumeLayout(False)
         Me._tabMenu_TabPage2.ResumeLayout(False)
         Me._tabMenu_TabPage3.ResumeLayout(False)
+        Me.TabPage1.ResumeLayout(False)
         Me.fraTimer.ResumeLayout(False)
         Me.fraTimer.PerformLayout()
         CType(Me.cmdMenu, System.ComponentModel.ISupportInitialize).EndInit()
@@ -666,5 +689,7 @@
 
     Public WithEvents _cmdMenu_109 As Button
     Public WithEvents _cmdMenu_110 As Button
+    Friend WithEvents TabPage1 As TabPage
+    Friend WithEvents WkdMenu1 As com.Wao.KDS.WKDMenu
 #End Region
 End Class
