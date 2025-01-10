@@ -29,22 +29,23 @@ Friend Class frmWKDM020B
     End Function
 
     'Check Length
-    Private Function IsLengthFormat(input As String) As Boolean
+    Private Function IsLengthFormat(input As String, content As String) As Boolean
         Dim result As Boolean = False
         Dim length As Integer = 0
-        Select Case input    ' 
-            Case "金融機関区分" Or "SEQ-CODE"
-                length = 1
-            Case "銀行コード" Or "廃店情報"
-                length = 4
-            Case "支店コード"
-                length = 3
-            Case "銀行名_カナ"
-                length = 15
-            Case "銀行名_漢字"
-                length = 40
-        End Select
-        If Not input.Length > length Then
+
+        If (input = "金融機関区分" Or input = "SEQ-CODE") Then
+            length = 1
+        ElseIf (input = "銀行コード" Or input = "廃店情報") Then
+            length = 4
+        ElseIf (input = "支店コード") Then
+            length = 3
+        ElseIf (input = "銀行名_カナ") Then
+            length = 15
+        ElseIf (input = "銀行名_漢字") Then
+            length = 40
+        End If
+
+        If Not content.Length > length Then
             result = True
         End If
         Return result
@@ -99,29 +100,29 @@ Friend Class frmWKDM020B
 
         contentarray = file.ReadCSVFileToArray(dlgFileOpen.FileName)
 
-        If (contentarray.GetLength(1) <> 10) Then
+        If (contentarray.GetLength(1) <> 11) Then
             Call gdDBS.AppMsgBox("指定されたファイル(" & dlgFileOpen.FileName & ")が異常です。" & vbCrLf & vbCrLf & "項目が不足しています。 ", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
             Exit Sub
         End If
 
         'Check Validation
         Dim tmpTitle As String = ""
-        For x = 1 To contentarray.GetLength(0) - 1
+        For x = 0 To contentarray.GetLength(0) - 1
             If (contentarray(x, 0) = Nothing) Then
                 Continue For
             End If
 
             'Check 銀行コード
-            pCheck(contentarray(x, 0), "銀行コード", x, {1, 2, 4, 5}, tmpTitle)
+            pCheck(Split(contentarray(x, 6), "-")(1), "銀行コード", x, {1, 2, 4, 5}, tmpTitle)
 
             'Check 支店コード
-            pCheck(contentarray(x, 1), "支店コード", x, {1, 2, 4, 5}, tmpTitle)
+            pCheck(Split(contentarray(x, 6), "-")(0), "支店コード", x, {1, 2, 4, 5}, tmpTitle)
 
             'Check 銀行名_カナ
-            pCheck(contentarray(x, 2), "銀行名_カナ", x, {1, 2, 5}, tmpTitle)
+            pCheck(contentarray(x, 4), "銀行名_カナ", x, {1, 5}, tmpTitle)
 
             'Check 銀行名_漢字
-            pCheck(contentarray(x, 3), "銀行名_漢字", x, {1, 5}, tmpTitle)
+            pCheck(contentarray(x, 5), "銀行名_漢字", x, {1, 5}, tmpTitle)
 
         Next
 
@@ -140,7 +141,7 @@ Friend Class frmWKDM020B
     Private Sub pCheck(content As String, title As String, index_row As Integer, arrCheck As String(), Optional ByRef tmp As String = "")
         '①項目データの桁数チェック
         If (arrCheck.Contains("1")) Then
-            If (Not IsLengthFormat(title)) Then
+            If (Not IsLengthFormat(title, content)) Then
                 tmp = tmp & index_row & "," & title & ",桁数データが含まれています。" & vbLf
             End If
         End If
@@ -191,17 +192,15 @@ Friend Class frmWKDM020B
                 Dim x As Integer
                 Dim dt As DataTable
 
-                For x = 1 To arrContent.GetLength(0) - 1
+                For x = 0 To arrContent.GetLength(0) - 1
                     If (arrContent(x, 0) = Nothing) Then
                         Continue For
                     End If
 
                     sql = "SELECT b.* "
                     sql = sql & " FROM tdBankMaster b "
-                    sql = sql & " WHERE DARKBN = " & gdDBS.ColumnDataSet(arrContent(x, 0), vEnd:=True)
-                    sql = sql & "   AND DABANK = " & gdDBS.ColumnDataSet(arrContent(x, 1), vEnd:=True)
-                    sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(x, 2), vEnd:=True)
-                    sql = sql & "   AND DASQNO = " & gdDBS.ColumnDataSet(arrContent(x, 3), vEnd:=True)
+                    sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(Split(arrContent(x, 6), "-")(1), vEnd:=True)
+                    sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(Split(arrContent(x, 6), "-")(0), vEnd:=True)
                     dt = gdDBS.ExecuteDataTable(cmd, sql)
                     If IsNothing(dt) Then
                         If False = tdBankMasterInsert(arrContent, x, cmd) Then
@@ -266,7 +265,7 @@ Friend Class frmWKDM020B
     Private Function tdBankMasterInsert(ByRef arrContent As String(,), row As Integer, ByRef cmd As Npgsql.NpgsqlCommand) As Boolean
         Dim sql As String
         sql = "INSERT INTO tdBankMaster ( " & vbCrLf
-        sql = sql & "DARKBN," & vbCrLf '//金融機関区分					
+        sql = sql & "DARKBN," & vbCrLf '//金融機関区分				
         sql = sql & "DABANK," & vbCrLf '//銀行コード					
         sql = sql & "DASITN," & vbCrLf '//支店コード					
         sql = sql & "DASQNO," & vbCrLf '//SEQ-CODE					
@@ -275,10 +274,10 @@ Friend Class frmWKDM020B
         sql = sql & "DAHTIF," & vbCrLf '//廃店情報					
         sql = sql & "DAUPDT" & vbCrLf  '//更新日					
         sql = sql & ") VALUES ( " & vbCrLf
-        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & "," & vbCrLf '//金融機関区分					
-        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & "," & vbCrLf '//銀行コード					
-        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & "," & vbCrLf '//支店コード					
-        sql = sql & "  NULL," & vbCrLf                                                 '//SEQ-CODE					
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 10), vEnd:=True) & "," & vbCrLf '//金融機関区分			
+        sql = sql & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(1), vEnd:=True) & "," & vbCrLf '//銀行コード					
+        sql = sql & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & "," & vbCrLf '//支店コード					
+        sql = sql & "'' ," & vbCrLf                                                 '//SEQ-CODE					
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf '//銀行名_カナ					
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf '//銀行名_漢字					
         sql = sql & "  NULL," & vbCrLf                                                 '//廃店情報					
@@ -294,13 +293,12 @@ Friend Class frmWKDM020B
         Dim result As Integer
 
         sql = "UPDATE tdBankMaster SET " & vbCrLf
-        sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf
-        sql = sql & " DAKNNM = " & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf
+        sql = sql & " DAKNNM = " & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf
+        sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf
         sql = sql & " DAUPDT = current_timestamp" & vbCrLf
-        sql = sql & " WHERE DARKBN = " & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & vbCrLf
-        sql = sql & "   AND DABANK = " & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & vbCrLf
-        sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & vbCrLf
-        sql = sql & "   AND DASQNO = " & gdDBS.ColumnDataSet(arrContent(row, 3), vEnd:=True) & vbCrLf
+        sql = sql & " WHERE DARKBN = " & gdDBS.ColumnDataSet(arrContent(row, 10), vEnd:=True) & vbCrLf
+        sql = sql & "   AND DABANK = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & vbCrLf
+        sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & vbCrLf
 
         cmd.CommandText = sql
         result = cmd.ExecuteNonQuery()
