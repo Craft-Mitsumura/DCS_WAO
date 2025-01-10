@@ -170,11 +170,76 @@ Public Class frmWKDT020B
             End If
         Next
 
+        Dim msg As New StringBuilder()
+        msg.AppendLine("以下のCSVファイルが出力されました。")
+
+        ' 源泉徴収票に出力する行を抽出
+        Dim query1 = From row In dt.AsEnumerable()
+                     Where Not row.Field(Of String)("chohyoshurui") = "給与支払報告書"
+                     Select row
+
+        ' 結果を新しいDataTableに格納
+        Dim dt1 As DataTable = dt.Clone() ' 構造をコピー
+        For Each row In query1
+            dt1.ImportRow(row) ' 行を新しいDataTableに追加
+        Next
+
+        ' 源泉徴収票に不要な列を削除
+        dt1.Columns.Remove("postno") ' オーナー郵便番号
+
         ' ＣＳＶファイル出力
         Dim fileName As String = "源泉徴収票_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
         Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+        msg.AppendLine("・" & filePath)
 
-        MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        ' 送付状に出力する行を抽出
+        Dim query3 = From row In dt.AsEnumerable()
+                     Group row By Ownerno = row.Field(Of String)("nys_ownerno"),
+                                  Postno = row.Field(Of String)("postno"),
+                                  Addr = row.Field(Of String)("addr"),
+                                  Name = row.Field(Of String)("name"),
+                                  Shurui = row.Field(Of String)("chohyoshurui"),
+                                  Count = row.Field(Of Int64)("cnt") Into Grouped = Group
+                     Select New With {
+                    .Ownerno = Ownerno,
+                    .Postno = Postno,
+                    .Addr = Addr,
+                    .Name = Name,
+                    .Shurui = Shurui,
+                    .Count = Count
+                    }
+
+        ' 結果を新しいDataTableに格納
+        Dim dt3 As New DataTable()
+        dt3.Columns.Add("owner", GetType(String))
+        dt3.Columns.Add("postno", GetType(String))
+        dt3.Columns.Add("addr", GetType(String))
+        dt3.Columns.Add("name", GetType(String))
+        dt3.Columns.Add("shiryonm", GetType(String))
+        dt3.Columns.Add("count", GetType(Int64))
+
+        Dim shiryonm As String = String.Empty
+
+        For Each row In query3
+            If Not row.Shurui.Equals("給与支払報告書") Then
+                shiryonm = String.Format("給与取得の源泉徴収票（{0}）", row.Shurui)
+            Else
+                shiryonm = row.Shurui
+            End If
+            dt3.Rows.Add(row.Ownerno,
+                         row.Postno,
+                         row.Addr,
+                         row.Name,
+                         shiryonm,
+                         row.Count) ' 行を新しいDataTableに追加
+        Next
+
+        ' ＣＳＶファイル出力
+        Dim fileName3 As String = "送付状_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
+        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True)
+        msg.AppendLine("・" & filePath3)
+
+        MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
 

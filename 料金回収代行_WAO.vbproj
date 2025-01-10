@@ -261,6 +261,9 @@
     <Reference Include="System.XML">
       <Name>System.XML</Name>
     </Reference>
+    <Reference Include="WKDMenu">
+      <HintPath>WKD\bin\WKDMenu.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -370,12 +373,6 @@
     </Compile>
     <Compile Include="WIN32API.vb">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WKDM020B_金融機関マスタ取込.Designer.vb">
-      <DependentUpon>WKDM020B_金融機関マスタ取込.vb</DependentUpon>
-    </Compile>
-    <Compile Include="WKDM020B_金融機関マスタ取込.vb">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="メインメニュー.Designer.vb">
       <SubType>Code</SubType>
@@ -566,9 +563,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RptViewer.resx">
       <DependentUpon>RptViewer.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WKDM020B_金融機関マスタ取込.resX">
-      <DependentUpon>WKDM020B_金融機関マスタ取込.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="メインメニュー.resX">
       <DependentUpon>メインメニュー.vb</DependentUpon>

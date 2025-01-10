@@ -128,9 +128,17 @@
       <Project>{cc4035c8-0741-4bf7-a2ca-56edc1bc4fe9}</Project>
       <Name>WKDR050B</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\WDKR080B\WKDR080B.vbproj">
+      <Project>{3862da09-b8c6-4f99-ba7e-00b090dd33bd}</Project>
+      <Name>WKDR080B</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\WKDC010B\WKDC010B.vbproj">
       <Project>{57df8ceb-347a-4dd9-b381-e5bd013d8f10}</Project>
       <Name>WKDC010B</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WKDR060B\WKDR060B.vbproj">
+      <Project>{96b31284-ea0a-4335-b904-69cb75cf86ed}</Project>
+      <Name>WKDR060B</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\WKDC030B\WKDC030B.vbproj">
       <Project>{fad7664a-11d9-4efa-9656-81a54437ff89}</Project>
@@ -139,6 +147,26 @@
     <ProjectReference Include="..\..\WKDC040B\WKDC040B.vbproj">
       <Project>{90d6bd87-d9e9-45fc-9b3c-b0614e2cb4c9}</Project>
       <Name>WKDC040B</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WKDR010B\WKDR010B.vbproj">
+      <Project>{b331cc32-80cd-404f-82dc-769c1086951e}</Project>
+      <Name>WKDR010B</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WKDR040B\WKDR040B.vbproj">
+      <Project>{83aab8cf-1d88-42c3-ad3f-950ddc01c88f}</Project>
+      <Name>WKDR040B</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WKDR020B\WKDR020B.vbproj">
+      <Project>{15625b07-63ea-446f-80a2-3404ee41017d}</Project>
+      <Name>WKDR020B</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WKDR030B\WKDR030B.vbproj">
+      <Project>{f916bf6d-4442-455e-88e2-5684871cf70a}</Project>
+      <Name>WKDR030B</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WKDR070B\WKDR070B.vbproj">
+      <Project>{e37c76d2-0056-45f5-ae40-ca5fbd2070e9}</Project>
+      <Name>WKDR070B</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\WKDT010B\WKDT010B.vbproj">
       <Project>{3e758582-b020-4f14-b6c1-3110ab00c87e}</Project>
@@ -152,9 +180,6 @@
       <Project>{e88aa8d6-b918-4071-b764-f04c0e76f1b3}</Project>
       <Name>WKDT030B</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
