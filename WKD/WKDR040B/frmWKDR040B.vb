@@ -54,7 +54,7 @@ Public Class frmWKDR040B
         tKahenkomoku = dba.GetTKahenkomoku_3(sysDate.ToString("yyyyMM"))
 
         For Each row As DataRow In tKahenkomoku.Rows
-            dba.UpdateTKahenkomoku_2(sysDate.ToString("yyyyMM"), "33948", row(2), "00000000", row(15))
+            dba.UpdateTKahenkomoku_2(sysDate.ToString("yyyyMM"), "33948", row(2), "00000000", row(14))
         Next
 
         tKahenkomoku = dba.GetTKahenkomoku_4(sysDate.ToString("yyyyMM"))
