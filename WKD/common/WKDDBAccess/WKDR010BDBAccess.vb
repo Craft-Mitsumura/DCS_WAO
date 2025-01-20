@@ -16,12 +16,14 @@ Public Class WKDR010BDBAccess
         sql.AppendLine("    , ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("    , seitono") ' 顧客番号（生徒Ｎｏ）
         sql.AppendLine("    , kseqno") ' 顧客番号内ＳＥＱ番号
+        sql.AppendLine("    , dtsybt")
         sql.AppendLine("    , syndate")
         sql.AppendLine("    , syntime")
         sql.AppendLine("    , skbt")
         sql.AppendLine("    , kuni")
         sql.AppendLine("    , mufcd")
         sql.AppendLine("    , kgycd")
+        sql.AppendLine("    , kgynmkn")
         sql.AppendLine("    , shkkkbn")
         sql.AppendLine("    , shrikgn")
         sql.AppendLine("    , insiflg")
@@ -42,12 +44,14 @@ Public Class WKDR010BDBAccess
         sql.AppendLine("    , @ownerno")
         sql.AppendLine("    , @seitono")
         sql.AppendLine("    , @kseqno")
+        sql.AppendLine("    , @dtsybt")
         sql.AppendLine("    , @syndate")
         sql.AppendLine("    , @syntime")
         sql.AppendLine("    , @skbt")
         sql.AppendLine("    , @kuni")
         sql.AppendLine("    , @mufcd")
         sql.AppendLine("    , @kgycd")
+        sql.AppendLine("    , @kgynmkn")
         sql.AppendLine("    , @shkkkbn")
         sql.AppendLine("    , @shrikgn")
         sql.AppendLine("    , @insiflg")
@@ -126,7 +130,7 @@ Public Class WKDR010BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine(" select a.*, b.dtnengetu kakutei_dtnengetu ")
+        sql.AppendLine(" select a.*, b.dtnengetu kakutei_dtnengetu, b.skingaku kakutei_kingaku ")
         sql.AppendLine(" from ")
         sql.AppendLine(" t_conveni_furikomi_kakuho a ")
         sql.AppendLine(" left join t_kakutei b ")

@@ -6,6 +6,7 @@ Imports System.Windows
 Imports System.IO
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms.AxHost
+Imports System.Security.Cryptography.X509Certificates
 
 Public Class frmWKDR010B
 
@@ -33,7 +34,7 @@ Public Class frmWKDR010B
         Dim fileName As String = String.Empty
 
         Using frmFileDialog As New OpenFileDialog
-            frmFileDialog.FileName = "確定データ.txt"
+            frmFileDialog.FileName = "コンビニ収納確報データ.txt"
             frmFileDialog.Filter = "テキスト文書(*.txt)|*.txt"
             frmFileDialog.Title = "ファイルを選択してください"
             ' ダイアログを表示する
@@ -82,17 +83,13 @@ Public Class frmWKDR010B
                 ' 固定長のフィールドの幅を指定
                 If reckbn = "1" Then
                     ' 1行目（ヘッダーレコード）
-                    'parser.SetFieldWidths(1, 8, 5, 5, 40, 61)
-                    'Dim fields As String() = parser.ReadFields()
                     Dim fields As String() = GetFieldString(rec, 1, 8, 5, 5, 40, 61)
                     tableHeader.Add((fields(0), fields(1), fields(2), fields(3), fields(4), fields(5)))
                 ElseIf reckbn = "2" Then
                     ' 2行目以降（明細レコード）
-                    'parser.SetFieldWidths(1, 2, 8, 4, 2, 1, 5, 5, 16, 1, 6, 1, 6, 1, 3, 7, 8, 8, 8, 8, 4, 15)
-                    'Dim fields As String() = parser.ReadFields()
                     Dim fields As String() = GetFieldString(rec, 1, 2, 8, 4, 2, 1, 5, 5, 16, 1, 6, 1, 6, 1, 3, 7, 8, 8, 8, 8, 4, 15)
                     Dim entity As New TConveniFurikomiKakuhoEntity
-                    entity.dtnengetu = sysDate.ToString("yyyy") + sysDate.AddMonths(-1).ToString("MM")
+                    entity.dtnengetu = tableHeader(0).SKDATE.Substring(0, 6)
                     entity.itakuno = If(tableHeader(0).KGYCD = "00404", "33948", tableHeader(0).KGYCD)
                     entity.ownerno = fields(8).Substring(1, 7)
                     entity.seitono = fields(8).Substring(8, 8)
@@ -100,12 +97,14 @@ Public Class frmWKDR010B
 
                     'Detail
                     tableDetail.Add((fields(0), ""))
+                    entity.dtsybt = fields(1)
                     entity.syndate = fields(2)
                     entity.syntime = fields(3)
                     entity.skbt = fields(4)
                     entity.kuni = fields(5)
                     entity.mufcd = fields(6)
                     entity.kgycd = fields(7)
+                    entity.kgynmkn = fields(8)
                     entity.shkkkbn = fields(9)
                     entity.shrikgn = fields(10)
                     entity.insiflg = fields(11)
@@ -143,9 +142,10 @@ Public Class frmWKDR010B
             row += 1
         Next
 
+        Dim csvFilePath As String = ""
         If errorRecords.Count > 0 Then
             fileName = System.IO.Path.GetFileName(filePath)
-            Dim csvFilePath As String = inputDirectory & "\" & fileName.Substring(0, fileName.Length - 4) & "_エラーリスト.csv"
+            csvFilePath = inputDirectory & "\" & fileName.Substring(0, fileName.Length - 4) & "_エラーリスト.csv"
 
             Using writer As New StreamWriter(csvFilePath, False, Encoding.UTF8)
                 For Each record As String In errorRecords
@@ -158,68 +158,83 @@ Public Class frmWKDR010B
         End If
 
         Dim dba As New WKDR010BDBAccess
+        'システム日付の前月を該当年月とする
+        Dim dtNow As DateTime = DateTime.Now
+        Dim monthAgo As String = dtNow.AddMonths(-1).ToString("yyyyMM")
 
-        If Not dba.Delete(sysDate.ToString("yyyy") + sysDate.AddMonths(-1).ToString("MM")) Then
+        'コンビニ振込確報データのデータ年月が該当年月と同一のデータを削除
+        If Not dba.Delete(monthAgo) Then
             Return
         End If
 
-        ' 確定データ作成
+        ' コンビニ振込確報データに登録
         If Not dba.Insert(entityList) Then
             Return
         End If
 
-        'Creat 受信チェックリスト
-        Dim tbCheck As New DataTable
-        tbCheck = dba.getListHeader(sysDate.ToString("yyyy") + sysDate.AddMonths(-1).ToString("MM"))
+        Dim chkExportFlg As Boolean = False
 
-        Dim dtErr As New DataTable
-        dtErr.Columns.Add("データ作成日", GetType(String))
-        dtErr.Columns.Add("企業コード", GetType(String))
-        dtErr.Columns.Add("企業名", GetType(String))
-        dtErr.Rows.Add("コンビニ受信データチェックリスト（ヘッダー）", "", "")
-        dtErr.Rows.Add("データ作成日", "企業コード", "企業名")
+        ' コンビニ振込確報データのヘッダー情報（ＭＵＦ企業コード）単位で重複データを除いたデータを検索
+        Dim tbCheck As DataTable = dba.getListHeader(monthAgo)
 
-        For Each dtrow As DataRow In tbCheck.Rows
-            dtErr.Rows.Add(sysDate.ToString("yyyyMMdd"), dtrow("kgycd"), "")
-        Next
-        dtErr.Rows.Add("合計" & tbCheck.Rows.Count.ToString() & "件", "", "")
+        If tbCheck.Rows.Count <> 6 Then
+            ' コンビニ受信データチェックリスト(ヘッダー)出力
+            Dim dtErr As New DataTable
+            dtErr.Columns.Add("データ作成日", GetType(String))
+            dtErr.Columns.Add("企業コード", GetType(String))
+            dtErr.Columns.Add("企業名", GetType(String))
+            dtErr.Rows.Add("コンビニ受信データチェックリスト（ヘッダー）")
+            dtErr.Rows.Add("データ作成日", "企業コード", "企業名")
 
-        Dim strName As String = "コンビニ受信データチェックリスト（ヘッダー）.csv"
-        filePath = WriteCsvData(dtErr, SettingManager.GetInstance.OutputDirectory, strName,,, True)
+            For Each dtrow As DataRow In tbCheck.Rows
+                dtErr.Rows.Add(dtrow("dtnengetsu"), dtrow("kgycd"), "")
+            Next
+            dtErr.Rows.Add("合計", tbCheck.Rows.Count.ToString(), "件")
 
-        Dim tbCheckDetail As DataTable = dba.getListDetail(sysDate.ToString("yyyy") + sysDate.AddMonths(-1).ToString("MM"))
+            Dim strName As String = "コンビニ受信データチェックリスト（ヘッダー）.csv"
+            csvfilePath = WriteCsvData(dtErr, SettingManager.GetInstance.OutputDirectory, strName,,, True)
+            chkExportFlg = True
+        End If
+
+        ' データ年月＆顧客番号（委託者Ｎｏ）＆顧客番号（オーナーＮｏ）＆顧客番号（生徒Ｎｏ）＆顧客番号内ＳＥＱ番号で確定データと併せて検索
+        Dim tbCheckDetail As DataTable = dba.getListDetail(monthAgo)
 
         Dim bErr As Boolean = False
-
         For Each dtrow As DataRow In tbCheckDetail.Rows
-            If IsDBNull(dtrow("kakutei_dtnengetu")) Or dtrow("skbt") <> "02" Or dtrow("shrikgn").ToString().Substring(4, 2) <> "24" Then
-                bErr = True
+            If IsDBNull(dtrow("kakutei_dtnengetu")) OrElse dtrow("kingk") <> dtrow("kakutei_kingaku") OrElse dtrow("dtsybt") <> "02" OrElse dtrow("shrikgn").ToString().Substring(4, 2) <> "24" Then
+                'コンビニ受信データチェックリスト(明細)出力
+                Dim dtErrDetail As New DataTable
+                dtErrDetail.Columns.Add("顧客番号", GetType(String))
+                dtErrDetail.Columns.Add("金額", GetType(String))
+                dtErrDetail.Columns.Add("データ種別", GetType(String))
+                dtErrDetail.Columns.Add("期限", GetType(String))
+                dtErrDetail.Columns.Add("ＣＶＳ", GetType(String))
+                dtErrDetail.Columns.Add("店舗ＣＤ", GetType(String))
+                dtErrDetail.Columns.Add("収納年月日", GetType(String))
+                dtErrDetail.Columns.Add("収納時間", GetType(String))
+                dtErrDetail.Rows.Add("コンビニ受信データチェックリスト（明細）", "", "", "", "", "", "", "")
+                dtErrDetail.Rows.Add(sysDate.ToString("yyyyMMdd"), "", "", "", "", "", "", "")
+                dtErrDetail.Rows.Add("顧客番号", "金額", "データ種別", "期限", "ＣＶＳ", "店舗ＣＤ", "収納年月日", "収納時間")
+                For Each dtrow2 As DataRow In tbCheckDetail.Rows
+                    dtErrDetail.Rows.Add(dtrow("itakuno") & dtrow("ownerno") & dtrow("seitono"), dtrow2("kingk"), "02", dtrow2("shrikgn"), dtrow2("cvscd"), dtrow2("uktncd"), dtrow2("syndate"), dtrow2("syntime"))
+                Next
+                dtErrDetail.Rows.Add("合計", tbCheck.Rows.Count.ToString(), "件")
+                Dim strName As String = "コンビニ受信データチェックリスト（明細）.csv"
+                csvFilePath = WriteCsvData(dtErrDetail, SettingManager.GetInstance.OutputDirectory, strName,,, True)
+                chkExportFlg = True
             End If
         Next
+
         If bErr Then
-            Dim dtErrDetail As New DataTable
-            dtErrDetail.Columns.Add("顧客番号", GetType(String))
-            dtErrDetail.Columns.Add("金額", GetType(String))
-            dtErrDetail.Columns.Add("データ種別", GetType(String))
-            dtErrDetail.Columns.Add("期限", GetType(String))
-            dtErrDetail.Columns.Add("ＣＶＳ", GetType(String))
-            dtErrDetail.Columns.Add("店舗ＣＤ", GetType(String))
-            dtErrDetail.Columns.Add("収納年月日", GetType(String))
-            dtErrDetail.Columns.Add("収納時間", GetType(String))
-            dtErrDetail.Rows.Add("コンビニ受信データチェックリスト（明細）", "", "", "", "", "", "", "")
-            dtErrDetail.Rows.Add(sysDate.ToString("yyyyMMdd"), "", "", "", "", "", "", "")
-            dtErrDetail.Rows.Add("顧客番号", "金額", "データ種別", "期限", "ＣＶＳ", "店舗ＣＤ", "収納年月日", "収納時間")
-            For Each dtrow As DataRow In tbCheckDetail.Rows
-                dtErrDetail.Rows.Add(dtrow("itakuno") & dtrow("ownerno") & dtrow("seitono"), dtrow("kingk"), "", dtrow("shrikgn"), dtrow("cvscd"), dtrow("uktncd"), dtrow("syndate"), dtrow("syntime"))
-            Next
-            dtErrDetail.Rows.Add("合計" & tbCheck.Rows.Count.ToString() & "件", "", "", "", "", "", "", "")
-            strName = "コンビニ受信データチェックリスト（明細）.csv"
-            filePath = WriteCsvData(dtErrDetail, SettingManager.GetInstance.OutputDirectory, strName,,, True)
+
         End If
 
-        If bErr = True And tbCheck.Rows.Count <> 6 Then
-            MessageBox.Show("確報データエラー有り。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        If chkExportFlg Then
+            MessageBox.Show("確報データエラー有り", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Else
+            MessageBox.Show("「" & filePath & "」が取り込まれました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
         End If
+
         tableHeader.Clear()
         tableDetail.Clear()
 
@@ -304,12 +319,13 @@ Public Class frmWKDR010B
             New propertiesInput With {.name = "顧客番号（オーナーＮｏ）", .value = entity.ownerno},
             New propertiesInput With {.name = "顧客番号（生徒Ｎｏ）", .value = entity.seitono},
             New propertiesInput With {.name = "顧客番号内ＳＥＱ番号", .value = entity.kseqno},
-            New propertiesInput With {.name = "CVS店舗収納年月日", .value = entity.syndate},
+            New propertiesInput With {.name = "顧客番号内ＳＥＱ番号", .value = entity.dtsybt},
             New propertiesInput With {.name = "CVS店舗収納時分", .value = entity.syntime?.ToString()},
             New propertiesInput With {.name = "識別子", .value = entity.skbt?.ToString()},
             New propertiesInput With {.name = "国コード", .value = entity.kuni?.ToString()},
             New propertiesInput With {.name = "ＭＵＦ企業コード", .value = entity.mufcd?.ToString()},
             New propertiesInput With {.name = "収納企業コード", .value = entity.kgycd?.ToString()},
+            New propertiesInput With {.name = "収納企業名（カナ）", .value = entity.kgynmkn?.ToString()},
             New propertiesInput With {.name = "再発行区分", .value = entity.shkkkbn?.ToString()},
             New propertiesInput With {.name = "支払期限", .value = entity.shrikgn?.ToString()},
             New propertiesInput With {.name = "印紙フラグ", .value = entity.insiflg?.ToString()},

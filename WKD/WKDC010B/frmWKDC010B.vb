@@ -141,9 +141,9 @@ Public Class frmWKDC010B
         End If
 
         '④ 該当項目について　で判断されたヘッダーレコードのデータ年月＝システム日付の年月でない場合はエラーとする。
-        If dtnengetu <> Now.ToString("yyyyMM") Then
-            errorRecords.Add(1 & "," & "データ年月" & "," & "データ年月が一致しません。")
-        End If
+        'If dtnengetu <> Now.ToString("yyyyMM") Then
+        '    errorRecords.Add(1 & "," & "データ年月" & "," & "データ年月が一致しません。")
+        'End If
 
         Dim skingakuSumAll As Decimal = entityList _
                                         .Where(Function(entity) entity.skingaku.HasValue) _
