@@ -2,6 +2,8 @@ Option Strict Off
 Option Explicit On
 Imports System.Configuration
 Imports System.IO
+Imports System.Text
+Imports Microsoft.VisualBasic.FileIO
 
 Friend Class FileClass
 
@@ -246,28 +248,53 @@ SaveDialogError:
 
         'Check if file exist
         If File.Exists(fname) Then
-            Dim tmpstream As StreamReader = File.OpenText(fname)
-            Dim strlines() As String
-            Dim strline() As String
+            ' TextFieldParserを使って固定長のファイルを読み込む（Shift-JIS指定）
+            Using parser As New TextFieldParser(fname, Encoding.GetEncoding("Shift_JIS"))
+                Dim strlines() As String
+                Dim strline() As String
 
-            'Load content of file to strLines array
-            strlines = tmpstream.ReadToEnd().Split(Environment.NewLine)
+                'Load content of file to strLines array
+                strlines = parser.ReadToEnd().Split(Environment.NewLine)
 
-            ' Redimension the array.
-            num_rows = UBound(strlines)
-            strline = strlines(0).Split(",")
-            num_cols = UBound(strline)
-            ReDim strarray(num_rows, num_cols)
+                ' Redimension the array.
+                num_rows = UBound(strlines) - 1
+                strline = strlines(0).Split(",")
+                num_cols = UBound(strline)
+                ReDim strarray(num_rows, num_cols)
 
-            ' Copy the data into the array.
-            For x = 0 To num_rows
-                strline = strlines(x).Split(",")
-                If (strline(0) <> vbLf) Then
-                    For y = 0 To num_cols
-                        strarray(x, y) = strline(y).Replace("""", "").Replace(vbLf, "")
-                    Next
-                End If
-            Next
+                ' Copy the data into the array.
+                For x = 0 To num_rows
+                    strline = strlines(x).Split(",")
+                    If (strline(0) <> vbLf) Then
+                        For y = 0 To num_cols
+                            strarray(x, y) = strline(y).Replace("""", "").Replace(vbLf, "")
+                        Next
+                    End If
+                Next
+            End Using
+
+            'Dim tmpstream As StreamReader = File.OpenText(fname)
+            'Dim strlines() As String
+            'Dim strline() As String
+
+            ''Load content of file to strLines array
+            'strlines = tmpstream.ReadToEnd().Split(Environment.NewLine)
+
+            '' Redimension the array.
+            'num_rows = UBound(strlines)
+            'strline = strlines(0).Split(",")
+            'num_cols = UBound(strline)
+            'ReDim strarray(num_rows, num_cols)
+
+            '' Copy the data into the array.
+            'For x = 0 To num_rows
+            '    strline = strlines(x).Split(",")
+            '    If (strline(0) <> vbLf) Then
+            '        For y = 0 To num_cols
+            '            strarray(x, y) = strline(y).Replace("""", "").Replace(vbLf, "")
+            '        Next
+            '    End If
+            'Next
         End If
         ReadCSVFileToArray = strarray
     End Function

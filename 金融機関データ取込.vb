@@ -111,24 +111,35 @@ Friend Class frmBankDataImport
                 Continue For
             End If
 
+            ''Check 銀行コード
+            'pCheck(Split(contentarray(x, 6), "-")(1), "銀行コード", x, {1, 2, 4, 5}, tmpTitle)
+            ''Check 支店コード
+            'pCheck(Split(contentarray(x, 6), "-")(0), "支店コード", x, {1, 2, 4, 5}, tmpTitle)
+            ''Check 銀行名_カナ
+            'pCheck(contentarray(x, 4), "銀行名_カナ", x, {1, 5}, tmpTitle)
+            ''Check 銀行名_漢字
+            'pCheck(contentarray(x, 5), "銀行名_漢字", x, {1, 5}, tmpTitle)
+
             'Check 銀行コード
-            pCheck(Split(contentarray(x, 6), "-")(1), "銀行コード", x, {1, 2, 4, 5}, tmpTitle)
+            pCheck(contentarray(x, 0), "銀行コード", x, {1, 2, 4, 5}, tmpTitle)
 
             'Check 支店コード
-            pCheck(Split(contentarray(x, 6), "-")(0), "支店コード", x, {1, 2, 4, 5}, tmpTitle)
+            pCheck(contentarray(x, 1), "支店コード", x, {1, 2, 4, 5}, tmpTitle)
 
             'Check 銀行名_カナ
-            pCheck(contentarray(x, 4), "銀行名_カナ", x, {1, 5}, tmpTitle)
+            pCheck(contentarray(x, 2), "銀行名_カナ", x, {1, 5}, tmpTitle)
 
             'Check 銀行名_漢字
-            pCheck(contentarray(x, 5), "銀行名_漢字", x, {1, 5}, tmpTitle)
+            pCheck(contentarray(x, 3), "銀行名_漢字", x, {1, 5}, tmpTitle)
 
         Next
 
         If (tmpTitle.Trim() <> "") Then
             'Export CSV Error
-            SetExportCSVError(tmpTitle, dlgFileOpen.FileName)
-            Call MsgBox("CSVs Error!", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, mCaption)
+            'SetExportCSVError(tmpTitle, dlgFileOpen.FileName)
+            'Call MsgBox("CSVs Error!", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, mCaption)
+            Dim filePath As String = SetExportCSVError(tmpTitle, dlgFileOpen.FileName)
+            Call MsgBox("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & filePath & "」を参照してください。", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, mCaption)
             Call pLockedControl(True)
             Exit Sub
         End If
@@ -198,8 +209,10 @@ Friend Class frmBankDataImport
 
                     sql = "SELECT b.* "
                     sql = sql & " FROM tdBankMaster b "
-                    sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(Split(arrContent(x, 6), "-")(1), vEnd:=True)
-                    sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(Split(arrContent(x, 6), "-")(0), vEnd:=True)
+                    'sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(Split(arrContent(x, 6), "-")(1), vEnd:=True)
+                    'sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(Split(arrContent(x, 6), "-")(0), vEnd:=True)
+                    sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(arrContent(x, 0), vEnd:=True)
+                    sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(x, 1), vEnd:=True)
                     dt = gdDBS.ExecuteDataTable(cmd, sql)
                     If IsNothing(dt) Then
                         If False = tdBankMasterInsert(arrContent, x, cmd) Then
@@ -213,7 +226,8 @@ Friend Class frmBankDataImport
                 Next
 
                 transaction.Commit()
-                Call MsgBox("Finish!", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, mCaption)
+                'Call MsgBox("Finish!", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, mCaption)
+                Call MsgBox("取込完了(" & x & "件)", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, mCaption)
 
                 '//コマンド・ボタン制御
                 Call pLockedControl(True)
@@ -235,7 +249,7 @@ Friend Class frmBankDataImport
         End Using
     End Sub
 
-    Private Sub SetExportCSVError(contentErr As String, mPathSaveFolder As String)
+    Private Function SetExportCSVError(contentErr As String, mPathSaveFolder As String)
         Dim sql, folderName, fileName, pathName As String
 
         Dim tmp As String
@@ -259,7 +273,8 @@ Friend Class frmBankDataImport
         FileClose(fp)
 
         Call MoveFileEx(TmpFname, reg.OutputFileName(mCaption), MOVEFILE_REPLACE_EXISTING + MOVEFILE_COPY_ALLOWED)
-    End Sub
+        Return reg.OutputFileName(mCaption)
+    End Function
 
     Private Function tdBankMasterInsert(ByRef arrContent As String(,), row As Integer, ByRef cmd As Npgsql.NpgsqlCommand) As Boolean
         Dim sql As String
@@ -274,11 +289,15 @@ Friend Class frmBankDataImport
         sql = sql & "DAUPDT" & vbCrLf  '//更新日					
         sql = sql & ") VALUES ( " & vbCrLf
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 10), vEnd:=True) & "," & vbCrLf '//金融機関区分			
-        sql = sql & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(1), vEnd:=True) & "," & vbCrLf '//銀行コード					
-        sql = sql & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & "," & vbCrLf '//支店コード					
+        'sql = sql & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(1), vEnd:=True) & "," & vbCrLf '//銀行コード					
+        'sql = sql & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & "," & vbCrLf '//支店コード	
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & "," & vbCrLf '//銀行コード					
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & "," & vbCrLf '//支店コード
         sql = sql & "'' ," & vbCrLf                                                 '//SEQ-CODE					
-        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf '//銀行名_カナ					
-        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf '//銀行名_漢字					
+        'sql = sql & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf '//銀行名_カナ					
+        'sql = sql & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf '//銀行名_漢字
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & "," & vbCrLf '//銀行名_カナ					
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 3), vEnd:=True) & "," & vbCrLf '//銀行名_漢字
         sql = sql & "  NULL," & vbCrLf                                                 '//廃店情報					
         sql = sql & "current_timestamp)" & vbCrLf                                      '//更新日						
 
@@ -292,12 +311,16 @@ Friend Class frmBankDataImport
         Dim result As Integer
 
         sql = "UPDATE tdBankMaster SET " & vbCrLf
-        sql = sql & " DAKNNM = " & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf
-        sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf
+        'sql = sql & " DAKNNM = " & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf
+        'sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf
+        sql = sql & " DAKNNM = " & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & "," & vbCrLf
+        sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 3), vEnd:=True) & "," & vbCrLf
         sql = sql & " DAUPDT = current_timestamp" & vbCrLf
-        sql = sql & " WHERE DARKBN = " & gdDBS.ColumnDataSet(arrContent(row, 10), vEnd:=True) & vbCrLf
-        sql = sql & "   AND DABANK = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(1), vEnd:=True) & vbCrLf
-        sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & vbCrLf
+        'sql = sql & " WHERE DARKBN = " & gdDBS.ColumnDataSet(arrContent(row, 10), vEnd:=True) & vbCrLf
+        'sql = sql & "   AND DABANK = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(1), vEnd:=True) & vbCrLf
+        'sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & vbCrLf
+        sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & vbCrLf
+        sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & vbCrLf
 
         cmd.CommandText = sql
         result = cmd.ExecuteNonQuery()

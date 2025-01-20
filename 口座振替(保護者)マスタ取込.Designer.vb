@@ -30,7 +30,6 @@
     Public dlgFileColor As System.Windows.Forms.ColorDialog
     Public dlgFilePrint As System.Windows.Forms.PrintDialog
     Public WithEvents dbcImport As BindingSource
-    Public WithEvents stbStatus As System.Windows.Forms.StatusStrip
     Public WithEvents lblSysDate As System.Windows.Forms.Label
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.
@@ -51,7 +50,6 @@
         Me.dlgFileColor = New System.Windows.Forms.ColorDialog()
         Me.dlgFilePrint = New System.Windows.Forms.PrintDialog()
         Me.dbcImport = New System.Windows.Forms.BindingSource(Me.components)
-        Me.stbStatus = New System.Windows.Forms.StatusStrip()
         Me.lblSysDate = New System.Windows.Forms.Label()
         Me.MainMenu1.SuspendLayout()
         CType(Me.dbcImport, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -62,33 +60,33 @@
         Me.MainMenu1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuHelp})
         Me.MainMenu1.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu1.Name = "MainMenu1"
-        Me.MainMenu1.Size = New System.Drawing.Size(730, 24)
+        Me.MainMenu1.Size = New System.Drawing.Size(376, 24)
         Me.MainMenu1.TabIndex = 16
         '
         'mnuFile
         '
         Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuEnd})
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(61, 20)
+        Me.mnuFile.Size = New System.Drawing.Size(57, 20)
         Me.mnuFile.Text = "Ãß≤Ÿ(&F)"
         '
         'mnuEnd
         '
         Me.mnuEnd.Name = "mnuEnd"
-        Me.mnuEnd.Size = New System.Drawing.Size(115, 22)
+        Me.mnuEnd.Size = New System.Drawing.Size(113, 22)
         Me.mnuEnd.Text = "èIóπ(&X)"
         '
         'mnuHelp
         '
         Me.mnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuVersion})
         Me.mnuHelp.Name = "mnuHelp"
-        Me.mnuHelp.Size = New System.Drawing.Size(64, 20)
+        Me.mnuHelp.Size = New System.Drawing.Size(60, 20)
         Me.mnuHelp.Text = "ÕŸÃﬂ(&H)"
         '
         'mnuVersion
         '
         Me.mnuVersion.Name = "mnuVersion"
-        Me.mnuVersion.Size = New System.Drawing.Size(165, 22)
+        Me.mnuVersion.Size = New System.Drawing.Size(156, 22)
         Me.mnuVersion.Text = " ﬁ∞ºﬁÆ›èÓïÒ(&A)"
         '
         'cmdImport
@@ -96,10 +94,10 @@
         Me.cmdImport.BackColor = System.Drawing.SystemColors.Control
         Me.cmdImport.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdImport.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdImport.Location = New System.Drawing.Point(32, 487)
+        Me.cmdImport.Location = New System.Drawing.Point(32, 181)
         Me.cmdImport.Name = "cmdImport"
         Me.cmdImport.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdImport.Size = New System.Drawing.Size(93, 31)
+        Me.cmdImport.Size = New System.Drawing.Size(93, 27)
         Me.cmdImport.TabIndex = 4
         Me.cmdImport.Text = "éÊçû(&I)"
         Me.cmdImport.UseVisualStyleBackColor = False
@@ -108,49 +106,44 @@
         '
         Me.cmdEnd.BackColor = System.Drawing.SystemColors.Control
         Me.cmdEnd.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cmdEnd.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.cmdEnd.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdEnd.Location = New System.Drawing.Point(624, 487)
+        Me.cmdEnd.Location = New System.Drawing.Point(264, 181)
         Me.cmdEnd.Name = "cmdEnd"
         Me.cmdEnd.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdEnd.Size = New System.Drawing.Size(89, 31)
+        Me.cmdEnd.Size = New System.Drawing.Size(89, 27)
         Me.cmdEnd.TabIndex = 0
         Me.cmdEnd.Text = "èIóπ(&X)"
         Me.cmdEnd.UseVisualStyleBackColor = False
-        '
-        'stbStatus
-        '
-        Me.stbStatus.Font = New System.Drawing.Font("MS PMincho", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
-        Me.stbStatus.Location = New System.Drawing.Point(0, 579)
-        Me.stbStatus.Name = "stbStatus"
-        Me.stbStatus.Size = New System.Drawing.Size(730, 22)
-        Me.stbStatus.TabIndex = 11
         '
         'lblSysDate
         '
         Me.lblSysDate.BackColor = System.Drawing.SystemColors.Control
         Me.lblSysDate.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblSysDate.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblSysDate.Location = New System.Drawing.Point(636, 26)
+        Me.lblSysDate.Location = New System.Drawing.Point(268, 22)
         Me.lblSysDate.Name = "lblSysDate"
         Me.lblSysDate.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblSysDate.Size = New System.Drawing.Size(85, 14)
+        Me.lblSysDate.Size = New System.Drawing.Size(85, 12)
         Me.lblSysDate.TabIndex = 9
         Me.lblSysDate.Text = "Label26"
         '
         'frmFurikaeReqImportAuto
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AcceptButton = Me.cmdEnd
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(730, 601)
+        Me.CancelButton = Me.cmdEnd
+        Me.ClientSize = New System.Drawing.Size(376, 247)
         Me.ControlBox = False
         Me.Controls.Add(Me.cmdImport)
         Me.Controls.Add(Me.cmdEnd)
-        Me.Controls.Add(Me.stbStatus)
         Me.Controls.Add(Me.lblSysDate)
         Me.Controls.Add(Me.MainMenu1)
         Me.Cursor = System.Windows.Forms.Cursors.Default
-        Me.Location = New System.Drawing.Point(163, 158)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+        Me.Location = New System.Drawing.Point(187, 122)
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "frmFurikaeReqImportAuto"
