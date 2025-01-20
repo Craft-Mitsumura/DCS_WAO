@@ -189,7 +189,7 @@ Public Class frmWKDT020B
 
         ' ＣＳＶファイル出力
         Dim fileName As String = "源泉徴収票_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
-        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
         msg.AppendLine("・" & filePath)
 
         ' 送付状に出力する行を抽出
@@ -236,7 +236,7 @@ Public Class frmWKDT020B
 
         ' ＣＳＶファイル出力
         Dim fileName3 As String = "送付状_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
-        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True)
+        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True, True)
         msg.AppendLine("・" & filePath3)
 
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
