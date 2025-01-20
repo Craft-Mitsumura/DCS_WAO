@@ -7,7 +7,7 @@ Imports System.IO
 Imports System.Text.RegularExpressions
 
 Public Class frmWKDR050B
-    Private Sub frmWDKR050B_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub frmWKDR050B_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         ' システム日付
         Dim sysDate As Date = Now

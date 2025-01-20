@@ -76,16 +76,21 @@ Public Class frmWKDR010B
             parser.TextFieldType = FieldType.FixedWidth
             While Not parser.EndOfData
                 cnt += 1
+                Dim rec As String = parser.ReadLine
+                Dim reckbn As String = rec.Substring(0, 1)
+
                 ' 固定長のフィールドの幅を指定
-                If 1 = cnt Then
+                If reckbn = "1" Then
                     ' 1行目（ヘッダーレコード）
-                    parser.SetFieldWidths(1, 8, 5, 5, 40, 61)
-                    Dim fields As String() = parser.ReadFields()
+                    'parser.SetFieldWidths(1, 8, 5, 5, 40, 61)
+                    'Dim fields As String() = parser.ReadFields()
+                    Dim fields As String() = GetFieldString(rec, 1, 8, 5, 5, 40, 61)
                     tableHeader.Add((fields(0), fields(1), fields(2), fields(3), fields(4), fields(5)))
-                ElseIf cnt <= (lastCnt - 3) Then
+                ElseIf reckbn = "2" Then
                     ' 2行目以降（明細レコード）
-                    parser.SetFieldWidths(1, 2, 8, 4, 2, 1, 5, 5, 16, 1, 6, 1, 6, 1, 3, 7, 8, 8, 8, 8, 4, 15)
-                    Dim fields As String() = parser.ReadFields()
+                    'parser.SetFieldWidths(1, 2, 8, 4, 2, 1, 5, 5, 16, 1, 6, 1, 6, 1, 3, 7, 8, 8, 8, 8, 4, 15)
+                    'Dim fields As String() = parser.ReadFields()
+                    Dim fields As String() = GetFieldString(rec, 1, 2, 8, 4, 2, 1, 5, 5, 16, 1, 6, 1, 6, 1, 3, 7, 8, 8, 8, 8, 4, 15)
                     Dim entity As New TConveniFurikomiKakuhoEntity
                     entity.dtnengetu = sysDate.ToString("yyyy") + sysDate.AddMonths(-1).ToString("MM")
                     entity.itakuno = If(tableHeader(0).KGYCD = "00404", "33948", tableHeader(0).KGYCD)

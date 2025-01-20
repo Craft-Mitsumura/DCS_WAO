@@ -11,7 +11,7 @@ Public Class WKDC010BDBAccess
         Dim sql As New StringBuilder()
         sql.AppendLine("insert ")
         sql.AppendLine("into t_kakutei( ")
-        sql.AppendLine("    dtnengetu") ' データ年月
+        sql.AppendLine("      dtnengetu") ' データ年月
         sql.AppendLine("    , itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("    , ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("    , seitono") ' 顧客番号（生徒Ｎｏ）
@@ -45,11 +45,16 @@ Public Class WKDC010BDBAccess
         sql.AppendLine("    , crt_user_pg_id") ' 登録プログラムID
         sql.AppendLine(") ")
         sql.AppendLine("values ( ")
-        sql.AppendLine("    @dtnengetu")
+        sql.AppendLine("      @dtnengetu")
         sql.AppendLine("    , @itakuno")
         sql.AppendLine("    , @ownerno")
         sql.AppendLine("    , @seitono")
-        sql.AppendLine("    , @kseqno")
+        sql.AppendLine("    , coalesce(cast((select max(cast(kseqno as numeric)) + 1 from t_kakutei")
+        sql.AppendLine("                    where dtnengetu = @dtnengetu")
+        sql.AppendLine("                    and   itakuno = @itakuno")
+        sql.AppendLine("                    and   ownerno = @ownerno")
+        sql.AppendLine("                    and   seitono = @seitono")
+        sql.AppendLine("      ) as character varying), @kseqno)")
         sql.AppendLine("    , @syokbn")
         sql.AppendLine("    , @skingaku")
         sql.AppendLine("    , @nyukaikin")

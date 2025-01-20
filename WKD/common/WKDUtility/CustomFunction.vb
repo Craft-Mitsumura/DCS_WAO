@@ -162,12 +162,36 @@ Public Class CustomFunction
     Public Shared Function CnvDec(ByVal value As Object) As Decimal
         If Not Convert.IsDBNull(value) AndAlso IsNumeric(value) Then
             If TypeOf value Is String Then
+                value = StrConv(value, VbStrConv.Narrow)
                 Return Decimal.Parse(value, Globalization.NumberStyles.Number)
             Else
                 Return Convert.ToDecimal(value)
             End If
         End If
         Return 0
+    End Function
+
+    ''' <summary>
+    ''' オブジェクトをDecimal型で返します。
+    ''' </summary>
+    ''' <param name="value">数値に変換するオブジェクト</param>
+    ''' <returns>変換が成功した数値</returns>
+    ''' <remarks>valueが数値ではない場合は-1を返して、NULLの場合は-2を返す。変換が失敗した場合は例外が発生します。</remarks>
+    Public Shared Function CnvDec2(ByVal value As Object) As Decimal
+        If Not Convert.IsDBNull(value) AndAlso IsNumeric(value) Then
+            If TypeOf value Is String Then
+                value = StrConv(value, VbStrConv.Narrow)
+                Return Decimal.Parse(value, Globalization.NumberStyles.Number)
+            Else
+                Return Convert.ToDecimal(value)
+            End If
+        ElseIf Convert.IsDBNull(value) Then
+            Return -2
+        End If
+        If String.IsNullOrEmpty(value) Then
+            Return -2
+        End If
+        Return -1
     End Function
 
     ''' <summary>
@@ -291,6 +315,28 @@ Public Class CustomFunction
 
     End Function
 
+    Public Shared Function GetFieldString(ByRef Str As String, ByVal ParamArray Prams() As Integer) As String()
+
+        Dim iPram As Integer
+        Dim iIndex As Integer = 0
+        Dim iStrP As Integer = 0
+        Dim strArray As String() = {""}
+        ' バイト配列に変換
+        Dim ByteArray As Byte() = Encoding.GetEncoding("Shift_JIS").GetBytes(Str)
+
+        For Each iPram In Prams
+            ' 文字列に変換して文字列の配列に格納
+            strArray(iStrP) = Encoding.GetEncoding("Shift_JIS").GetString(ByteArray, iIndex, iPram)
+            iStrP = iStrP + 1
+            ReDim Preserve strArray(iStrP)
+            iIndex = iIndex + iPram
+        Next
+
+        ' 余分な配列を除く
+        ReDim Preserve strArray(iStrP - 1)
+        Return strArray
+
+    End Function
 #End Region
 
 #Region "ファイル入出力"

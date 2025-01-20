@@ -67,29 +67,26 @@ Public Class frmWKDC010B
 
         ' TextFieldParserを使って固定長のファイルを読み込む（Shift-JIS指定）
         Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("Shift_JIS"))
-            parser.TextFieldType = FieldType.FixedWidth
+            parser.TextFieldType = FieldType.Delimited
             While Not parser.EndOfData
                 cnt += 1
                 ' 固定長のフィールドの幅を指定
                 If 1 = cnt Then
                     ' 1行目（ヘッダーレコード）
-                    parser.SetFieldWidths(5, 7, 8, 6, 69, 120, 8, 60)
-                    Dim fields As String() = parser.ReadFields()
+                    Dim fields As String() = GetFieldString(parser.ReadLine, 5, 7, 8, 6, 69, 240, 8, 120)
                     dtnengetu = fields(3) ' データ年月
                 ElseIf lastCnt = cnt Then
                     ' 最終行目（合計レコード）
-                    parser.SetFieldWidths(5, 7, 8, 1, 11, 11, 11, 11, 11, 11, 8, 120, 8, 60)
-                    Dim fields As String() = parser.ReadFields()
-                    skingakuSum = CnvDec(fields(4)) ' 金額
-                    nyukaikinSum = CnvDec(fields(5)) ' 入会金
-                    jugyoryoSum = CnvDec(fields(6)) ' 授業料
-                    skanhiSum = CnvDec(fields(7)) ' 施設関連諸費
-                    texthiSum = CnvDec(fields(8)) ' テキスト費
-                    testhiSum = CnvDec(fields(9)) ' テスト費
+                    Dim fields As String() = GetFieldString(parser.ReadLine, 5, 7, 8, 1, 11, 11, 11, 11, 11, 11, 8, 240, 8, 120)
+                    skingakuSum = CnvDec2(fields(4)) ' 金額
+                    nyukaikinSum = CnvDec2(fields(5)) ' 入会金
+                    jugyoryoSum = CnvDec2(fields(6)) ' 授業料
+                    skanhiSum = CnvDec2(fields(7)) ' 施設関連諸費
+                    texthiSum = CnvDec2(fields(8)) ' テキスト費
+                    testhiSum = CnvDec2(fields(9)) ' テスト費
                 Else
                     ' 2行目以降（明細レコード）
-                    parser.SetFieldWidths(5, 7, 8, 1, 11, 11, 11, 11, 11, 11, 8, 40, 40, 20, 20, 8, 20, 20, 20)
-                    Dim fields As String() = parser.ReadFields()
+                    Dim fields As String() = GetFieldString(parser.ReadLine, 5, 7, 8, 1, 11, 11, 11, 11, 11, 11, 8, 80, 80, 40, 40, 8, 40, 40, 40)
                     Dim entity As New TKakuteiEntity
                     entity.dtnengetu = dtnengetu ' データ年月
                     entity.itakuno = fields(0) ' 顧客番号（委託者Ｎｏ）
@@ -97,17 +94,17 @@ Public Class frmWKDC010B
                     entity.seitono = fields(2) ' 顧客番号（生徒Ｎｏ）
                     entity.kseqno = "1" ' 顧客番号内ＳＥＱ番号
                     entity.syokbn = fields(3) ' 処理区分
-                    entity.skingaku = CnvDec(fields(4)) ' 金額
-                    entity.nyukaikin = CnvDec(fields(5)) ' 入会金
-                    entity.jugyoryo = CnvDec(fields(6)) ' 授業料
-                    entity.skanhi = CnvDec(fields(7)) ' 施設関連諸費
-                    entity.texthi = CnvDec(fields(8)) ' テキスト費
-                    entity.testhi = CnvDec(fields(9)) ' テスト費
+                    entity.skingaku = CnvDec2(fields(4)) ' 金額
+                    entity.nyukaikin = CnvDec2(fields(5)) ' 入会金
+                    entity.jugyoryo = CnvDec2(fields(6)) ' 授業料
+                    entity.skanhi = CnvDec2(fields(7)) ' 施設関連諸費
+                    entity.texthi = CnvDec2(fields(8)) ' テキスト費
+                    entity.testhi = CnvDec2(fields(9)) ' テスト費
                     entity.yubin = fields(10) ' 郵便番号
-                    entity.jusyo1_1 = fields(11).Substring(0, 20) ' 住所１－１（漢字）
-                    entity.jusyo1_2 = fields(11).Substring(20, 20) ' 住所１－２（漢字）
-                    entity.jusyo2_1 = fields(12).Substring(0, 20) ' 住所２－１（漢字）
-                    entity.jusyo2_2 = fields(12).Substring(20, 20) ' 住所２－２（漢字）
+                    entity.jusyo1_1 = GetMidByte(fields(11), 1, 40) ' 住所１－１（漢字）
+                    entity.jusyo1_2 = GetMidByte(fields(11), 41, 40) ' 住所１－２（漢字）
+                    entity.jusyo2_1 = GetMidByte(fields(12), 1, 40) ' 住所２－１（漢字）
+                    entity.jusyo2_2 = GetMidByte(fields(12), 41, 40) ' 住所２－２（漢字）
                     entity.hogosnm = fields(13) ' 保護者名（漢字）
                     entity.seitonm = fields(14) ' 生徒名（漢字）
                     entity.fkbankcd = "" ' 振替銀行コード
@@ -128,9 +125,26 @@ Public Class frmWKDC010B
             End While
         End Using
 
+        '明細が0件の場合処理終了
+        If entityList.Count = 0 Then
+            MessageBox.Show("取込対象データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
         Dim errorList As New List(Of String)
         Dim errorRecords As New List(Of String)
         Dim row As Integer = 2
+
+        '① ヘッダーレコードのデータ年月の半角チェック
+        If (IsHalfWidthForHeader(dtnengetu) <> "") Then
+            errorRecords.Add(IsHalfWidthForHeader(dtnengetu))
+        End If
+
+        '④ 該当項目について　で判断されたヘッダーレコードのデータ年月＝システム日付の年月でない場合はエラーとする。
+        If dtnengetu <> Now.ToString("yyyyMM") Then
+            errorRecords.Add(1 & "," & "データ年月" & "," & "データ年月が一致しません。")
+        End If
+
         Dim skingakuSumAll As Decimal = entityList _
                                         .Where(Function(entity) entity.skingaku.HasValue) _
                                         .Sum(Function(entity) entity.skingaku.Value)
@@ -174,6 +188,7 @@ Public Class frmWKDC010B
                 Next
             End Using
 
+            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -206,25 +221,30 @@ Public Class frmWKDC010B
         For Each propertiesInput As propertiesInput In propertiesList
 
             '① 項目データの半角チェック
-            If {"データ年月", "顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号（生徒Ｎｏ）", "顧客番号内ＳＥＱ番号", "処理区分",
-                "金額", "入会金", "授業料", "施設関連諸費", "テキスト費", "テスト費", "郵便番号", "差出人郵便番号"}.Contains(propertiesInput.name) Then
+            'If {"データ年月", "顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号（生徒Ｎｏ）", "顧客番号内ＳＥＱ番号", "処理区分",
+            '"金額", "入会金", "授業料", "施設関連諸費", "テキスト費", "テスト費", "郵便番号", "差出人郵便番号"}.Contains(propertiesInput.name) Then
+            If {"顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号（生徒Ｎｏ）", "顧客番号内ＳＥＱ番号", "処理区分",
+                 "郵便番号", "差出人郵便番号"}.Contains(propertiesInput.name) Then
                 If (IsHalfWidth(propertiesInput, row) <> "") Then
                     errors.Add(IsHalfWidth(propertiesInput, row))
                 End If
             End If
 
-            '② 項目データの全角チェック
-            If {"住所２－１（漢字）", "住所２－２（漢字）", "保護者名（漢字）", "生徒名（漢字）", "差出人住所１（漢字）", "差出人住所２（漢字）", "差出人名（漢字）"}.Contains(propertiesInput.name) Then
-                If (IsFullWidth(propertiesInput, row) <> "") Then
-                    errors.Add(IsFullWidth(propertiesInput, row))
-                End If
-            End If
+            ''② 項目データの全角チェック
+            'If {"住所２－１（漢字）", "住所２－２（漢字）", "保護者名（漢字）", "生徒名（漢字）", "差出人住所１（漢字）", "差出人住所２（漢字）", "差出人名（漢字）"}.Contains(propertiesInput.name) Then
+            '    If (IsFullWidth(propertiesInput, row) <> "") Then
+            '        errors.Add(IsFullWidth(propertiesInput, row))
+            '    End If
+            'End If
 
             '③ 項目データの数字チェック
             If {"顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号（生徒Ｎｏ）", "顧客番号内ＳＥＱ番号",
-                "処理区分", "金額", "入会金", "授業料", "施設関連諸費", "テキスト費"}.Contains(propertiesInput.name) Then
-                If (IsNumericData(propertiesInput, row) <> "") Then
-                    errors.Add(IsNumericData(propertiesInput, row))
+                "処理区分", "金額", "入会金", "授業料", "施設関連諸費", "テキスト費", "テスト費"}.Contains(propertiesInput.name) Then
+                'If (IsNumericData(propertiesInput, row) <> "") Then
+                '    errors.Add(IsNumericData(propertiesInput, row))
+                'End If
+                If Not IsNumeric(propertiesInput.value) OrElse propertiesInput.value = -1 Then
+                    errors.Add(row.ToString() & "," & propertiesInput.name & "," & "文字列が含まれています。")
                 End If
             End If
 
@@ -235,18 +255,22 @@ Public Class frmWKDC010B
             End If
 
             '④ 該当項目について　で判断されたヘッダーレコードのデータ年月＝システム日付の年月でない場合はエラーとする。
-            If {"データ年月"}.Contains(propertiesInput.name) Then
-                If (ValidateDateMatch(propertiesInput, row) <> "") Then
-                    errors.Add(ValidateDateMatch(propertiesInput, row))
-                End If
-            End If
+            'If {"データ年月"}.Contains(propertiesInput.name) Then
+            '    If (ValidateDateMatch(propertiesInput, row) <> "") Then
+            '        errors.Add(ValidateDateMatch(propertiesInput, row))
+            '    End If
+            'End If
         Next
 
         Return errors
     End Function
 
-    Private Function ValidateDateMatch(input As propertiesInput, row As Integer) As String
-        Return If(DateTime.TryParseExact(input.value, "yyyyMM", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, Nothing), Nothing, row.ToString() & "," & input.name & "," & "データ年月が一致しません。")
+    'Private Function ValidateDateMatch(input As propertiesInput, row As Integer) As String
+    '    Return If(DateTime.TryParseExact(input.value, "yyyyMM", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, Nothing), Nothing, row.ToString() & "," & input.name & "," & "データ年月が一致しません。")
+    'End Function
+
+    Private Function ValidateDateMatchForHeader(input As String) As String
+        Return If(DateTime.TryParseExact(input, "yyyyMM", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, Nothing), Nothing, 1 & "," & "データ年月" & "," & "データ年月が一致しません。")
     End Function
 
     Private Function IsHalfWidth(input As propertiesInput, row As Integer) As String
@@ -256,6 +280,15 @@ Public Class frmWKDC010B
         End If
         Return result
     End Function
+
+    Private Function IsHalfWidthForHeader(input As String) As String
+        Dim result As String = ""
+        If Not input.All(Function(c) AscW(c) < 256) Then
+            result = 1 & "," & "データ年月" & "," & "全角データが含まれています。 "
+        End If
+        Return result
+    End Function
+
 
     Private Function IsFullWidth(input As propertiesInput, row As Integer) As String
         Dim result As String = ""
@@ -275,10 +308,10 @@ Public Class frmWKDC010B
     End Function
 
     Private Function IsNumericDataByFormat(input As propertiesInput, row As Integer) As String
-        Dim pattern As String = "^\d{3}-\d{4}$|^\d+$"
+        Dim pattern As String = "^\d{3}-\d{4}$"
         Dim result As String = ""
         If Not Regex.IsMatch(input.value, pattern) Then
-            result = row.ToString() & "," & input.name & "," & "文字列が含まれています。"
+            result = row.ToString() & "," & input.name & "," & "形式に誤りがあります。"
         End If
         Return result
     End Function

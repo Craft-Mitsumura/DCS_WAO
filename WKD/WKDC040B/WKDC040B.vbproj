@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DocumentationFile>WKDC040B.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DocumentationFile>WKDC040B.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
@@ -59,12 +59,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="WKDSetting">
-      <HintPath>..\bin\WKDSetting.dll</HintPath>
-    </Reference>
-    <Reference Include="WKDUtility">
-      <HintPath>..\bin\WKDUtility.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -129,6 +123,14 @@
     <ProjectReference Include="..\common\WKDDBAccess\WKDDBAccess.vbproj">
       <Project>{7e47a3a3-f384-499e-bf45-64fdf3f067bc}</Project>
       <Name>WKDDBAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\common\WKDSetting\WKDSetting.vbproj">
+      <Project>{7bdafc8a-0473-4535-8148-a8aaadfb3499}</Project>
+      <Name>WKDSetting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\common\WKDUtility\WKDUtility.vbproj">
+      <Project>{c50140a6-bb55-44b0-8bc4-03491b98da9c}</Project>
+      <Name>WKDUtility</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
