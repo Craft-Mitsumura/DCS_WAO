@@ -1,6 +1,7 @@
 Option Strict Off
 Option Explicit On
 Imports System.Linq
+Imports System.Text
 
 Friend Class frmBankDataImport
     Inherits System.Windows.Forms.Form
@@ -12,12 +13,18 @@ Friend Class frmBankDataImport
 
     'Check 1 byte    
     Private Function IsHalfWidth(input As String) As Boolean
-        Return input.All(Function(c) AscW(c) < 256)
+        Dim sjisEnc = Encoding.GetEncoding("Shift_JIS")
+        Dim num As Integer = sjisEnc.GetByteCount(input)
+        Return num = input.Length
+        'Return input.All(Function(c) AscW(c) < 256)
     End Function
 
     'Check 2 byte
     Private Function IsFullWidth(input As String) As Boolean
-        Return input.All(Function(c) AscW(c) >= 256)
+        Dim sjisEnc = Encoding.GetEncoding("Shift_JIS")
+        Dim num As Integer = sjisEnc.GetByteCount(input)
+        Return num = input.Length * 2
+        'Return input.All(Function(c) AscW(c) >= 256)
     End Function
 
     'Check Numeric
@@ -40,7 +47,7 @@ Friend Class frmBankDataImport
         ElseIf (input = "銀行名_カナ") Then
             length = 15
         ElseIf (input = "銀行名_漢字") Then
-            length = 40
+            length = 30
         End If
 
         If Not content.Length > length Then
@@ -99,17 +106,17 @@ Friend Class frmBankDataImport
 
         contentarray = file.ReadCSVFileToArray(dlgFileOpen.FileName)
 
-        If (contentarray.GetLength(1) <> 11) Then
-            Call gdDBS.AppMsgBox("指定されたファイル(" & dlgFileOpen.FileName & ")が異常です。" & vbCrLf & vbCrLf & "項目が不足しています。 ", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
-            Exit Sub
-        End If
+        'If (contentarray.GetLength(1) <> 11) Then
+        '    Call gdDBS.AppMsgBox("指定されたファイル(" & dlgFileOpen.FileName & ")が異常です。" & vbCrLf & vbCrLf & "項目が不足しています。 ", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, mCaption)
+        '    Exit Sub
+        'End If
 
         'Check Validation
         Dim tmpTitle As String = ""
         For x = 0 To contentarray.GetLength(0) - 1
-            If (contentarray(x, 0) = Nothing) Then
-                Continue For
-            End If
+            'If (contentarray(x, 0) = Nothing) Then
+            '    Continue For
+            'End If
 
             ''Check 銀行コード
             'pCheck(Split(contentarray(x, 6), "-")(1), "銀行コード", x, {1, 2, 4, 5}, tmpTitle)
@@ -127,7 +134,7 @@ Friend Class frmBankDataImport
             pCheck(contentarray(x, 1), "支店コード", x, {1, 2, 4, 5}, tmpTitle)
 
             'Check 銀行名_カナ
-            pCheck(contentarray(x, 2), "銀行名_カナ", x, {1, 5}, tmpTitle)
+            pCheck(contentarray(x, 2), "銀行名_カナ", x, {1, 2, 5}, tmpTitle)
 
             'Check 銀行名_漢字
             pCheck(contentarray(x, 3), "銀行名_漢字", x, {1, 5}, tmpTitle)
@@ -149,38 +156,42 @@ Friend Class frmBankDataImport
     End Sub
 
     Private Sub pCheck(content As String, title As String, index_row As Integer, arrCheck As String(), Optional ByRef tmp As String = "")
+
+        Dim i As Integer = index_row + 1
+
+        '⑤必須項目データのNULLチェック
+        If (arrCheck.Contains("5")) Then
+            If (content Is Nothing OrElse content.Trim = "") Then
+                tmp = tmp & i & "," & title & ",必須項目にNULLが含まれています。 " & vbLf
+                Return
+            End If
+        End If
+
         '①項目データの桁数チェック
         If (arrCheck.Contains("1")) Then
             If (Not IsLengthFormat(title, content)) Then
-                tmp = tmp & index_row & "," & title & ",桁数データが含まれています。" & vbLf
+                tmp = tmp & i & "," & title & ",桁数が一致しません。" & vbLf
             End If
         End If
 
         '②項目データの半角チェック
         If (arrCheck.Contains("2")) Then
             If (Not IsHalfWidth(content)) Then
-                tmp = tmp & index_row & "," & title & ",半角項目に全角文字が含まれます。" & vbLf
+                tmp = tmp & i & "," & title & ",半角項目に全角文字が含まれます。" & vbLf
             End If
         End If
 
         '③項目データの全角チェック
         If (arrCheck.Contains("3")) Then
             If (Not IsFullWidth(content)) Then
-                tmp = tmp & index_row & "," & title & ",全角項目に半角文字が含まれます。 " & vbLf
+                tmp = tmp & i & "," & title & ",全角項目に半角文字が含まれます。 " & vbLf
             End If
         End If
 
         '④項目データの数字チェック
         If (arrCheck.Contains("4")) Then
-            If (Not IsNumericData(content)) Then
-                tmp = tmp & index_row & "," & title & ",桁数が一致しません。" & vbLf
-            End If
-        End If
-
-        '⑤必須項目データのNULLチェック
-        If (arrCheck.Contains("5")) Then
-            If (content.Trim = "NULL") Then
-                tmp = tmp & index_row & "," & title & ",必須項目にNULLが含まれています。 " & vbLf
+            If Not IsNumeric(content) Then
+                tmp = tmp & i & "," & title & ",数字項目に数字以外の文字が含まれています。" & vbLf
             End If
         End If
 
