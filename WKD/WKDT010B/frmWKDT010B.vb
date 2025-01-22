@@ -187,12 +187,15 @@ Public Class frmWKDT010B
 
         ' 送付状に出力する行を抽出
         Dim query3 = From row In dt.AsEnumerable()
+                     Let Category = GetCategory(row.Field(Of String)("chohyoshurui"))
                      Group row By Ownerno = row.Field(Of String)("nys_ownerno"),
                                   Postno = row.Field(Of String)("postno"),
                                   Addr = row.Field(Of String)("addr"),
                                   Name = row.Field(Of String)("name"),
                                   Shurui = row.Field(Of String)("chohyoshurui"),
+                                  Category = Category,
                                   Count = row.Field(Of Int64)("cnt") Into Grouped = Group
+                     Order By Ownerno, Category
                      Select New With {
                     .Ownerno = Ownerno,
                     .Postno = Postno,
@@ -235,6 +238,19 @@ Public Class frmWKDT010B
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
+
+    Private Function GetCategory(shurui As String) As String
+        Select Case shurui
+            Case "受給者交付用"
+                Return "1"
+            Case "保存用"
+                Return "2"
+            Case "税務署提出用"
+                Return "3"
+            Case "給与支払報告書"
+                Return "4"
+        End Select
+    End Function
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
         Me.Close()
