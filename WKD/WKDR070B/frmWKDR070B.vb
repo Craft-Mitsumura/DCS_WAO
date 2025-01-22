@@ -2,6 +2,7 @@
 Imports Com.Wao.KDS.CustomFunction
 Imports System.Text
 Imports System.Windows.Forms
+Imports System.Security.Cryptography
 
 Public Class frmWKDR070B
 
@@ -9,9 +10,19 @@ Public Class frmWKDR070B
 
         ' システム日付
         Dim sysDate As Date = Now
+        Dim dt As DataTable = Nothing
+        Dim dba As New WKDR070BDBAccess
 
         lblSysDate.Text = sysDate.ToString("yyyy/MM/dd")
         lblSysDate.AutoSize = True
+
+        Dim ngn As String = sysDate.ToString("yyyyMM") & txtNyukinbi.Text
+
+        '翌日取得
+        dt = dba.GetDayPushBack(ngn)
+        If dt.Rows.Count > 0 Then
+            txtNyukinbi.Text = dt.Rows(0)(0).ToString.Substring(6, 2)
+        End If
 
     End Sub
 
