@@ -2,7 +2,6 @@
 Imports Com.Wao.KDS.CustomFunction
 Imports System.Text
 Imports System.Windows.Forms
-Imports System.Windows
 Imports System.IO
 Imports System.Text.RegularExpressions
 
