@@ -15,7 +15,7 @@ Public Class frmWKDC040B
         lblSysDate.AutoSize = True
 
         ' 処理年月
-        txtShoriNengetsu.Text = sysDate.ToString("yyyyMM")
+        txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
         txtShoriNengetsu.Enabled = True
 
     End Sub
@@ -26,7 +26,7 @@ Public Class frmWKDC040B
         Dim tConveniFurikomiList As New DataTable
         Dim recordListCsv As New DataTable
 
-        Dim dtnengetu As String = txtShoriNengetsu.Text
+        Dim dtnengetu As String = txtShoriNengetsu.Text.Replace("/", "")
 
         ' システム日付
         Dim sysDate As Date = Now
