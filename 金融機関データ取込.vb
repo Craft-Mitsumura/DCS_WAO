@@ -112,22 +112,17 @@ Friend Class frmBankDataImport
             'Check Validation
             Dim tmpTitle As String = ""
             For x = 0 To contentarray.GetLength(0) - 1
-                If (contentarray(x, 0) = Nothing) Then
-                    Continue For
-                End If
-
                 'Check 銀行コード
-                pCheck(contentarray(x, 0), "銀行コード", x + 1, {1, 2, 4, 5}, tmpTitle)
+                pCheck(contentarray(x, 0), "銀行コード", x, {1, 2, 4, 5}, tmpTitle)
 
                 'Check 支店コード
-                pCheck(contentarray(x, 1), "支店コード", x + 1, {1, 2, 4, 5}, tmpTitle)
+                pCheck(contentarray(x, 1), "支店コード", x, {1, 2, 4, 5}, tmpTitle)
 
                 'Check 銀行名_カナ
-                pCheck(contentarray(x, 2), "銀行名_カナ", x + 1, {1, 2, 5}, tmpTitle)
+                pCheck(contentarray(x, 2), "銀行名_カナ", x, {1, 2, 5}, tmpTitle)
 
                 'Check 銀行名_漢字
-                pCheck(contentarray(x, 3), "銀行名_漢字", x + 1, {1, 5}, tmpTitle)
-
+                pCheck(contentarray(x, 3), "銀行名_漢字", x, {1, 5}, tmpTitle)
             Next
 
             If (tmpTitle.Trim() <> "") Then
@@ -208,6 +203,7 @@ Friend Class frmBankDataImport
                 End If
 
                 Dim x As Integer
+                Dim cnt As Integer = 0
                 Dim dt As DataTable
 
                 For Each arrContent As String(,) In arrContentList
@@ -231,12 +227,13 @@ Friend Class frmBankDataImport
                                 Throw New Exception
                             End If
                         End If
+                        cnt += 1
                     Next
 
                 Next
 
                 transaction.Commit()
-                Call MsgBox("取込完了(" & x & "件)", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, mCaption)
+                Call MsgBox("取込完了(" & cnt & "件)", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, mCaption)
 
                 '//コマンド・ボタン制御
                 Call pLockedControl(True)
