@@ -17,7 +17,6 @@ Friend Class frmBankDataImport
         Dim sjisEnc = Encoding.GetEncoding("Shift_JIS")
         Dim num As Integer = sjisEnc.GetByteCount(input)
         Return num = input.Length
-        'Return input.All(Function(c) AscW(c) < 256)
     End Function
 
     'Check 2 byte
@@ -25,7 +24,6 @@ Friend Class frmBankDataImport
         Dim sjisEnc = Encoding.GetEncoding("Shift_JIS")
         Dim num As Integer = sjisEnc.GetByteCount(input)
         Return num = input.Length * 2
-        'Return input.All(Function(c) AscW(c) >= 256)
     End Function
 
     'Check Numeric
@@ -151,38 +149,42 @@ Friend Class frmBankDataImport
     End Sub
 
     Private Sub pCheck(content As String, title As String, index_row As Integer, arrCheck As String(), Optional ByRef tmp As String = "")
+
+        Dim i As Integer = index_row + 1
+
+        '⑤必須項目データのNULLチェック
+        If (arrCheck.Contains("5")) Then
+            If (content Is Nothing OrElse content.Trim = "") Then
+                tmp = tmp & i & "," & title & ",必須項目にNULLが含まれています。 " & vbLf
+                Return
+            End If
+        End If
+
         '①項目データの桁数チェック
         If (arrCheck.Contains("1")) Then
             If (Not IsLengthFormat(title, content)) Then
-                tmp = tmp & index_row & "," & title & ",桁数が一致しません。" & vbLf
+                tmp = tmp & i & "," & title & ",桁数が一致しません。" & vbLf
             End If
         End If
 
         '②項目データの半角チェック
         If (arrCheck.Contains("2")) Then
             If (Not IsHalfWidth(content)) Then
-                tmp = tmp & index_row & "," & title & ",半角項目に全角文字が含まれます。" & vbLf
+                tmp = tmp & i & "," & title & ",半角項目に全角文字が含まれます。" & vbLf
             End If
         End If
 
         '③項目データの全角チェック
         If (arrCheck.Contains("3")) Then
             If (Not IsFullWidth(content)) Then
-                tmp = tmp & index_row & "," & title & ",全角項目に半角文字が含まれます。 " & vbLf
+                tmp = tmp & i & "," & title & ",全角項目に半角文字が含まれます。 " & vbLf
             End If
         End If
 
         '④項目データの数字チェック
         If (arrCheck.Contains("4")) Then
-            If (Not IsNumericData(content)) Then
-                tmp = tmp & index_row & "," & title & ",数字項目に数字以外の文字が含まれています。" & vbLf
-            End If
-        End If
-
-        '⑤必須項目データのNULLチェック
-        If (arrCheck.Contains("5")) Then
-            If (content Is Nothing OrElse content.Trim = "") Then
-                tmp = tmp & index_row & "," & title & ",必須項目にNULLが含まれています。 " & vbLf
+            If Not IsNumeric(content) Then
+                tmp = tmp & i & "," & title & ",数字項目に数字以外の文字が含まれています。" & vbLf
             End If
         End If
 
@@ -217,8 +219,6 @@ Friend Class frmBankDataImport
 
                         sql = "SELECT b.* "
                         sql = sql & " FROM tdBankMaster b "
-                        'sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(Split(arrContent(x, 6), "-")(1), vEnd:=True)
-                        'sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(Split(arrContent(x, 6), "-")(0), vEnd:=True)
                         sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(arrContent(x, 0), vEnd:=True)
                         sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(x, 1), vEnd:=True)
                         dt = gdDBS.ExecuteDataTable(cmd, sql)
@@ -236,7 +236,6 @@ Friend Class frmBankDataImport
                 Next
 
                 transaction.Commit()
-                'Call MsgBox("Finish!", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, mCaption)
                 Call MsgBox("取込完了(" & x & "件)", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, mCaption)
 
                 '//コマンド・ボタン制御
@@ -270,7 +269,7 @@ Friend Class frmBankDataImport
         folderName = System.IO.Path.GetDirectoryName(mPathSaveFolder)
         fileName = System.IO.Path.GetFileName(mPathSaveFolder)
         pathName = folderName & "\" & fileName.Substring(0, fileName.Length - 4) & "_エラーリスト.csv"
-        reg.OutputFileName(mCaption) = pathName 'dlgFileSave.FileName
+        reg.OutputFileName(mCaption) = pathName
 
         '//取り敢えずテンポラリに書く
         Dim fp As Short
@@ -299,13 +298,9 @@ Friend Class frmBankDataImport
         sql = sql & "DAUPDT" & vbCrLf  '//更新日					
         sql = sql & ") VALUES ( " & vbCrLf
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 10), vEnd:=True) & "," & vbCrLf '//金融機関区分			
-        'sql = sql & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(1), vEnd:=True) & "," & vbCrLf '//銀行コード					
-        'sql = sql & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & "," & vbCrLf '//支店コード	
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & "," & vbCrLf '//銀行コード					
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & "," & vbCrLf '//支店コード
         sql = sql & "'' ," & vbCrLf                                                 '//SEQ-CODE					
-        'sql = sql & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf '//銀行名_カナ					
-        'sql = sql & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf '//銀行名_漢字
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & "," & vbCrLf '//銀行名_カナ					
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 3), vEnd:=True) & "," & vbCrLf '//銀行名_漢字
         sql = sql & "  NULL," & vbCrLf                                                 '//廃店情報					
@@ -321,14 +316,9 @@ Friend Class frmBankDataImport
         Dim result As Integer
 
         sql = "UPDATE tdBankMaster SET " & vbCrLf
-        'sql = sql & " DAKNNM = " & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf
-        'sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf
         sql = sql & " DAKNNM = " & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & "," & vbCrLf
         sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 3), vEnd:=True) & "," & vbCrLf
         sql = sql & " DAUPDT = current_timestamp" & vbCrLf
-        'sql = sql & " WHERE DARKBN = " & gdDBS.ColumnDataSet(arrContent(row, 10), vEnd:=True) & vbCrLf
-        'sql = sql & "   AND DABANK = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(1), vEnd:=True) & vbCrLf
-        'sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(Split(arrContent(row, 6), "-")(0), vEnd:=True) & vbCrLf
         sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & vbCrLf
         sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & vbCrLf
 
