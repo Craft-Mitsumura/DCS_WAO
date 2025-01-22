@@ -90,7 +90,7 @@ Public Class WKDR010BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("delete from t_conveni_furikomi_kakuho where dtnengetu = @dtnengetu")
+        sql.AppendLine("delete from t_conveni_furikomi_kakuho where dtnengetu >= @dtnengetu")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)
