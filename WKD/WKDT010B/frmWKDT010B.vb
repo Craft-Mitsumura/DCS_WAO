@@ -161,7 +161,7 @@ Public Class frmWKDT010B
 
         ' ＣＳＶファイル出力
         Dim fileName1 As String = "源泉徴収票_" & txtShoriNendo.Text & ".csv"
-        Dim filePath1 As String = WriteCsvData(dt1, SettingManager.GetInstance.OutputDirectory, fileName1,,, True)
+        Dim filePath1 As String = WriteCsvData(dt1, SettingManager.GetInstance.OutputDirectory, fileName1,,, True, True)
         msg.AppendLine("・" & filePath1)
 
         ' 給与支払報告書に出力する行を抽出
@@ -182,7 +182,7 @@ Public Class frmWKDT010B
 
         ' ＣＳＶファイル出力
         Dim fileName2 As String = "給与支払報告書_" & txtShoriNendo.Text & ".csv"
-        Dim filePath2 As String = WriteCsvData(dt2, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
+        Dim filePath2 As String = WriteCsvData(dt2, SettingManager.GetInstance.OutputDirectory, fileName2,,, True, True)
         msg.AppendLine("・" & filePath2)
 
         ' 送付状に出力する行を抽出
@@ -229,7 +229,7 @@ Public Class frmWKDT010B
 
         ' ＣＳＶファイル出力
         Dim fileName3 As String = "送付状_" & txtShoriNendo.Text & ".csv"
-        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True)
+        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True, True)
         msg.AppendLine("・" & filePath3)
 
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)

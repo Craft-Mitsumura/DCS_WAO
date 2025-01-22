@@ -397,7 +397,7 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , '' funocd")
         sql.AppendLine("  , '' syuunou")
         sql.AppendLine("  , '' h_hkdate")
-        sql.AppendLine("  , fkinzem fkkin")
+        sql.AppendLine("  , fkinzeg fkkin")
         sql.AppendLine("  , zeigak tesur")
         sql.AppendLine("  , '' bankcd")
         sql.AppendLine("  , '' banmnm")

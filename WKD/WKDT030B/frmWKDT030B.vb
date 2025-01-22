@@ -166,7 +166,7 @@ Public Class frmWKDT030B
 
         ' 解約先分源泉徴収票に出力する行を抽出
         Dim query1 = From row In dt.AsEnumerable()
-                     Where Not row.Field(Of String)("chohyoshurui") = "解約先分給与支払報告書"
+                     Where Not row.Field(Of String)("chohyoshurui") = "給与支払報告書"
                      Select row
 
         ' 結果を新しいDataTableに格納
@@ -180,12 +180,12 @@ Public Class frmWKDT030B
 
         ' ＣＳＶファイル出力
         Dim fileName As String = "解約先分源泉徴収票.csv"
-        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
         MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         ' 解約先分給与支払報告書に出力する行を抽出
         Dim query2 = From row In dt.AsEnumerable()
-                     Where row.Field(Of String)("chohyoshurui") = "解約先分給与支払報告書"
+                     Where row.Field(Of String)("chohyoshurui") = "給与支払報告書"
                      Select row
 
         ' 結果を新しいDataTableに格納
@@ -200,7 +200,7 @@ Public Class frmWKDT030B
         dt2.Columns.Remove("chohyoshurui") ' 帳票種類
 
         Dim fileName2 As String = "解約先分給与支払報告書.csv"
-        Dim filePath2 As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
+        Dim filePath2 As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName2,,, True, True)
         msg.AppendLine("「" & filePath2 & "」が出力されました。")
 
         ' 解約先分送付状に出力する行を抽出
@@ -232,7 +232,7 @@ Public Class frmWKDT030B
         Dim shiryonm As String = String.Empty
 
         For Each row In query3
-            If Not row.Shurui.Equals("解約先分給与支払報告書") Then
+            If Not row.Shurui.Equals("給与支払報告書") Then
                 shiryonm = String.Format("給与取得の源泉徴収票（{0}）", row.Shurui)
             Else
                 shiryonm = row.Shurui
@@ -247,7 +247,7 @@ Public Class frmWKDT030B
 
         ' ＣＳＶファイル出力
         Dim fileName3 As String = "解約先分送付状.csv"
-        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True)
+        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True, True)
         msg.AppendLine("・" & filePath3)
 
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)

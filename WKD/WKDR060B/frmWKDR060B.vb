@@ -47,10 +47,10 @@ Public Class frmWKDR060B
         Dim kozahurikomi As String = dtkozahurikomi.Rows(0)("Result").ToString()
 
         ' コンビニ収納締切日(前月の24日)
-        Dim konbinishuno As Date = New Date(prevMonthDate.Year, prevMonthDate.Month, 24) ' 前月の24日を設定
+        Dim konbinishuno24 As Date = New Date(prevMonthDate.Year, prevMonthDate.Month, 24) ' 前月の24日を設定
 
         '「yyyyMMdd」形式に変換
-        Dim konbinishunoStr As String = konbinishuno.ToString("yyyyMMdd")
+        Dim konbinishuno As String = konbinishuno24.ToString("yyyyMMdd")
 
         ' 可変項目データ編集後(オーナー別新規件数・金額データを結合)を取得
         Dim dtkahen As DataTable = Nothing ' 初期化

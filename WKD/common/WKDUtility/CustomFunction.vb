@@ -592,7 +592,7 @@ Public Class CustomFunction
     ''' <param name="tableNameOutput">DataTableのテーブル名を１行目に出力するかどうか。初期値:False（しない）</param>
     ''' <returns>CSVファイルパス</returns>
     ''' <remarks>フォルダが存在しない場合は作成してからCSVファイルを作成します。</remarks>
-    Public Shared Function WriteCsvData(ByVal dt As DataTable, ByVal fileDirectory As String, ByVal fileName As String, Optional ByVal topRowIsFieldName As Boolean = False, Optional ByVal tableNameOutput As Boolean = False, Optional ByVal doubleQuotation As Boolean = False, Optional ByVal fileMode As FileMode = FileMode.Create) As String
+    Public Shared Function WriteCsvData(ByVal dt As DataTable, ByVal fileDirectory As String, ByVal fileName As String, Optional ByVal topRowIsFieldName As Boolean = False, Optional ByVal tableNameOutput As Boolean = False, Optional ByVal doubleQuotation As Boolean = False, Optional ByVal GOutput As Boolean = False, Optional ByVal fileMode As FileMode = FileMode.Create) As String
 
         'フォルダ名は必ず\で終わる必要がある
         If Not fileDirectory.EndsWith("\") Then
@@ -605,7 +605,7 @@ Public Class CustomFunction
             Directory.CreateDirectory(fileDirectory)
         End If
 
-        Return WriteCsvData(dt, fileDirectory & fileName, topRowIsFieldName, tableNameOutput, doubleQuotation, fileMode)
+        Return WriteCsvData(dt, fileDirectory & fileName, topRowIsFieldName, tableNameOutput, doubleQuotation, GOutput, fileMode)
 
     End Function
 
@@ -618,12 +618,14 @@ Public Class CustomFunction
     ''' <param name="tableNameOutput">DataTableのテーブル名を１行目に出力するかどうか。初期値:False（しない）</param>
     ''' <returns>CSVファイルパス</returns>
     ''' <remarks></remarks>
-    Private Shared Function WriteCsvData(ByVal dt As DataTable, ByVal filePath As String, Optional ByVal topRowIsFieldName As Boolean = False, Optional ByVal tableNameOutput As Boolean = False, Optional ByVal doubleQuotation As Boolean = False, Optional ByVal fileMode As FileMode = FileMode.Create) As String
+    Private Shared Function WriteCsvData(ByVal dt As DataTable, ByVal filePath As String, Optional ByVal topRowIsFieldName As Boolean = False, Optional ByVal tableNameOutput As Boolean = False, Optional ByVal doubleQuotation As Boolean = False, Optional ByVal GOutput As Boolean = False, Optional ByVal fileMode As FileMode = FileMode.Create) As String
 
         'DataTableの内容が空の場合は何もしない
         If dt Is Nothing OrElse dt.Rows.Count = 0 Then Return String.Empty
 
         Dim oneLine As StringBuilder
+
+        Dim rowCount As Integer = 0
 
         'デリゲートの登録があることを確認
         If Not delegateRef Is Nothing Then
@@ -709,7 +711,14 @@ Public Class CustomFunction
                             'クライアントにコールバックします。
                             delegateRef.Invoke(progress)
                         End If
+
+                        rowCount += 1
                     Next
+
+                    If GOutput = True Then
+                        ' 最後の行に合計行数を出力
+                        sw.WriteLine(rowCount.ToString)
+                    End If
 
                 Catch ex As Exception
                     'デリゲートの登録があることを確認
