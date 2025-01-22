@@ -26,6 +26,11 @@ Public Class TConveniFurikomiKakuhoEntity
 	Public Property kseqno As String
 
 	''' <summary>
+	''' データ種別
+	''' </summary>
+	Public Property dtsybt As String
+
+	''' <summary>
 	''' CVS店舗収納年月日
 	''' </summary>
 	Public Property syndate As String
@@ -54,6 +59,11 @@ Public Class TConveniFurikomiKakuhoEntity
 	''' 収納企業コード
 	''' </summary>
 	Public Property kgycd As String
+
+	''' <summary>
+	''' 収納企業名（カナ）
+	''' </summary>
+	Public Property kgynmkn As String
 
 	''' <summary>
 	''' 再発行区分
