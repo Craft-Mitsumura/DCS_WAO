@@ -44,9 +44,9 @@ Public Class frmWKDR030B
         'Check FileName
         fileName = Path.GetFileName(filePath)
 
-        If (fileName = "GWAOKKD_可変項目データ.txt") Then
+        If (fileName = "hiyou_kakuninsho.txt") Then
             processtTkahenkomoku(filePath, inputDirectory, fileName)
-        ElseIf (fileName = "GWAOINS_インストラクターデータ.txt") Then
+        ElseIf (fileName = "KSSB0040.txt") Then
             processtTinstructorfurikomi(filePath, inputDirectory, fileName)
         Else
             MessageBox.Show("「" & filePath & "」wrong name !", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -81,19 +81,17 @@ Public Class frmWKDR030B
 
         ' TextFieldParserを使って固定長のファイルを読み込む（Shift-JIS指定）
         Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("Shift_JIS"))
-            parser.TextFieldType = FieldType.FixedWidth
+            parser.TextFieldType = FieldType.Delimited
             While Not parser.EndOfData
                 cnt += 1
                 ' 固定長のフィールドの幅を指定
                 If 1 = cnt Then
                     ' 1行目（ヘッダーレコード）
-                    parser.SetFieldWidths(20, 6)
-                    Dim fields As String() = parser.ReadFields()
+                    Dim fields As String() = GetFieldString(parser.ReadLine, 20, 6)
                     dtnengetu = fields(1) ' データ年月
                 Else
                     ' 2行目以降（明細レコード）
-                    parser.SetFieldWidths(5, 7, 8, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11)
-                    Dim fields As String() = parser.ReadFields()
+                    Dim fields As String() = GetFieldString(parser.ReadLine, 5, 7, 8, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11)
                     Dim entity As New TKahenkomokuEntity
                     entity.dtnengetu = dtnengetu ' データ年月
                     entity.itakuno = fields(0) ' 顧客番号（委託者Ｎｏ）
@@ -171,28 +169,27 @@ Public Class frmWKDR030B
         Dim cnt As Integer = 0
 
         ' TextFieldParserを使って固定長のファイルを読み込む（Shift-JIS指定）
-        Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("UTF-8"))
+        Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("Shift_JIS"))
             ' 最終行を取得
             lastCnt = Split(parser.ReadToEnd, vbCrLf).Length - 1
         End Using
 
         ' TextFieldParserを使って固定長のファイルを読み込む（Shift-JIS指定）
-        Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("UTF-8"))
-            parser.TextFieldType = FieldType.FixedWidth
+        Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("Shift_JIS"))
+            parser.TextFieldType = FieldType.Delimited
             While Not parser.EndOfData
                 cnt += 1
                 ' 固定長のフィールドの幅を指定
                 If 1 = cnt Then
                     ' 1行目（ヘッダーレコード）
-                    parser.SetFieldWidths(20, 6)
-                    Dim fields As String() = parser.ReadFields()
+                    Dim fields As String() = GetFieldString(parser.ReadLine, 20, 6)
                     dtnengetu = fields(1) ' データ年月
                 ElseIf lastCnt = cnt Then
-                    '
+                    '　最終行目（合計レコード）
+                    Dim fields As String() = GetFieldString(parser.ReadLine, 5, 7, 8, 11, 47)
                 Else
                     ' 2行目以降（明細レコード）
-                    parser.SetFieldWidths(5, 7, 8, 11, 4, 3, 1, 7, 30, 8, 40, 30, 4, 2, 2, 4, 2, 2, 4, 2, 2, 40, 30)
-                    Dim fields As String() = parser.ReadFields()
+                    Dim fields As String() = GetFieldString(parser.ReadLine, 5, 7, 8, 11, 4, 3, 1, 7, 30, 8, 80, 40, 30, 4, 2, 2, 4, 2, 2, 4, 2, 2, 100, 80)
                     Dim entity As New TInstructorFurikomiEntity
                     entity.dtnengetu = dtnengetu ' データ年月
                     entity.itakuno = fields(0) ' 顧客番号（委託者Ｎｏ）
@@ -205,19 +202,19 @@ Public Class frmWKDR030B
                     entity.kozono = fields(7) ' 口座番号
                     entity.meigkn = fields(8) ' 預金者名義（カナ）
                     entity.yubin = fields(9) ' 郵便番号
-                    entity.namekj = fields(10) ' 氏名（漢字）
-                    entity.namekn = fields(11) ' 氏名（カナ）
-                    entity.seiyyyy = fields(12) '生年
-                    entity.seimm = fields(13) ' 生月
-                    entity.seidd = fields(14) ' 生日
-                    entity.nyunen = fields(15) ' 入社年
-                    entity.nyutuki = fields(16) ' 入社月
-                    entity.nyuhi = fields(17) ' 入社日
-                    entity.tainen = fields(18) ' 退職年
-                    entity.taituki = fields(19) ' 退職月
-                    entity.taihi = fields(20) ' 退職日
-                    entity.jusyo1 = fields(21) ' 住所１（漢字）
-                    entity.jusyo2 = fields(22) ' 住所２（漢字）
+                    entity.namekj = fields(11) ' 氏名（漢字）
+                    entity.namekn = fields(12) ' 氏名（カナ）
+                    entity.seiyyyy = fields(13) '生年
+                    entity.seimm = fields(14) ' 生月
+                    entity.seidd = fields(15) ' 生日
+                    entity.nyunen = fields(16) ' 入社年
+                    entity.nyutuki = fields(17) ' 入社月
+                    entity.nyuhi = fields(18) ' 入社日
+                    entity.tainen = fields(19) ' 退職年
+                    entity.taituki = fields(20) ' 退職月
+                    entity.taihi = fields(21) ' 退職日
+                    entity.jusyo1 = fields(22) ' 住所１（漢字）
+                    entity.jusyo2 = fields(23) ' 住所２（漢字）
                     entity.crt_user_id = SettingManager.GetInstance.LoginUserName ' 登録ユーザーID
                     entity.crt_user_dtm = sysDate ' 登録日時
                     entity.crt_user_pg_id = Me.ProductName ' 登録プログラムID
@@ -229,6 +226,16 @@ Public Class frmWKDR030B
         Dim errorList As New List(Of String)
         Dim errorRecords As New List(Of String)
         Dim row As Integer = 2
+
+        '① ヘッダーレコードのデータ年月の半角チェック
+        If (IsHalfWidthForHeader(dtnengetu) <> "") Then
+            errorRecords.Add(IsHalfWidthForHeader(dtnengetu))
+        End If
+
+        ''④ 該当項目について　で判断されたヘッダーレコードのデータ年月＝システム日付の年月でない場合はエラーとする。
+        'If dtnengetu <> Now.ToString("yyyyMM") Then
+        '    errorRecords.Add(1 & "," & "データ年月" & "," & "データ年月が一致しません。")
+        'End If
 
         For Each entity As TInstructorFurikomiEntity In entityList
             Dim errors = ValidateEntityTInstructorFurikomi(entity, row)
@@ -247,18 +254,26 @@ Public Class frmWKDR030B
                     writer.WriteLine(record)
                 Next
             End Using
-
+            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
         Dim dba As New WKDR030BDBAccess
 
-        ' 確定データ削除
+        ' インストラクター向け振込データ削除
         If Not dba.DeleteTinstructorfurikomi(dtnengetu) Then
             Return
         End If
 
-        ' 確定データ作成
+        ' ①　処理日の前月の年月を保持する
+        Dim dtNow As DateTime = DateTime.Now
+        Dim monthAgo As String = dtNow.AddMonths(-1).ToString("yyyyMM")
+
+        If Not dba.DeleteTinstructorfurikomi(dtnengetu) Then
+            Return
+        End If
+
+        ' インストラクター向け振込データ作成
         If Not dba.InsertTinstructorfurikomi(entityList) Then
             Return
         End If
@@ -280,15 +295,15 @@ Public Class frmWKDR030B
 
             '① 項目データの半角チェック
             If {"データ年月", "顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号（FILLER）", "手数料－１", "手数料－２", "手数料－３", "手数料－４", "手数料－５", "手数料－６"}.Contains(propertiesInput.name) Then
-                If (IsHalfWidth(propertiesInput, row) <> "") Then
-                    errors.Add(IsHalfWidth(propertiesInput, row))
+                If Not IsHalfWidth(propertiesInput.value) Then
+                    errors.Add(row.ToString() & "," & propertiesInput.name & "," & "半角項目に全角文字が含まれます。")
                 End If
             End If
 
             '② 項目データの全角チェック
             If {"手数料－１名称（漢字）", "手数料－２名称（漢字）", "手数料－３名称（漢字）", "手数料－４名称（漢字）", "手数料－５名称（漢字）", "手数料－６名称（漢字）"}.Contains(propertiesInput.name) Then
-                If (IsFullWidth(propertiesInput, row) <> "") Then
-                    errors.Add(IsFullWidth(propertiesInput, row))
+                If Not IsFullWidth(propertiesInput.value) Then
+                    errors.Add(row.ToString() & "," & propertiesInput.name & "," & "全角項目に半角文字が含まれます。")
                 End If
             End If
 
@@ -299,18 +314,18 @@ Public Class frmWKDR030B
                 End If
             End If
 
-            If {}.Contains(propertiesInput.name) Then
-                If (IsNumericDataByFormat(propertiesInput, row) <> "") Then
-                    errors.Add(IsNumericDataByFormat(propertiesInput, row))
-                End If
-            End If
+            'If {}.Contains(propertiesInput.name) Then
+            '    If (IsNumericDataByFormat(propertiesInput, row) <> "") Then
+            '        errors.Add(IsNumericDataByFormat(propertiesInput, row))
+            '    End If
+            'End If
 
-            '④ 該当項目について　で判断されたヘッダーレコードのデータ年月＝システム日付の年月でない場合はエラーとする。
-            If {"データ年月"}.Contains(propertiesInput.name) Then
-                If (ValidateDateMatch(propertiesInput, row) <> "") Then
-                    errors.Add(ValidateDateMatch(propertiesInput, row))
-                End If
-            End If
+            ''④ 該当項目について　で判断されたヘッダーレコードのデータ年月＝システム日付の年月でない場合はエラーとする。
+            'If {"データ年月"}.Contains(propertiesInput.name) Then
+            '    If (ValidateDateMatch(propertiesInput, row) <> "") Then
+            '        errors.Add(ValidateDateMatch(propertiesInput, row))
+            '    End If
+            'End If
         Next
 
         Return errors
@@ -325,16 +340,16 @@ Public Class frmWKDR030B
         For Each propertiesInput As propertiesInput In propertiesList
 
             '① 項目データの半角チェック
-            If {"データ年月", "顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号(インストラクターNo）", "振込金額（税引前）", "銀行コード", "支店コード", "預金種目", "口座番号", "預金者名義（カナ）", "氏名（カナ", "生年", "生月", "生日", "入社年", "入社月", "入社日", "退職年", "退職月", "退職日"}.Contains(propertiesInput.name) Then
-                If (IsHalfWidth(propertiesInput, row) <> "") Then
-                    errors.Add(IsHalfWidth(propertiesInput, row))
+            If {"データ年月", "顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号(インストラクターNo）", "振込金額（税引前）", "銀行コード", "支店コード", "預金種目", "口座番号", "預金者名義（カナ）", "郵便番号", "氏名（カナ）", "生年", "生月", "生日", "入社年", "入社月", "入社日", "退職年", "退職月", "退職日"}.Contains(propertiesInput.name) Then
+                If Not IsHalfWidth(propertiesInput.value) Then
+                    errors.Add(row.ToString() & "," & propertiesInput.name & "," & "半角項目に全角文字が含まれます。")
                 End If
             End If
 
-            '② 項目データの全角チェック]
+            '② 項目データの全角チェック
             If {"氏名（漢字）", "住所１（漢字）", "住所２（漢字）"}.Contains(propertiesInput.name) Then
-                If (IsFullWidth(propertiesInput, row) <> "") Then
-                    errors.Add(IsFullWidth(propertiesInput, row))
+                If Not IsFullWidth(propertiesInput.value) Then
+                    errors.Add(row.ToString() & "," & propertiesInput.name & "," & "全角項目に半角文字が含まれます。")
                 End If
             End If
 
@@ -351,12 +366,12 @@ Public Class frmWKDR030B
                 End If
             End If
 
-            '④ 該当項目について　で判断されたヘッダーレコードのデータ年月＝システム日付の年月でない場合はエラーとする。
-            If {"データ年月"}.Contains(propertiesInput.name) Then
-                If (ValidateDateMatch(propertiesInput, row) <> "") Then
-                    errors.Add(ValidateDateMatch(propertiesInput, row))
-                End If
-            End If
+            ''④ 該当項目について　で判断されたヘッダーレコードのデータ年月＝システム日付の年月でない場合はエラーとする。
+            'If {"データ年月"}.Contains(propertiesInput.name) Then
+            '    If (ValidateDateMatch(propertiesInput, row) <> "") Then
+            '        errors.Add(ValidateDateMatch(propertiesInput, row))
+            '    End If
+            'End If
         Next
 
         Return errors
@@ -366,20 +381,26 @@ Public Class frmWKDR030B
         Return If(DateTime.TryParseExact(input.value, "yyyyMM", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, Nothing), Nothing, row.ToString() & "," & input.name & "," & "データ年月が一致しません。")
     End Function
 
-    Private Function IsHalfWidth(input As propertiesInput, row As Integer) As String
+    Private Function IsHalfWidth(input As String) As Boolean
+        Dim sjisEnc = Encoding.GetEncoding("Shift_JIS")
+        Dim num As Integer = sjisEnc.GetByteCount(input)
+        Return num = input.Length
+        'Return input.All(Function(c) AscW(c) < 256)
+    End Function
+
+    Private Function IsHalfWidthForHeader(input As String) As String
         Dim result As String = ""
-        If Not input.value.All(Function(c) AscW(c) < 256) Then
-            result = row.ToString() & "," & input.name & "," & "全角データが含まれています。 "
+        If Not input.All(Function(c) AscW(c) < 256) Then
+            result = 1 & "," & "データ年月" & "," & "全角データが含まれています。 "
         End If
         Return result
     End Function
 
-    Private Function IsFullWidth(input As propertiesInput, row As Integer) As String
-        Dim result As String = ""
-        If Not input.value.All(Function(c) AscW(c) >= 256) Then
-            result = row.ToString() & "," & input.name & "," & "半角データが含まれています。"
-        End If
-        Return result
+    Private Function IsFullWidth(input As String) As Boolean
+        Dim sjisEnc = Encoding.GetEncoding("Shift_JIS")
+        Dim num As Integer = sjisEnc.GetByteCount(input)
+        Return num = input.Length * 2
+        'Return input.All(Function(c) AscW(c) >= 256)
     End Function
 
     Private Function IsNumericData(input As propertiesInput, row As Integer) As String
@@ -392,10 +413,10 @@ Public Class frmWKDR030B
     End Function
 
     Private Function IsNumericDataByFormat(input As propertiesInput, row As Integer) As String
-        Dim pattern As String = "^\d{3}Then-\d{4}$|^\d+$"
+        Dim pattern As String = "^\d{3}-\d{4}$"
         Dim result As String = ""
         If Not Regex.IsMatch(input.value, pattern) Then
-            result = row.ToString() & "," & input.name & "," & "文字列が含まれています。"
+            result = row.ToString() & "," & input.name & "," & "形式に誤りがあります。"
         End If
         Return result
     End Function
