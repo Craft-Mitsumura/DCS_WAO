@@ -75,7 +75,7 @@ Public Class frmWKDC040B
             Dim partnerCompanyCode As String = "00404"
             Dim customerCode As String = row(4) & row(2) & row(3)
             Dim reissueCode As String = "0"
-            Dim paymentTerm As String = lblSysDate.Text.Split("/")(2)
+            Dim paymentTerm As String = sysDate.ToString("yyMM") & "24" 'lblSysDate.Text.Split("/")(2)
             Dim amountsBilled As String = row(6).ToString().PadLeft(6, "0")
             Dim stampFlag As String = ""
             Dim total As Integer = 0
@@ -101,11 +101,11 @@ Public Class frmWKDC040B
             newRow("生徒名") = row(18)
             newRow("オーナー郵便番号") = row(25)
             newRow("オーナー住所") = row(26) & row(27)
-            newRow("学校名") = row(30)
+            newRow("学校名") = row(28)
             newRow("コンビニ収納締切日の年") = sysDate.ToString("yyyy")
             newRow("コンビニ収納締切日の月") = sysDate.ToString("MM")
             newRow("コンビニ収納締切日の日") = "24"
-            newRow("頁") = tConveniFurikomiList.Rows.Count()
+            newRow("頁") = 1 'tConveniFurikomiList.Rows.Count()
             newRow("ご請求金額") = row(6)
             newRow("作成年(2)") = sysDate.ToString("yyyy")
             newRow("作成月(2)") = sysDate.ToString("MM")
@@ -149,7 +149,7 @@ Public Class frmWKDC040B
         If saveFileDialog.ShowDialog() = DialogResult.OK Then
             Dim directoryPath As String = Path.GetDirectoryName(saveFileDialog.FileName)
             Dim fileName As String = Path.GetFileName(saveFileDialog.FileName)
-            MessageBox.Show("「" & WriteCsvData(recordListCsv, directoryPath, fileName,,, True) & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("「" & WriteCsvData(recordListCsv, directoryPath, fileName,,, True, True) & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
         End If
         Exit Sub
     End Sub

@@ -14,7 +14,7 @@ Public Class DBClient
     End Sub
 
     ' データベース接続の作成
-    Private Function GetConnection() As NpgsqlConnection
+    Public Function GetConnection() As NpgsqlConnection
         Return New NpgsqlConnection(connectionString)
     End Function
 
@@ -129,6 +129,20 @@ Public Class DBClient
             End Try
         End Using
         Return dt
+    End Function
+
+    Public Function ExecuteNonQueryWithTransaction(query As String, parameters As List(Of NpgsqlParameter), transaction As NpgsqlTransaction) As Boolean
+        Try
+            Using command As New NpgsqlCommand(query, transaction.Connection, transaction)
+                command.Parameters.AddRange(parameters.ToArray())
+                command.ExecuteNonQuery()
+            End Using
+
+            Return True
+        Catch ex As Exception
+            Throw ex
+            Return False
+        End Try
     End Function
 
 End Class
