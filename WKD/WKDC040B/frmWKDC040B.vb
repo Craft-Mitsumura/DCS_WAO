@@ -66,8 +66,6 @@ Public Class frmWKDC040B
             recordListCsv.Columns.Add(columnName, GetType(String))
         Next
 
-
-
         For Each row As DataRow In tConveniFurikomiList.Rows
 
             Dim identifier As String = "91"
@@ -96,12 +94,20 @@ Public Class frmWKDC040B
             newRow("作成月") = sysDate.ToString("MM")
             newRow("作成日") = sysDate.ToString("dd")
             newRow("保護者郵便番号") = row(12)
-            newRow("保護者住所") = row(13) & row(14) & row(15) & row(16)
-            newRow("保護者名") = row(17)
-            newRow("生徒名") = row(18)
+            newRow("保護者住所") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
+
+            Dim nameLength1 As Integer = row(17).ToString.Trim.Length
+            Dim nameLength2 As Integer = row(18).ToString.Trim.Length
+            Dim maxNameLength As Integer = nameLength1
+            If maxNameLength < nameLength2 Then
+                maxNameLength = nameLength2
+            End If
+
+            newRow("保護者名") = row(17).ToString.Trim & StrDup(maxNameLength - nameLength1, "　") & "　様"
+            newRow("生徒名") = row(18).ToString.Trim & StrDup(maxNameLength - nameLength2, "　") & "　様"
             newRow("オーナー郵便番号") = row(25)
-            newRow("オーナー住所") = row(26) & row(27)
-            newRow("学校名") = row(28)
+            newRow("オーナー住所") = row(26).ToString.Trim & row(27).ToString.Trim
+            newRow("学校名") = row(28).ToString.Trim
             newRow("コンビニ収納締切日の年") = sysDate.ToString("yyyy")
             newRow("コンビニ収納締切日の月") = sysDate.ToString("MM")
             newRow("コンビニ収納締切日の日") = "24"
@@ -113,34 +119,33 @@ Public Class frmWKDC040B
             newRow("契約者番号(委託者№)") = row(1)
             newRow("契約者番号(オーナー№)") = row(2)
             newRow("契約者番号(生徒№)") = row(3)
-            newRow("生徒氏名") = row(18)
+            newRow("生徒氏名") = row(18).ToString.Trim & "　様"
             newRow("入会金") = row(7)
             newRow("授業料") = row(8)
             newRow("施設関連諸費") = row(9)
             newRow("テキスト費") = row(10)
             newRow("テスト費") = row(11)
             newRow("合計金額") = row(6)
-            newRow("払込人氏名(右)") = row(17)
+            newRow("払込人氏名(右)") = row(17).ToString.Trim & "　様"
             newRow("金額(左)") = row(6)
             newRow("払込人郵便番号(左)") = row(12)
-            newRow("払込人住所(左)") = row(13) & row(14) & row(15) & row(16)
+            newRow("払込人住所(左)") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
             newRow("金額(中)") = row(6)
             newRow("お客様コード(右)") = row(4) & row(2) & row(3)
             newRow("払込人郵便番号(中)") = row(12)
-            newRow("払込人住所(中)") = row(13) & row(14) & row(15) & row(16)
+            newRow("払込人住所(中)") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
             newRow("金額(右)") = row(6)
-            newRow("払込人氏名(左)") = row(17)
+            newRow("払込人氏名(左)") = row(17).ToString.Trim & "　様"
             newRow("収納締切日の年(左)") = sysDate.ToString("yyyy")
             newRow("収納締切日の月(左)") = sysDate.ToString("MM")
             newRow("収納締切日の日(左)") = "24"
-            newRow("払込人氏名(中)") = row(17)
+            newRow("払込人氏名(中)") = row(17).ToString.Trim & "　様"
             newRow("お客様コード(中)") = row(4) & row(2) & row(3)
             newRow("ＥＡＮ-128バーコード(左)") = identifier & companyCode & partnerCompanyCode & customerCode & reissueCode & paymentTerm & stampFlag & amountsBilled
             newRow("ＥＡＮコード1(左)") = "(" & identifier & ")" & companyCode & "-" & partnerCompanyCode & customerCode & reissueCode
             newRow("ＥＡＮコード2(左)") = sysDate.ToString("yy") & sysDate.ToString("MM") & "24-" & stampFlag & "-" & amountsBilled
             recordListCsv.Rows.Add(newRow)
         Next
-
 
         ' ＣＳＶファイル出力
         Dim saveFileDialog As New SaveFileDialog()

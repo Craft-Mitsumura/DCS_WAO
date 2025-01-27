@@ -113,7 +113,7 @@ Partial Class frmWKDT010B
         'mnuEnd
         '
         Me.mnuEnd.Name = "mnuEnd"
-        Me.mnuEnd.Size = New System.Drawing.Size(180, 22)
+        Me.mnuEnd.Size = New System.Drawing.Size(113, 22)
         Me.mnuEnd.Text = "終了(&X)"
         '
         'mnuHelp
@@ -170,11 +170,9 @@ Partial Class frmWKDT010B
         Me.txtShoriNendo.Location = New System.Drawing.Point(115, 95)
         Me.txtShoriNendo.MaxLength = 4
         Me.txtShoriNendo.Name = "txtShoriNendo"
-        Me.txtShoriNendo.RightToLeft = System.Windows.Forms.RightToLeft.Yes
         Me.txtShoriNendo.Size = New System.Drawing.Size(41, 19)
         Me.txtShoriNendo.TabIndex = 4
         Me.txtShoriNendo.Text = "9999"
-        Me.txtShoriNendo.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'frmWKDT010B
         '

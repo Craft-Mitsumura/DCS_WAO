@@ -45,24 +45,25 @@ Partial Class frmWKDC030B
         Me.fraShoriKubun.Controls.Add(Me.rdoShoriKubun_1)
         Me.fraShoriKubun.Controls.Add(Me.rdoShoriKubun_0)
         Me.fraShoriKubun.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraShoriKubun.Location = New System.Drawing.Point(40, 43)
+        Me.fraShoriKubun.Location = New System.Drawing.Point(40, 40)
         Me.fraShoriKubun.Name = "fraShoriKubun"
         Me.fraShoriKubun.Padding = New System.Windows.Forms.Padding(0)
         Me.fraShoriKubun.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.fraShoriKubun.Size = New System.Drawing.Size(155, 46)
+        Me.fraShoriKubun.Size = New System.Drawing.Size(155, 42)
         Me.fraShoriKubun.TabIndex = 2
         Me.fraShoriKubun.TabStop = False
         Me.fraShoriKubun.Text = "処理区分"
+        Me.fraShoriKubun.Visible = False
         '
         'rdoShoriKubun_1
         '
         Me.rdoShoriKubun_1.BackColor = System.Drawing.SystemColors.Control
         Me.rdoShoriKubun_1.Cursor = System.Windows.Forms.Cursors.Default
         Me.rdoShoriKubun_1.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.rdoShoriKubun_1.Location = New System.Drawing.Point(82, 16)
+        Me.rdoShoriKubun_1.Location = New System.Drawing.Point(82, 15)
         Me.rdoShoriKubun_1.Name = "rdoShoriKubun_1"
         Me.rdoShoriKubun_1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.rdoShoriKubun_1.Size = New System.Drawing.Size(66, 17)
+        Me.rdoShoriKubun_1.Size = New System.Drawing.Size(66, 16)
         Me.rdoShoriKubun_1.TabIndex = 1
         Me.rdoShoriKubun_1.TabStop = True
         Me.rdoShoriKubun_1.Text = "再出力"
@@ -74,10 +75,10 @@ Partial Class frmWKDC030B
         Me.rdoShoriKubun_0.Checked = True
         Me.rdoShoriKubun_0.Cursor = System.Windows.Forms.Cursors.Default
         Me.rdoShoriKubun_0.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.rdoShoriKubun_0.Location = New System.Drawing.Point(16, 16)
+        Me.rdoShoriKubun_0.Location = New System.Drawing.Point(16, 15)
         Me.rdoShoriKubun_0.Name = "rdoShoriKubun_0"
         Me.rdoShoriKubun_0.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.rdoShoriKubun_0.Size = New System.Drawing.Size(66, 17)
+        Me.rdoShoriKubun_0.Size = New System.Drawing.Size(66, 16)
         Me.rdoShoriKubun_0.TabIndex = 0
         Me.rdoShoriKubun_0.TabStop = True
         Me.rdoShoriKubun_0.Text = "新規"
@@ -88,10 +89,10 @@ Partial Class frmWKDC030B
         Me.lblSysDate.BackColor = System.Drawing.SystemColors.Control
         Me.lblSysDate.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblSysDate.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblSysDate.Location = New System.Drawing.Point(380, 28)
+        Me.lblSysDate.Location = New System.Drawing.Point(380, 26)
         Me.lblSysDate.Name = "lblSysDate"
         Me.lblSysDate.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblSysDate.Size = New System.Drawing.Size(86, 17)
+        Me.lblSysDate.Size = New System.Drawing.Size(86, 16)
         Me.lblSysDate.TabIndex = 1
         Me.lblSysDate.Text = "yyyy/MM/dd"
         '
@@ -108,26 +109,26 @@ Partial Class frmWKDC030B
         '
         Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuEnd})
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(61, 20)
+        Me.mnuFile.Size = New System.Drawing.Size(57, 20)
         Me.mnuFile.Text = "ﾌｧｲﾙ(&F)"
         '
         'mnuEnd
         '
         Me.mnuEnd.Name = "mnuEnd"
-        Me.mnuEnd.Size = New System.Drawing.Size(115, 22)
+        Me.mnuEnd.Size = New System.Drawing.Size(113, 22)
         Me.mnuEnd.Text = "終了(&X)"
         '
         'mnuHelp
         '
         Me.mnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuVersion})
         Me.mnuHelp.Name = "mnuHelp"
-        Me.mnuHelp.Size = New System.Drawing.Size(64, 20)
+        Me.mnuHelp.Size = New System.Drawing.Size(60, 20)
         Me.mnuHelp.Text = "ﾍﾙﾌﾟ(&H)"
         '
         'mnuVersion
         '
         Me.mnuVersion.Name = "mnuVersion"
-        Me.mnuVersion.Size = New System.Drawing.Size(165, 22)
+        Me.mnuVersion.Size = New System.Drawing.Size(156, 22)
         Me.mnuVersion.Text = "ﾊﾞｰｼﾞｮﾝ情報(&A)"
         '
         'btnClose
@@ -135,10 +136,10 @@ Partial Class frmWKDC030B
         Me.btnClose.BackColor = System.Drawing.SystemColors.Control
         Me.btnClose.Cursor = System.Windows.Forms.Cursors.Default
         Me.btnClose.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnClose.Location = New System.Drawing.Point(363, 312)
+        Me.btnClose.Location = New System.Drawing.Point(363, 288)
         Me.btnClose.Name = "btnClose"
         Me.btnClose.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.btnClose.Size = New System.Drawing.Size(89, 36)
+        Me.btnClose.Size = New System.Drawing.Size(89, 33)
         Me.btnClose.TabIndex = 6
         Me.btnClose.Text = "終了(&X)"
         Me.btnClose.UseVisualStyleBackColor = False
@@ -148,10 +149,10 @@ Partial Class frmWKDC030B
         Me.btnOutput.BackColor = System.Drawing.SystemColors.Control
         Me.btnOutput.Cursor = System.Windows.Forms.Cursors.Default
         Me.btnOutput.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnOutput.Location = New System.Drawing.Point(268, 312)
+        Me.btnOutput.Location = New System.Drawing.Point(268, 288)
         Me.btnOutput.Name = "btnOutput"
         Me.btnOutput.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.btnOutput.Size = New System.Drawing.Size(89, 36)
+        Me.btnOutput.Size = New System.Drawing.Size(89, 33)
         Me.btnOutput.TabIndex = 5
         Me.btnOutput.Text = "出力(&O)"
         Me.btnOutput.UseVisualStyleBackColor = False
@@ -159,29 +160,27 @@ Partial Class frmWKDC030B
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(54, 106)
+        Me.Label1.Location = New System.Drawing.Point(54, 98)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(55, 13)
+        Me.Label1.Size = New System.Drawing.Size(53, 12)
         Me.Label1.TabIndex = 3
         Me.Label1.Text = "処理年度"
         '
         'txtShoriNendo
         '
         Me.txtShoriNendo.ImeMode = System.Windows.Forms.ImeMode.Disable
-        Me.txtShoriNendo.Location = New System.Drawing.Point(115, 103)
+        Me.txtShoriNendo.Location = New System.Drawing.Point(115, 95)
         Me.txtShoriNendo.MaxLength = 4
         Me.txtShoriNendo.Name = "txtShoriNendo"
-        Me.txtShoriNendo.RightToLeft = System.Windows.Forms.RightToLeft.Yes
-        Me.txtShoriNendo.Size = New System.Drawing.Size(41, 20)
+        Me.txtShoriNendo.Size = New System.Drawing.Size(41, 19)
         Me.txtShoriNendo.TabIndex = 4
         Me.txtShoriNendo.Text = "9999"
-        Me.txtShoriNendo.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'frmWKDC030B
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(466, 361)
+        Me.ClientSize = New System.Drawing.Size(466, 333)
         Me.Controls.Add(Me.txtShoriNendo)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnOutput)
