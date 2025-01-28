@@ -100,7 +100,7 @@ Public Class frmWKDR010B
                     ' 2行目以降（明細レコード）
                     Dim fields As String() = GetFieldString(rec, 1, 2, 8, 4, 2, 1, 5, 5, 16, 1, 6, 1, 6, 1, 3, 7, 8, 8, 8, 8, 4, 15)
                     Dim entity As New TConveniFurikomiKakuhoEntity
-                    entity.dtnengetu = GetMidByte(tableHeaderList(i).skdate, 1, 6)
+                    entity.dtnengetu = GetMidByte((fields(2)), 1, 6)
                     entity.itakuno = If(tableHeaderList(i).kgycd = "00404", "33948", tableHeaderList(i).kgycd)
                     entity.ownerno = GetMidByte((fields(8)), 2, 7)
                     entity.seitono = GetMidByte((fields(8)), 9, 8)

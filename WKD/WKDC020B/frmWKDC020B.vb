@@ -47,7 +47,7 @@ Public Class frmWKDC020B
         Dim dt2 As DataTable = Nothing
 
         ' 口座振替請求データ取得
-        dt2 = dba.GetKozafurikae(shoriNengetsu)
+        dt2 = dba.GetTKozafurikae(shoriNengetsu)
         If dt2.Rows.Count <= 0 Then
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
