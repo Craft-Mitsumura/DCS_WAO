@@ -20,9 +20,8 @@ Partial Class frmWKDR080B
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-<<<<<<< HEAD
         Me.lblSysDate = New System.Windows.Forms.Label()
         Me.MainMenu1 = New System.Windows.Forms.MenuStrip()
         Me.mnuFile = New System.Windows.Forms.ToolStripMenuItem()
@@ -156,7 +155,6 @@ Partial Class frmWKDR080B
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
-=======
         Me.lblSysDate = New System.Windows.Forms.Label()
         Me.MainMenu1 = New System.Windows.Forms.MenuStrip()
         Me.mnuFile = New System.Windows.Forms.ToolStripMenuItem()
@@ -279,7 +277,6 @@ Partial Class frmWKDR080B
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
->>>>>>> e46435f0619501e408c79189cf861034570a4c40
     End Sub
 
     Public WithEvents lblSysDate As Label
