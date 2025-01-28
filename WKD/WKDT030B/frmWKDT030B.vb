@@ -249,7 +249,7 @@ Public Class frmWKDT030B
         Next
 
         ' ＣＳＶファイル出力
-        Dim fileName3 As String = "解約先分送付状.csv"
+        Dim fileName3 As String = "解約送付状.csv"
         Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True, True)
         msg.AppendLine("・" & filePath3)
 

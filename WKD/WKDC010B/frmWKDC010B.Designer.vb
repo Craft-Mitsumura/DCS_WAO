@@ -122,11 +122,9 @@ Partial Class frmWKDC010B
         Me.txtShoriNengetsu.Location = New System.Drawing.Point(115, 95)
         Me.txtShoriNengetsu.MaxLength = 4
         Me.txtShoriNengetsu.Name = "txtShoriNengetsu"
-        Me.txtShoriNengetsu.RightToLeft = System.Windows.Forms.RightToLeft.Yes
         Me.txtShoriNengetsu.Size = New System.Drawing.Size(53, 19)
         Me.txtShoriNengetsu.TabIndex = 7
         Me.txtShoriNengetsu.Text = "9999/99"
-        Me.txtShoriNengetsu.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'frmWKDC010B
         '

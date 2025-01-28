@@ -69,12 +69,19 @@ Public Class frmWKDR010B
             lastCnt = Split(parser.ReadToEnd, vbCrLf).Length
         End Using
 
+        Dim savereckbn As String = ""
+        Dim saveflg As Boolean = False
+
         ' TextFieldParserを使って固定長のファイルを読み込む（Shift-JIS指定）
         Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("Shift_JIS"))
             parser.TextFieldType = FieldType.Delimited
             While Not parser.EndOfData
                 Dim rec As String = parser.ReadLine
                 Dim reckbn As String = rec.Substring(0, 1)
+                If Not saveflg Then
+                    savereckbn = reckbn
+                    saveflg = True
+                End If
 
                 ' 固定長のフィールドの幅を指定
                 If reckbn = "1" Then
@@ -131,11 +138,17 @@ Public Class frmWKDR010B
             End While
         End Using
 
+        '明細が0件の場合処理終了
+        If entityList.Count = 0 Then
+            MessageBox.Show("取込対象データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
         Dim errorRecords As New List(Of String)
         Dim row As Integer = 0
 
         ' ①先頭レコードは、データ区分=1以外であればエラーとする
-        If tableHeaderList(0).reckbn.ToString() <> "1" Then
+        If savereckbn <> "1" Then
             errorRecords.Add("1,レコード区分" & "," & "ファイルの先頭がヘッダーレコードになっていません。 ")
         End If
 

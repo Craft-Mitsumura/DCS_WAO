@@ -5,6 +5,7 @@ Imports System.Windows.Forms
 Imports System.Windows
 Imports System.IO
 Imports System.Text.RegularExpressions
+Imports System.Security.Cryptography
 
 Public Class frmWKDC020B
 
@@ -18,11 +19,40 @@ Public Class frmWKDC020B
 
         ' 処理年月
         txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        txtShoriNengetsu.Enabled = False
+        'txtShoriNengetsu.Enabled = False
 
     End Sub
 
     Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click
+
+        Dim dba As New WKDC020BDBAccess
+
+        Dim shoriNengetsu As String = txtShoriNengetsu.Text.Replace("/", "")
+        Dim jigetsu As String = CnvDat(shoriNengetsu & "01").AddMonths(-1).ToString("yyyyMM")
+
+        ' 口座振替請求データ作成
+        If Not dba.AllProcess(shoriNengetsu, jigetsu, Me.ProductName) Then
+            Return
+        End If
+
+        Dim dt As DataTable = Nothing
+
+        ' 口座振替請求データ取得
+        dt = dba.GetKozafurikae(shoriNengetsu)
+        If dt.Rows.Count <= 0 Then
+            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim msg As New StringBuilder()
+        msg.AppendLine("以下のファイルが出力されました。")
+
+        ' ファイル出力
+        Dim fileName As String = "WAO_SEIKYU.DAT"
+        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
+        msg.AppendLine("・" & filePath)
+
+        MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
 

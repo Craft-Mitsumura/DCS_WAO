@@ -188,7 +188,8 @@ Public Class frmWKDT020B
         dt1.Columns.Remove("postno") ' オーナー郵便番号
 
         ' ＣＳＶファイル出力
-        Dim fileName As String = "源泉徴収票_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
+        'Dim fileName As String = "源泉徴収票_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
+        Dim fileName As String = "退職分源泉徴収票.csv"
         Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
         msg.AppendLine("・" & filePath)
 
@@ -238,7 +239,8 @@ Public Class frmWKDT020B
         Next
 
         ' ＣＳＶファイル出力
-        Dim fileName3 As String = "送付状_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
+        'Dim fileName3 As String = "送付状_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
+        Dim fileName3 As String = "退職分送付状.csv"
         Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True, True)
         msg.AppendLine("・" & filePath3)
 
