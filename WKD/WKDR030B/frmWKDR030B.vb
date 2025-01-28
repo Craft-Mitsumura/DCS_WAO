@@ -50,7 +50,7 @@ Public Class frmWKDR030B
         ElseIf (fileName = "KSSB0040.txt") Then
             processtTinstructorfurikomi(filePath, inputDirectory, fileName)
         Else
-            MessageBox.Show("「" & filePath & "」wrong name !", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("ファイル名に誤りがあります。" & vbCrLf & "「" & filePath & "」", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End If
 
     End Sub
@@ -124,6 +124,12 @@ Public Class frmWKDR030B
                 End If
             End While
         End Using
+
+        '明細が0件の場合処理終了
+        If entityList.Count = 0 Then
+            MessageBox.Show("取込対象データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
 
         Dim errorList As New List(Of String)
         Dim errorRecords As New List(Of String)
@@ -272,6 +278,12 @@ Public Class frmWKDR030B
                 End If
             End While
         End Using
+
+        '明細が0件の場合処理終了
+        If entityList.Count = 0 Then
+            MessageBox.Show("取込対象データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
 
         Dim errorList As New List(Of String)
         Dim errorRecords As New List(Of String)
