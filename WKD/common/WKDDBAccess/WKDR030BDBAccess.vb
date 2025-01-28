@@ -130,14 +130,14 @@ Public Class WKDR030BDBAccess
 
     End Function
 
-    Public Function InsertTinstructorfurikomi(entityList As List(Of TInstructorFurikomiEntity)) As Boolean
+    Public Function InsertInstructorfurikomi(entityList As List(Of TInstructorFurikomiEntity), tbname As String) As Boolean
 
         Dim ret As Boolean = False
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
         sql.AppendLine("insert ")
-        sql.AppendLine("into t_instructor_furikomi( ")
+        sql.AppendLine("into " & tbname & "( ")
         sql.AppendLine("    dtnengetu") ' データ年月
         sql.AppendLine("    , itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("    , ownerno") ' 顧客番号（オーナーＮｏ）
@@ -238,6 +238,133 @@ Public Class WKDR030BDBAccess
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
 
         Return ret
+
+    End Function
+
+    Public Function getInstructorfurikomi(dtnengetu As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select * from w_instructor_furikomi order by dtnengetu, itakuno, ownerno, instno")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+        New NpgsqlParameter("@dtnengetu", dtnengetu)
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
+
+    Public Function getZeigakuhyo(fkinzem As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select * from m_zeigakuhyo where @fkinzem between kingakfrom and kingakto")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+        New NpgsqlParameter("@fkinzem", Integer.Parse(fkinzem))
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
+
+    Public Function getTesuryo(shoriNengatu As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select * from m_tesuryo")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+        New NpgsqlParameter("@shoriNengatu", shoriNengatu)
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
+
+    Public Function getInstructorfurikomiForconsistencycheck(dtnengetu As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select a.ownerno ownerno_inst, a.instno, a.namekj, b.ownerno ownerno_kahen ")
+        sql.AppendLine("from t_instructor_furikomi a ")
+        sql.AppendLine(" left join t_kahenkomoku b ")
+        sql.AppendLine(" on a.itakuno = b. itakuno and a.ownerno = b.ownerno ")
+        sql.AppendLine("where a.dtnengetu = @dtnengetu ")
+        sql.AppendLine(" order by a.itakuno, a.ownerno ")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+        New NpgsqlParameter("@dtnengetu", dtnengetu)
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
+
+    Public Function getInstructorfurikomiForexistsownercheck(dtnengetu As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select a.ownerno ownerno_inst, b.bakycd ownerno_owner ")
+        sql.AppendLine("from t_instructor_furikomi a ")
+        sql.AppendLine(" left join tbkeiyakushamaster b ")
+        sql.AppendLine(" on a.ownerno = b.bakycd ")
+        sql.AppendLine(" and bakome is not null and bakyfg = '0' ")
+        sql.AppendLine(" and bakyfg = '0' ")
+        sql.AppendLine("where a.dtnengetu = @dtnengetu ")
+        sql.AppendLine(" order by a.itakuno, a.ownerno ")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+        New NpgsqlParameter("@dtnengetu", dtnengetu)
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
+
+    Public Function getKahenkomokuForexistsownercheck(dtnengetu As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select a.ownerno ownerno_kahen, a.filler, b.bakycd ownerno_owner ")
+        sql.AppendLine("from t_kahenkomoku a ")
+        sql.AppendLine(" left join tbkeiyakushamaster b ")
+        sql.AppendLine(" on a.ownerno = b.bakycd ")
+        sql.AppendLine(" and bakome is not null and bakyfg = '0' ")
+        sql.AppendLine(" and bakyfg = '0' ")
+        sql.AppendLine("where a.dtnengetu = @dtnengetu ")
+        sql.AppendLine(" order by a.itakuno, a.ownerno ")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+        New NpgsqlParameter("@dtnengetu", dtnengetu)
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
 
     End Function
 
