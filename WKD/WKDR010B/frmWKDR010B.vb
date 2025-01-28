@@ -176,12 +176,12 @@ Public Class frmWKDR010B
         Dim monthAgo As String = dtNow.AddMonths(-1).ToString("yyyyMM")
 
         'コンビニ振込確報データのデータ年月が該当年月と同一のデータを削除
-        If Not dba.Delete(monthAgo) Then
+        If Not dba.WDelete() Then
             Return
         End If
 
-        ' コンビニ振込確報データに登録
-        If Not dba.Insert(entityList) Then
+        'コンビニ振込確報データに登録
+        If Not dba.WInsert(entityList) Then
             Return
         End If
 
@@ -203,7 +203,7 @@ Public Class frmWKDR010B
 
         ' コンビニ受信データチェックリスト(明細)出力
         ' データ年月＆顧客番号（委託者Ｎｏ）＆顧客番号（オーナーＮｏ）＆顧客番号（生徒Ｎｏ）＆顧客番号内ＳＥＱ番号で確定データと併せて検索
-        Dim tbCheckDetail As DataTable = dba.getListDetail(monthAgo)
+        Dim tbCheckDetail As DataTable = dba.WgetListDetail(monthAgo)
         Dim errCnt As Integer = 0
         Dim dtErrDetail As New DataTable
         dtErrDetail.Columns.Add("顧客番号", GetType(String))
@@ -219,7 +219,7 @@ Public Class frmWKDR010B
         For Each dtrow As DataRow In tbCheckDetail.Rows
             If IsDBNull(dtrow("kakutei_dtnengetu")) OrElse dtrow("kingk") <> dtrow("kakutei_kingaku") OrElse dtrow("dtsybt") <> "02" OrElse dtrow("shrikgn").ToString().Substring(4, 2) <> "24" Then
                 For Each dtrow2 As DataRow In tbCheckDetail.Rows
-                    dtErrDetail.Rows.Add(dtrow("itakuno") & dtrow("ownerno") & dtrow("seitono"), CnvDec(dtrow("kingk")).ToString("#,##0"), "02", dtrow2("shrikgn"), dtrow2("cvscd"), dtrow2("uktncd"), dtrow2("syndate"), dtrow2("syntime"))
+                    dtErrDetail.Rows.Add(dtrow("itakuno") & dtrow("ownerno") & dtrow("seitono"), CnvDec(dtrow("kingk")).ToString("#,##0"), dtrow2("dtsybt"), dtrow2("shrikgn"), dtrow2("cvscd"), dtrow2("uktncd"), dtrow2("syndate"), dtrow2("syntime"))
                     errCnt += 1
                 Next
             End If
@@ -233,6 +233,15 @@ Public Class frmWKDR010B
         If tableHeaderList.Count <> "6" OrElse errCnt > 0 Then
             MessageBox.Show("確報データエラー有り", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Else
+            'コンビニ振込確報データのデータ年月が該当年月と同一のデータを削除
+            If Not dba.Delete(monthAgo) Then
+                Return
+            End If
+
+            ' コンビニ振込確報データに登録
+            If Not dba.Insert(monthAgo) Then
+                Return
+            End If
             MessageBox.Show("「" & filePath & "」が取り込まれました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
         End If
 
