@@ -28,18 +28,27 @@ Public Class frmWKDC020B
         Dim dba As New WKDC020BDBAccess
 
         Dim shoriNengetsu As String = txtShoriNengetsu.Text.Replace("/", "")
-        Dim jigetsu As String = CnvDat(shoriNengetsu & "01").AddMonths(-1).ToString("yyyyMM")
+        Dim jigetsu As String = CnvDat(shoriNengetsu & "01").AddMonths(1).ToString("yyyyMM")
+
+        Dim dt As DataTable = Nothing
+
+        ' 確定データ取得
+        dt = dba.GetTKakutei(shoriNengetsu)
+        If dt.Rows.Count <= 0 Then
+            MessageBox.Show("確定データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
 
         ' 口座振替請求データ作成
         If Not dba.AllProcess(shoriNengetsu, jigetsu, Me.ProductName) Then
             Return
         End If
 
-        Dim dt As DataTable = Nothing
+        Dim dt2 As DataTable = Nothing
 
         ' 口座振替請求データ取得
-        dt = dba.GetKozafurikae(shoriNengetsu)
-        If dt.Rows.Count <= 0 Then
+        dt2 = dba.GetKozafurikae(shoriNengetsu)
+        If dt2.Rows.Count <= 0 Then
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
@@ -49,7 +58,7 @@ Public Class frmWKDC020B
 
         ' ファイル出力
         Dim fileName As String = "WAO_SEIKYU.DAT"
-        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
+        Dim filePath As String = WriteCsvData(dt2, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
         msg.AppendLine("・" & filePath)
 
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
