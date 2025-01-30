@@ -25,6 +25,8 @@ Public Class WKDC020BDBAccess
                 InsertTYoteihyo(dtnengetu, pgid, transaction)
                 DeleteTFurikaeJigetsuKurikoshi(jigetsu, transaction)
                 InsertTFurikaeJigetsuKurikoshi(dtnengetu, jigetsu, pgid, transaction)
+                DeleteTOwnerKensuKingaku(jigetsu, transaction)
+                InsertTOwnerKensuKingaku(dtnengetu, pgid, transaction)
 
                 ' トランザクションのコミット
                 transaction.Commit()
@@ -121,6 +123,89 @@ Public Class WKDC020BDBAccess
 
     End Function
 
+    Private Function InsertTKozafurikae(dtnengetu As String, pgid As String, transaction As NpgsqlTransaction) As Boolean
+
+        Dim ret As Boolean = False
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("insert into t_kozafurikae")
+        sql.AppendLine("(")
+        sql.AppendLine("select")
+        sql.AppendLine("    kak.dtnengetu") ' データ年月
+        sql.AppendLine("  , kak.itakuno") ' 顧客番号（委託者Ｎｏ）
+        sql.AppendLine("  , kak.ownerno") ' 顧客番号（オーナーＮｏ）
+        sql.AppendLine("  , kak.seitono") ' 顧客番号（生徒Ｎｏ）
+        sql.AppendLine("  , kak.kseqno") ' 顧客番号内ＳＥＱ番号
+        sql.AppendLine("  , kak.syokbn") ' 処理区分
+        sql.AppendLine("  , kak.skingaku") ' 金額
+        sql.AppendLine("  , kak.nyukaikin") ' 入会金
+        sql.AppendLine("  , kak.jugyoryo") ' 授業料
+        sql.AppendLine("  , kak.skanhi") ' 施設関連諸費
+        sql.AppendLine("  , kak.texthi") ' テキスト費
+        sql.AppendLine("  , kak.testhi") ' テスト費
+        sql.AppendLine("  , kak.yubin") ' 郵便番号
+        sql.AppendLine("  , kak.jusyo1_1") ' 住所１－１（漢字）
+        sql.AppendLine("  , kak.jusyo1_2") ' 住所１－２（漢字）
+        sql.AppendLine("  , kak.jusyo2_1") ' 住所２－１（漢字）
+        sql.AppendLine("  , kak.jusyo2_2") ' 住所２－２（漢字）
+        sql.AppendLine("  , kak.hogosnm") ' 保護者名（漢字）
+        sql.AppendLine("  , kak.seitonm") ' 生徒名（漢字）
+        sql.AppendLine("  , hog.fkbankcd") ' 振替銀行コード
+        sql.AppendLine("  , hog.fksitencd") ' 振替支店コード
+        sql.AppendLine("  , hog.fksyumoku") ' 振替種目
+        sql.AppendLine("  , hog.fkkouzano") ' 振替口座番号
+        sql.AppendLine("  , hog.kaisiym") ' 振替開始年月
+        sql.AppendLine("  , hog.kouzanm") ' 口座名義人名（カナ）
+        sql.AppendLine("  , kak.s_yubin") ' 差出人郵便番号
+        sql.AppendLine("  , kak.s_jusyo1") ' 差出人住所１（漢字）
+        sql.AppendLine("  , kak.s_jusyo2") ' 差出人住所２（漢字）
+        sql.AppendLine("  , kak.s_sasinm") ' 差出人名（漢字）
+        sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
+        sql.AppendLine("  , current_timestamp") ' 登録日時
+        sql.AppendLine("  , @crt_user_pg_id") ' 登録プログラムID
+        sql.AppendLine("  , null") ' 更新ユーザーID
+        sql.AppendLine("  , null") ' 更新日時
+        sql.AppendLine("  , null") ' 更新プログラムID
+        sql.AppendLine("from")
+        sql.AppendLine("    t_kakutei kak")
+        ' 保護者マスタワークに存在する
+        sql.AppendLine("inner join w_hogosha hog on (kak.dtnengetu = hog.dtnengetu and kak.itakuno = hog.itakuno and kak.ownerno = hog.ownerno and kak.seitono = hog.seitono)")
+        sql.AppendLine("where kak.dtnengetu = @dtnengetu")
+        sql.AppendLine("and   kak.syokbn = '2'") '処理区分=2(口座振替)
+        sql.AppendLine("and   kak.skingaku > 0") '金額が0以下でない
+        sql.AppendLine(")")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@dtnengetu", dtnengetu),
+            New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
+            New NpgsqlParameter("@crt_user_pg_id", pgid)
+        }
+
+        ret = dbc.ExecuteNonQueryWithTransaction(sql.ToString(), params, transaction)
+
+        Return ret
+
+    End Function
+
+    Private Function DeleteTKozafurikae(dtnengetu As String, transaction As NpgsqlTransaction) As Boolean
+
+        Dim ret As Boolean = False
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("delete from t_kozafurikae where dtnengetu = @dtnengetu")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@dtnengetu", dtnengetu)
+        }
+
+        ret = dbc.ExecuteNonQueryWithTransaction(sql.ToString(), params, transaction)
+
+        Return ret
+
+    End Function
+
     Private Function InsertTConveniFurikomi(dtnengetu As String, pgid As String, transaction As NpgsqlTransaction) As Boolean
 
         Dim ret As Boolean = False
@@ -205,150 +290,6 @@ Public Class WKDC020BDBAccess
         Return ret
 
     End Function
-
-
-    Private Function InsertTKozafurikae(dtnengetu As String, pgid As String, transaction As NpgsqlTransaction) As Boolean
-
-        Dim ret As Boolean = False
-        Dim dbc As New DBClient
-
-        Dim sql As New StringBuilder()
-        sql.AppendLine("insert into t_kozafurikae")
-        sql.AppendLine("(")
-        sql.AppendLine("select")
-        sql.AppendLine("    kak.dtnengetu") ' データ年月
-        sql.AppendLine("  , kak.itakuno") ' 顧客番号（委託者Ｎｏ）
-        sql.AppendLine("  , kak.ownerno") ' 顧客番号（オーナーＮｏ）
-        sql.AppendLine("  , kak.seitono") ' 顧客番号（生徒Ｎｏ）
-        sql.AppendLine("  , kak.kseqno") ' 顧客番号内ＳＥＱ番号
-        sql.AppendLine("  , kak.syokbn") ' 処理区分
-        sql.AppendLine("  , kak.skingaku") ' 金額
-        sql.AppendLine("  , kak.nyukaikin") ' 入会金
-        sql.AppendLine("  , kak.jugyoryo") ' 授業料
-        sql.AppendLine("  , kak.skanhi") ' 施設関連諸費
-        sql.AppendLine("  , kak.texthi") ' テキスト費
-        sql.AppendLine("  , kak.testhi") ' テスト費
-        sql.AppendLine("  , kak.yubin") ' 郵便番号
-        sql.AppendLine("  , kak.jusyo1_1") ' 住所１－１（漢字）
-        sql.AppendLine("  , kak.jusyo1_2") ' 住所１－２（漢字）
-        sql.AppendLine("  , kak.jusyo2_1") ' 住所２－１（漢字）
-        sql.AppendLine("  , kak.jusyo2_2") ' 住所２－２（漢字）
-        sql.AppendLine("  , kak.hogosnm") ' 保護者名（漢字）
-        sql.AppendLine("  , kak.seitonm") ' 生徒名（漢字）
-        sql.AppendLine("  , hog.fkbankcd") ' 振替銀行コード
-        sql.AppendLine("  , hog.fksitencd") ' 振替支店コード
-        sql.AppendLine("  , hog.fksyumoku") ' 振替種目
-        sql.AppendLine("  , hog.fkkouzano") ' 振替口座番号
-        sql.AppendLine("  , hog.kaisiym") ' 振替開始年月
-        sql.AppendLine("  , hog.kouzanm") ' 口座名義人名（カナ）
-        sql.AppendLine("  , kak.s_yubin") ' 差出人郵便番号
-        sql.AppendLine("  , kak.s_jusyo1") ' 差出人住所１（漢字）
-        sql.AppendLine("  , kak.s_jusyo2") ' 差出人住所２（漢字）
-        sql.AppendLine("  , kak.s_sasinm") ' 差出人名（漢字）
-        sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
-        sql.AppendLine("  , current_timestamp") ' 登録日時
-        sql.AppendLine("  , @crt_user_pg_id") ' 登録プログラムID
-        sql.AppendLine("  , null") ' 更新ユーザーID
-        sql.AppendLine("  , null") ' 更新日時
-        sql.AppendLine("  , null") ' 更新プログラムID
-        sql.AppendLine("from")
-        sql.AppendLine("    t_kakutei kak")
-        ' 保護者マスタワークに存在する
-        sql.AppendLine("inner join w_hogosha hog on (kak.dtnengetu = hog.dtnengetu and kak.itakuno = hog.itakuno and kak.ownerno = hog.ownerno and kak.seitono = hog.seitono)")
-        sql.AppendLine("where kak.dtnengetu = @dtnengetu")
-        sql.AppendLine("and   kak.syokbn = '2'") '処理区分=2(口座振替)
-        sql.AppendLine("and   kak.skingaku > 0") '金額が0以下でない
-        sql.AppendLine(")")
-
-        Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@dtnengetu", dtnengetu),
-            New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_pg_id", pgid)
-        }
-
-        ret = dbc.ExecuteNonQueryWithTransaction(sql.ToString(), params, transaction)
-
-        Return ret
-
-    End Function
-
-    Private Function DeleteTKozafurikae(dtnengetu As String, transaction As NpgsqlTransaction) As Boolean
-
-        Dim ret As Boolean = False
-        Dim dbc As New DBClient
-
-        Dim sql As New StringBuilder()
-        sql.AppendLine("delete from t_kozafurikae where dtnengetu = @dtnengetu")
-
-        Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@dtnengetu", dtnengetu)
-        }
-
-        ret = dbc.ExecuteNonQueryWithTransaction(sql.ToString(), params, transaction)
-
-        Return ret
-
-    End Function
-
-    Private Function InsertTFurikaeJigetsuKurikoshi(dtnengetu As String, jigetsu As String, pgid As String, transaction As NpgsqlTransaction) As Boolean
-
-        Dim ret As Boolean = False
-        Dim dbc As New DBClient
-
-        Dim sql As New StringBuilder()
-        sql.AppendLine("insert into t_furikae_jigetsu_kurikoshi")
-        sql.AppendLine("(")
-        sql.AppendLine("select")
-        sql.AppendLine("    @jigetsu") ' データ年月
-        sql.AppendLine("  , hog.itakuno") ' 顧客番号（委託者Ｎｏ）
-        sql.AppendLine("  , hog.ownerno") ' 顧客番号（オーナーＮｏ）
-        sql.AppendLine("  , hog.seitono") ' 顧客番号（生徒Ｎｏ）
-        sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
-        sql.AppendLine("  , current_timestamp") ' 登録日時
-        sql.AppendLine("  , @crt_user_pg_id") ' 登録プログラムID
-        sql.AppendLine("  , null") ' 更新ユーザーID
-        sql.AppendLine("  , null") ' 更新日時
-        sql.AppendLine("  , null") ' 更新プログラムID
-        sql.AppendLine("from")
-        sql.AppendLine("    w_hogosha hog")
-        sql.AppendLine("where hog.dtnengetu = @dtnengetu")
-        ' 確定データに存在しない
-        sql.AppendLine("and   not exists (")
-        sql.AppendLine("    select * from t_kakutei kak where kak.dtnengetu = hog.dtnengetu and kak.itakuno = hog.itakuno and kak.ownerno = hog.ownerno and kak.seitono = hog.seitono")
-        sql.AppendLine(")")
-        sql.AppendLine(")")
-
-        Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@dtnengetu", dtnengetu),
-            New NpgsqlParameter("@jigetsu", jigetsu),
-            New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_pg_id", pgid)
-        }
-
-        ret = dbc.ExecuteNonQueryWithTransaction(sql.ToString(), params, transaction)
-
-        Return ret
-
-    End Function
-
-    Private Function DeleteTFurikaeJigetsuKurikoshi(jigetsu As String, transaction As NpgsqlTransaction) As Boolean
-
-        Dim ret As Boolean = False
-        Dim dbc As New DBClient
-
-        Dim sql As New StringBuilder()
-        sql.AppendLine("delete from t_furikae_jigetsu_kurikoshi where dtnengetu = @jigetsu")
-
-        Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@jigetsu", jigetsu)
-        }
-
-        ret = dbc.ExecuteNonQueryWithTransaction(sql.ToString(), params, transaction)
-
-        Return ret
-
-    End Function
-
 
     Private Function InsertTYoteihyo(dtnengetu As String, pgid As String, transaction As NpgsqlTransaction) As Boolean
 
@@ -519,28 +460,120 @@ Public Class WKDC020BDBAccess
 
     End Function
 
-    Public Function GetTKozafurikae(dtnengetu As String) As DataTable
+    Private Function InsertTFurikaeJigetsuKurikoshi(dtnengetu As String, jigetsu As String, pgid As String, transaction As NpgsqlTransaction) As Boolean
 
-        Dim dt As DataTable = Nothing
+        Dim ret As Boolean = False
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
+        sql.AppendLine("insert into t_furikae_jigetsu_kurikoshi")
+        sql.AppendLine("(")
         sql.AppendLine("select")
-        sql.AppendLine("    *")
+        sql.AppendLine("    @jigetsu") ' データ年月
+        sql.AppendLine("  , hog.itakuno") ' 顧客番号（委託者Ｎｏ）
+        sql.AppendLine("  , hog.ownerno") ' 顧客番号（オーナーＮｏ）
+        sql.AppendLine("  , hog.seitono") ' 顧客番号（生徒Ｎｏ）
+        sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
+        sql.AppendLine("  , current_timestamp") ' 登録日時
+        sql.AppendLine("  , @crt_user_pg_id") ' 登録プログラムID
+        sql.AppendLine("  , null") ' 更新ユーザーID
+        sql.AppendLine("  , null") ' 更新日時
+        sql.AppendLine("  , null") ' 更新プログラムID
         sql.AppendLine("from")
-        sql.AppendLine("    t_kozafurikae")
-        sql.AppendLine("order by")
-        sql.AppendLine("    ownerno") ' 顧客番号（オーナーＮｏ）
-        sql.AppendLine("  , seitono") ' 顧客番号（生徒Ｎｏ）
-        sql.AppendLine("  , kseqno") ' 顧客番号内ＳＥＱ番号
+        sql.AppendLine("    w_hogosha hog")
+        sql.AppendLine("where hog.dtnengetu = @dtnengetu")
+        ' 確定データに存在しない
+        sql.AppendLine("and   not exists (")
+        sql.AppendLine("    select * from t_kakutei kak where kak.dtnengetu = hog.dtnengetu and kak.itakuno = hog.itakuno and kak.ownerno = hog.ownerno and kak.seitono = hog.seitono")
+        sql.AppendLine(")")
+        sql.AppendLine(")")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@dtnengetu", dtnengetu),
+            New NpgsqlParameter("@jigetsu", jigetsu),
+            New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
+            New NpgsqlParameter("@crt_user_pg_id", pgid)
+        }
+
+        ret = dbc.ExecuteNonQueryWithTransaction(sql.ToString(), params, transaction)
+
+        Return ret
+
+    End Function
+
+    Private Function DeleteTFurikaeJigetsuKurikoshi(jigetsu As String, transaction As NpgsqlTransaction) As Boolean
+
+        Dim ret As Boolean = False
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("delete from t_furikae_jigetsu_kurikoshi where dtnengetu = @jigetsu")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@jigetsu", jigetsu)
+        }
+
+        ret = dbc.ExecuteNonQueryWithTransaction(sql.ToString(), params, transaction)
+
+        Return ret
+
+    End Function
+
+    Private Function InsertTOwnerKensuKingaku(dtnengetu As String, pgid As String, transaction As NpgsqlTransaction) As Boolean
+
+        Dim ret As Boolean = False
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("insert into t_owner_kensu_kingaku")
+        sql.AppendLine("(")
+        sql.AppendLine("select")
+        sql.AppendLine("    kfk.dtnengetu") ' データ年月
+        sql.AppendLine("  , kfk.seitono") ' 顧客番号（生徒Ｎｏ）
+        sql.AppendLine("  , count(*) kensu") ' 件数
+        sql.AppendLine("  , sum(tsu.sinki) kingaku") ' 金額
+        sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
+        sql.AppendLine("  , current_timestamp") ' 登録日時
+        sql.AppendLine("  , @crt_user_pg_id") ' 登録プログラムID
+        sql.AppendLine("  , null") ' 更新ユーザーID
+        sql.AppendLine("  , null") ' 更新日時
+        sql.AppendLine("  , null") ' 更新プログラムID
+        sql.AppendLine("from")
+        sql.AppendLine("    t_kozafurikae kfk")
+        sql.AppendLine("  , t_tesuryo tsu")
+        sql.AppendLine("where kfk.dtnengetu = @dtnengetu")
+        sql.AppendLine("group by")
+        sql.AppendLine("    kfk.dtnengetu") ' データ年月
+        sql.AppendLine("  , kfk.seitono") ' 顧客番号（生徒Ｎｏ）
+        sql.AppendLine(")")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@dtnengetu", dtnengetu),
+            New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
+            New NpgsqlParameter("@crt_user_pg_id", pgid)
+        }
+
+        ret = dbc.ExecuteNonQueryWithTransaction(sql.ToString(), params, transaction)
+
+        Return ret
+
+    End Function
+
+    Private Function DeleteTOwnerKensuKingaku(dtnengetu As String, transaction As NpgsqlTransaction) As Boolean
+
+        Dim ret As Boolean = False
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("delete from t_owner_kensu_kingaku where dtnengetu = @dtnengetu")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)
         }
 
-        dt = dbc.GetData(sql.ToString(), params)
+        ret = dbc.ExecuteNonQueryWithTransaction(sql.ToString(), params, transaction)
 
-        Return dt
+        Return ret
 
     End Function
 
@@ -584,6 +617,83 @@ Public Class WKDC020BDBAccess
         sql.AppendLine("    t_kakutei kak")
         sql.AppendLine("where kak.dtnengetu = @dtnengetu")
         sql.AppendLine("and   kak.skingaku > 0") '金額が0以下でない
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@dtnengetu", dtnengetu)
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
+
+    Public Function GetMItakusha(dtnengetu As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select * from m_itakusha")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@dtnengetu", dtnengetu)
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
+
+    Public Function GetMTesuryo() As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select * from m_tesuryo")
+
+        Dim params As New List(Of NpgsqlParameter)
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
+
+    Public Function GetDayPushBack(shoriNengatu As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select * from getdaypushback(@shoriNengatu)")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+        New NpgsqlParameter("@shoriNengatu", shoriNengatu)
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
+
+    Public Function GetTKozafurikae(dtnengetu As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("select")
+        sql.AppendLine("    *")
+        sql.AppendLine("from")
+        sql.AppendLine("    t_kozafurikae")
+        sql.AppendLine("order by")
+        sql.AppendLine("    ownerno") ' 顧客番号（オーナーＮｏ）
+        sql.AppendLine("  , seitono") ' 顧客番号（生徒Ｎｏ）
+        sql.AppendLine("  , kseqno") ' 顧客番号内ＳＥＱ番号
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)

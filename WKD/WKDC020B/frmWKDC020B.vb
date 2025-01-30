@@ -30,13 +30,41 @@ Public Class frmWKDC020B
         Dim shoriNengetsu As String = txtShoriNengetsu.Text.Replace("/", "")
         Dim jigetsu As String = CnvDat(shoriNengetsu & "01").AddMonths(1).ToString("yyyyMM")
 
-        Dim dt As DataTable = Nothing
+        Dim dtK As DataTable = Nothing
 
         ' 確定データ取得
-        dt = dba.GetTKakutei(shoriNengetsu)
-        If dt.Rows.Count <= 0 Then
+        dtK = dba.GetTKakutei(shoriNengetsu)
+        If dtK.Rows.Count <= 0 Then
             MessageBox.Show("確定データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
+        End If
+
+        Dim dtI As DataTable = Nothing
+
+        ' 委託者マスタ取得
+        dtI = dba.GetMItakusha(shoriNengetsu)
+        If dtI.Rows.Count <= 0 Then
+            MessageBox.Show("委託者マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim dtT As DataTable = Nothing
+
+        ' 手数料マスタ取得
+        dtT = dba.GetMItakusha(shoriNengetsu)
+        If dtT.Rows.Count <= 0 Then
+            MessageBox.Show("手数料マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim dtD As DataTable = Nothing
+        Dim hikiotoshiYmd As String = shoriNengetsu & "27"
+        Dim hikiotoshiMd As String = String.Empty
+
+        ' 引落日取得
+        dtD = dba.GetDayPushBack(hikiotoshiYmd)
+        If 0 < dtD.Rows.Count Then
+            hikiotoshiMd = CnvDat(dtD.Rows(0)(0)).ToString("MMdd")
         End If
 
         ' 口座振替請求データ作成
@@ -44,11 +72,11 @@ Public Class frmWKDC020B
             Return
         End If
 
-        Dim dt2 As DataTable = Nothing
+        Dim dtF As DataTable = Nothing
 
         ' 口座振替請求データ取得
-        dt2 = dba.GetTKozafurikae(shoriNengetsu)
-        If dt2.Rows.Count <= 0 Then
+        dtF = dba.GetTKozafurikae(shoriNengetsu)
+        If dtF.Rows.Count <= 0 Then
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
@@ -58,7 +86,7 @@ Public Class frmWKDC020B
 
         ' ファイル出力
         Dim fileName As String = "WAO_SEIKYU.DAT"
-        Dim filePath As String = WriteCsvData(dt2, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
+        Dim filePath As String = WriteCsvData(dtF, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
         msg.AppendLine("・" & filePath)
 
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
