@@ -16,12 +16,14 @@ Public Class frmWKDR070B
         lblSysDate.Text = sysDate.ToString("yyyy/MM/dd")
         lblSysDate.AutoSize = True
 
-        Dim ngn As String = sysDate.ToString("yyyyMM") & txtNyukinbi.Text
+        Dim ngn As String = sysDate.ToString("yyyyMMdd")
 
         '翌日取得
         dt = dba.GetDayPushBack(ngn)
         If dt.Rows.Count > 0 Then
             txtNyukinbi.Text = dt.Rows(0)(0).ToString.Substring(6, 2)
+        Else
+            txtNyukinbi.Text = ngn.ToString.Substring(6, 2)
         End If
 
     End Sub

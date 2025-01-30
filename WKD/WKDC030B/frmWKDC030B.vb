@@ -14,12 +14,8 @@ Public Class frmWKDC030B
         lblSysDate.AutoSize = True
 
         ' 処理年度
-        If sysDate.Month < 4 Then
-            txtShoriNendo.Text = sysDate.AddYears(-1).ToString("yyyy")
-        Else
-            txtShoriNendo.Text = sysDate.ToString("yyyy")
-        End If
-        txtShoriNendo.Enabled = False
+        txtShoriNendo.Text = sysDate.ToString("yyyy/MM")
+        'txtShoriNendo.Enabled = False
 
     End Sub
 
@@ -45,7 +41,10 @@ Public Class frmWKDC030B
             Return
         End If
 
-        dt = dba.GetCsvData(DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("yyyyMM"))
+        Dim shoriNengetsu As String = txtShoriNendo.Text.Replace("/", "")
+
+        'dt = dba.GetCsvData(DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("yyyyMM"))
+        dt = dba.GetCsvData(shoriNengetsu & 27, shoriNengetsu & 25, shoriNengetsu)
 
         If dt.Rows.Count <= 0 Then
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)

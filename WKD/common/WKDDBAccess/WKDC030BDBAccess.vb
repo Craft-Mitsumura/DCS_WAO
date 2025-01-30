@@ -39,7 +39,7 @@ Public Class WKDC030BDBAccess
 
     End Function
 
-    Public Function GetCsvData(processingDate As String, conditionDate As String) As DataTable
+    Public Function GetCsvData(processingDate27 As String, processingDate25 As String, conditionDate As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -47,9 +47,9 @@ Public Class WKDC030BDBAccess
 
         sql.AppendLine("select ownerno ")
         sql.AppendLine(", bakome ")
-        sql.AppendLine(", TO_CHAR(CURRENT_DATE , 'YYYYMM') ")
-        sql.AppendLine(", getdaypushback(@processingDate) ")
-        sql.AppendLine(", getdaypushback(@processingDate) ")
+        sql.AppendLine(", @conditionDate ")
+        sql.AppendLine(", getdaypushback(@processingDate27) ")
+        sql.AppendLine(", getdaypushback(@processingDate25) ")
         sql.AppendLine(", seitono ")
         sql.AppendLine(", syokbn ")
         sql.AppendLine(", skingaku ")
@@ -77,12 +77,13 @@ Public Class WKDC030BDBAccess
         sql.AppendLine("left join")
         sql.AppendLine("    tbkeiyakushamaster own on (ytd.ownerno = own.bakyny)")
         sql.AppendLine("left join")
-        sql.AppendLine("    tchogoshamaster hog on (ytd.ownerno = hog.cakycd and ytd.seitono = hog.cahgcd and hog.cafkst <= CAST(getdaypushback(@processingDate) AS INTEGER) and hog.cafked >= CAST(getdaypushback(@processingDate) AS INTEGER)) ")
+        sql.AppendLine("    tchogoshamaster hog on (ytd.ownerno = hog.cakycd and ytd.seitono = hog.cahgcd and hog.cafkst <= CAST(getdaypushback(@processingDate27) AS INTEGER) and hog.cafked >= CAST(getdaypushback(@processingDate27) AS INTEGER)) ")
         sql.AppendLine("where ytd.dtnengetu = @conditionDate")
 
         Dim params = New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@conditionDate", conditionDate),
-            New NpgsqlParameter("@processingDate", processingDate)
+            New NpgsqlParameter("@processingDate27", processingDate27),
+            New NpgsqlParameter("@processingDate25", processingDate25)
         }
 
         dt = dbc.GetData(sql.ToString(), params)
