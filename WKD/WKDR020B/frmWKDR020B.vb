@@ -282,7 +282,9 @@ Public Class frmWKDR020B
             Dim tesuryo As String = ""
             Dim intkonbini As Integer = CnvDec(konbini)
             If dtrow("insiflg") = "1" Then
-                intkonbini += insi31500
+                If IsDBNull(dtrow("code")) Then
+                    intkonbini += insi31500
+                End If
             End If
             entity.tesur = intkonbini.ToString ' 手数料金額
             entity.bankcd = "" ' 振込先銀行番号
