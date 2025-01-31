@@ -266,6 +266,8 @@ Public Class frmWKDT030B
                 Return "3"
             Case "給与支払報告書"
                 Return "4"
+            Case Else
+                Return ""
         End Select
     End Function
 

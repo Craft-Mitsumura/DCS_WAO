@@ -25,7 +25,7 @@ Public Class WKDC020BDBAccess
                 InsertTYoteihyo(dtnengetu, pgid, transaction)
                 DeleteTFurikaeJigetsuKurikoshi(jigetsu, transaction)
                 InsertTFurikaeJigetsuKurikoshi(dtnengetu, jigetsu, pgid, transaction)
-                DeleteTOwnerKensuKingaku(jigetsu, transaction)
+                DeleteTOwnerKensuKingaku(dtnengetu, transaction)
                 InsertTOwnerKensuKingaku(dtnengetu, pgid, transaction)
 
                 ' トランザクションのコミット
@@ -81,18 +81,24 @@ Public Class WKDC020BDBAccess
         sql.AppendLine("  , case hog.cakkbn when '0' then hog.cakzsb when '1' then '0' end cakzsb") ' 振替種目
         sql.AppendLine("  , case hog.cakkbn when '0' then hog.cakzno when '1' then substr(hog.caybtn,1,7) end cakzno") ' 振替口座番号
         ' 振替開始次月繰越データに存在する場合、振替開始年月を処理年月とする
-        sql.AppendLine("  , case exists (select * from t_furikae_jigetsu_kurikoshi kur where kur.dtnengetu = @dtnengetu and kur.ownerno = hog.cakycd and kur.seitono = hog.cahgcd)") ' 振替開始年月
-        sql.AppendLine("        when true then @dtnengetu")
+        sql.AppendLine("  , case exists (select * from t_furikae_jigetsu_kurikoshi kur where kur.dtnengetu = @dtnengetu and kur.ownerno = hog.cakycd and kur.seitono = hog.cahgcd)")
+        sql.AppendLine("        when true then")
+        sql.AppendLine("        case ((substr(cast(hog.cafkst as character varying),1,6) <= @dtnengetu")
+        sql.AppendLine("            and substr(cast(hog.cafked as character varying),1,6) >= @dtnengetu)")
+        sql.AppendLine("            or (substr(cast(hog.cafked as character varying),1,6) < @dtnengetu))")
+        sql.AppendLine("            when true then '999999'")
+        sql.AppendLine("            else @dtnengetu")
+        sql.AppendLine("        end")
         sql.AppendLine("        else substr(cast(hog.cafkst as character varying),1,6)")
-        sql.AppendLine("    end cafkst")
-        sql.AppendLine("  , hog.cafked")
+        sql.AppendLine("    end cafkst") ' 振替開始年月
+        sql.AppendLine("  , substr(cast(hog.cafked as character varying),1,6) cafked") ' 振替終了年月
         sql.AppendLine("  , rtrim(substr(hog.cakznm || repeat(' ',30),1,30)) cakznm") ' 口座名義人名（カナ）※40桁→30桁に切り詰め
         sql.AppendLine("from")
         sql.AppendLine("    tchogoshamaster hog")
         sql.AppendLine(") hog2")
         ' 振替開始日の年月 ≦ 処理年月 ≦ 振替終了日
-        sql.AppendLine("where substr(cast(hog2.cafkst as character varying),1,6) <= @dtnengetu")
-        sql.AppendLine("and   substr(cast(hog2.cafked as character varying),1,6) >= @dtnengetu")
+        sql.AppendLine("where hog2.cafkst <= @dtnengetu")
+        sql.AppendLine("and   hog2.cafked >= @dtnengetu")
         sql.AppendLine(")")
 
         Dim params As New List(Of NpgsqlParameter) From {
@@ -529,7 +535,7 @@ Public Class WKDC020BDBAccess
         sql.AppendLine("(")
         sql.AppendLine("select")
         sql.AppendLine("    kfk.dtnengetu") ' データ年月
-        sql.AppendLine("  , kfk.seitono") ' 顧客番号（生徒Ｎｏ）
+        sql.AppendLine("  , kfk.ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("  , count(*) kensu") ' 件数
         sql.AppendLine("  , sum(tsu.sinki) kingaku") ' 金額
         sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
@@ -540,11 +546,11 @@ Public Class WKDC020BDBAccess
         sql.AppendLine("  , null") ' 更新プログラムID
         sql.AppendLine("from")
         sql.AppendLine("    t_kozafurikae kfk")
-        sql.AppendLine("  , t_tesuryo tsu")
+        sql.AppendLine("  , m_tesuryo tsu")
         sql.AppendLine("where kfk.dtnengetu = @dtnengetu")
         sql.AppendLine("group by")
         sql.AppendLine("    kfk.dtnengetu") ' データ年月
-        sql.AppendLine("  , kfk.seitono") ' 顧客番号（生徒Ｎｏ）
+        sql.AppendLine("  , kfk.ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine(")")
 
         Dim params As New List(Of NpgsqlParameter) From {
@@ -636,9 +642,7 @@ Public Class WKDC020BDBAccess
         Dim sql As New StringBuilder()
         sql.AppendLine("select * from m_itakusha")
 
-        Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@dtnengetu", dtnengetu)
-        }
+        Dim params As New List(Of NpgsqlParameter)
 
         dt = dbc.GetData(sql.ToString(), params)
 
@@ -690,6 +694,7 @@ Public Class WKDC020BDBAccess
         sql.AppendLine("    *")
         sql.AppendLine("from")
         sql.AppendLine("    t_kozafurikae")
+        sql.AppendLine("where dtnengetu = @dtnengetu")
         sql.AppendLine("order by")
         sql.AppendLine("    ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("  , seitono") ' 顧客番号（生徒Ｎｏ）
