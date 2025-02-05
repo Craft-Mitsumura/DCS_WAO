@@ -9,6 +9,7 @@ Public Class WKDR040BDBAccess
         Dim dt As DataTable = Nothing
 
         Dim sql As New StringBuilder()
+
         sql.AppendLine("select * ")
         sql.AppendLine("from wao.t_kahenkomoku ")
         sql.AppendLine("where dtnengetu = @dtnengetu ")
@@ -55,6 +56,7 @@ Public Class WKDR040BDBAccess
         Dim dt As DataTable = Nothing
 
         Dim sql As New StringBuilder()
+
         sql.AppendLine("select * ")
         sql.AppendLine("from wao.t_instructor_furikomi ")
         sql.AppendLine("where dtnengetu = @dtnengetu ")
@@ -68,6 +70,7 @@ Public Class WKDR040BDBAccess
         Return dt
 
     End Function
+
     Public Function GetTbFurikaekekkameisai(dtnengetu As String) As DataTable
 
         Dim dbc As New DBClient
@@ -95,6 +98,11 @@ Public Class WKDR040BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
+        sql.AppendLine(" select ")
+        sql.AppendLine(" * ")
+        sql.AppendLine(" from ")
+        sql.AppendLine(" m_itakusha ")
+        sql.AppendLine(" where itakuno = @itakuno ")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@itakuno", itakuno)
@@ -112,6 +120,33 @@ Public Class WKDR040BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
+        sql.AppendLine("update wao.t_kahenkomoku  ")
+        sql.AppendLine("set  ")
+        '結果・手数料設定 
+        sql.AppendLine("   tesur3 = t2.tesur3, ")
+        sql.AppendLine("   fuzken = t2.fuzken, ")
+        sql.AppendLine("   fuzkin = t2.fuzkin, ")
+        sql.AppendLine("   fufken = t2.fufken, ")
+        sql.AppendLine("   fufkin = t2.fufkin, ")
+        sql.AppendLine("   cszken = t2.cszken, ")
+        sql.AppendLine("   cszkin = t2.cszkin, ")
+        sql.AppendLine("   csmken = t2.csmken, ")
+        sql.AppendLine("   csmkin = t2.csmkin, ")
+        sql.AppendLine("   fritesu = t2.fritesu, ")
+        '調整額設定 
+        sql.AppendLine("   tyosei = t3.tyouseigaku, ")
+        'オーナー情報設定 
+        sql.AppendLine("   name = t4.bakjnm,  ")
+        sql.AppendLine("   koumei = t4.bakome,  ")
+        sql.AppendLine("   postno1 = t4.bazpc1, ")
+        sql.AppendLine("   postno2 = t4.bazpc2, ")
+        sql.AppendLine("   addr1 = t4.baadj1, ")
+        sql.AppendLine("   addr2 = t4.baadj2, ")
+        sql.AppendLine("   bankcd = t4.babank, ")
+        sql.AppendLine("   sitencd = t4.basitn, ")
+        sql.AppendLine("   syumoku = t4.bakzsb, ")
+        sql.AppendLine("   kouzano = t4.bakzno, ")
+        sql.AppendLine("   kouzanm = rtrim(substr(t4.bakznm || repeat(' ',30),1,30)), ")
 
         sql.AppendLine("   upd_user_id = @upd_user_id, ")
         sql.AppendLine("   upd_user_dtm = @upd_user_dtm, ")
@@ -188,6 +223,10 @@ Public Class WKDR040BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
+        sql.AppendLine(" select ")
+        sql.AppendLine(" * ")
+        sql.AppendLine(" from ")
+        sql.AppendLine(" getdaybringforward(@in_yyyymmdd) ")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@in_yyyymmdd", in_yyyymmdd)
@@ -227,13 +266,14 @@ Public Class WKDR040BDBAccess
 
         Dim sql As New StringBuilder()
         sql.AppendLine(" delete  ")
-        sql.AppendLine(" FROM "))
+        sql.AppendLine(" FROM ")
         sql.AppendLine(" t_choseigaku ")
         sql.AppendLine(" WHERE dtnengetu = @dtnengetu ")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)
         }
+
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
 
         Return ret
@@ -312,7 +352,7 @@ Public Class WKDR040BDBAccess
         Dim ret As Boolean = False
         Dim dbc As New DBClient
 
-        Dim sql As New StringBuilder())
+        Dim sql As New StringBuilder()
         sql.AppendLine("insert ")
         sql.AppendLine("into t_choseigaku( ")
         sql.AppendLine("    dtnengetu") ' データ年月
