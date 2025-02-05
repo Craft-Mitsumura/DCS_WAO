@@ -45,13 +45,12 @@ Public Class frmWKDC030B
 
         ' オーナーマスタ取得
         Dim dt2 As DataTable = dba.GetOwner(shoriNengetsu)
-        If dt2.Rows.Count <= 0 Then
+        If 0 < dt2.Rows.Count Then
             MessageBox.Show("オーナーマスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
 
-        Dim dt3 As DataTable = dba.GetTesuryo()
-        dt3 = dba.GetCsvData(shoriNengetsu & 27, shoriNengetsu & 25, shoriNengetsu)
+        Dim dt3 As DataTable = dba.GetCsvData(shoriNengetsu & 27, shoriNengetsu & 25, shoriNengetsu)
         If dt3.Rows.Count <= 0 Then
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
@@ -59,7 +58,7 @@ Public Class frmWKDC030B
 
         '' ＣＳＶファイル出力
         Dim fileName As String = "claim.csv"
-        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+        Dim filePath As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
 
         MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
