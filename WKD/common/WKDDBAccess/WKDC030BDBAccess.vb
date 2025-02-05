@@ -104,10 +104,10 @@ Public Class WKDC030BDBAccess
         sql.AppendLine("    t_yoteihyo ytd ")
         sql.AppendLine("left join")
         sql.AppendLine("    tbkeiyakushamaster own")
-        sql.AppendLine("on (ytd.ownerno = own.bakyny")
+        sql.AppendLine("on (ytd.ownerno = own.bakycd")
         sql.AppendLine("and own.bakome is not null and own.bakyfg = '0')")
         sql.AppendLine("where ytd.dtnengetu = @dtnengetu")
-        sql.AppendLine("and own.bakyny is null")
+        sql.AppendLine("and own.bakycd is null")
 
         Dim params = New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)
