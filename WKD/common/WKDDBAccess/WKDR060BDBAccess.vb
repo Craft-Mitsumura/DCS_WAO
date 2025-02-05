@@ -58,12 +58,12 @@ Public Class WKDR060BDBAccess
         sql.AppendLine("  , cszkin + csmkin csskin") ' 収納請求金額
         sql.AppendLine("  , csmkin") ' 収納不能金額
         sql.AppendLine("  , cszkin") ' 収納済金額
-        sql.AppendLine("  , '0' cresken") ' クレジット請求件数
-        sql.AppendLine("  , '0' crehfken") ' クレジット引落不能件数
-        sql.AppendLine("  , '0' crehzken") ' クレジット引落済件数
-        sql.AppendLine("  , '0' crehskin") ' クレジット引落請金額
-        sql.AppendLine("  , '0' crehfkin") ' クレジット引落不能金額
-        sql.AppendLine("  , '0' crehzkin") ' クレジット引落済金額
+        sql.AppendLine("  , 0 cresken") ' クレジット請求件数
+        sql.AppendLine("  , 0 crehfken") ' クレジット引落不能件数
+        sql.AppendLine("  , 0 crehzken") ' クレジット引落済件数
+        sql.AppendLine("  , 0 crehskin") ' クレジット引落請金額
+        sql.AppendLine("  , 0 crehfkin") ' クレジット引落不能金額
+        sql.AppendLine("  , 0 crehzkin") ' クレジット引落済金額
         sql.AppendLine("  , tesur1") ' 回収手数料-１
         sql.AppendLine("  , tesur2") ' 回収手数料-２
         sql.AppendLine("  , tesur3") ' 回収手数料-３

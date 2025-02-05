@@ -66,7 +66,7 @@ Public Class WKDR070BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("delete from w_furikae_kekka_meisai where dtnengetu = @shoriNengatu")
+        sql.AppendLine("delete from w_furikae_kekka_meisai")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengatu", shoriNengatu)
@@ -241,7 +241,7 @@ Public Class WKDR070BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("delete from w_kahenkomoku where dtnengetu = @shoriNengatu")
+        sql.AppendLine("delete from w_kahenkomoku")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengatu", shoriNengatu)
@@ -334,8 +334,8 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , tk.fufkin")
         sql.AppendLine("  , tk.cszken")
         sql.AppendLine("  , tk.cszkin")
-        sql.AppendLine("  , coalesce(ok.mnokensu, 0) csmken")
-        sql.AppendLine("  , coalesce(ok.mnokingk, 0) csmkin")
+        sql.AppendLine("  , tk.csmken + coalesce(ok.mnokensu, 0) csmken")
+        sql.AppendLine("  , tk.csmkin + coalesce(ok.mnokingk, 0) csmkin")
         sql.AppendLine("  , tk.fritesu")
         sql.AppendLine("  , @crt_user_id")
         sql.AppendLine("  , @crt_user_dtm")
@@ -432,21 +432,22 @@ Public Class WKDR070BDBAccess
         Dim dbc As New DBClient
 
         ' 現在の日付を基準に前月を計算
-        Dim currentDate As DateTime = DateTime.Now
-        Dim previousMonthDate As DateTime = currentDate.AddMonths(-1)
-        Dim previousMonth As String = previousMonthDate.ToString("yyyyMM")
+        'Dim currentDate As DateTime = DateTime.Now
+        'Dim previousMonthDate As DateTime = currentDate.AddMonths(-1)
+        'Dim previousMonth As String = previousMonthDate.ToString("yyyyMM")
 
         Dim sql As New StringBuilder()
         sql.AppendLine("select")
-        sql.AppendLine("    ownerno")
-        sql.AppendLine("  , substr(instno,2,7)")
-        sql.AppendLine("  , " & previousMonth & " frinengetu")
-        sql.AppendLine("  , namekj")
-        sql.AppendLine("  , fkinzem")
-        sql.AppendLine("  , fkinzeg")
-        sql.AppendLine("  , zeigak")
-        sql.AppendLine("  , fritesu")
-        sql.AppendLine("  , '' filler")
+        sql.AppendLine("    ownerno オーナー№")
+        sql.AppendLine("  , substr(instno,2,7) インストラクター№")
+        sql.AppendLine("  , @shoriNengatu 締年月")
+        'sql.AppendLine("  , namekj 氏名（漢字）")
+        sql.AppendLine("  , rtrim(namekj) 氏名（漢字）")
+        sql.AppendLine("  , fkinzem 振込金額（税引前）")
+        sql.AppendLine("  , fkinzeg 振込金額（税引後）")
+        sql.AppendLine("  , zeigak 源泉徴収税額")
+        sql.AppendLine("  , fritesu 振込手数料")
+        'sql.AppendLine("  , '' filler")
         sql.AppendLine("from t_instructor_furikomi")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
         sql.AppendLine("order by dtnengetu, itakuno, ownerno, instno")
@@ -461,13 +462,13 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function DeleteWTutisyo(shoriNengatu As String) As Boolean
+    Public Function DeleteWTsuchisho(shoriNengatu As String) As Boolean
 
         Dim ret As Boolean = False
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("delete from w_tutihyou where dtnengetu = @shoriNengatu")
+        sql.AppendLine("delete from w_tsuchisho")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengatu", shoriNengatu)
@@ -527,7 +528,7 @@ Public Class WKDR070BDBAccess
     End Function
 
 
-    Public Function InsertWTutisyo0(shoriNengatu As String, pgid As String, meisu As Integer) As Boolean
+    Public Function InsertWTsuchisho1(shoriNengatu As String, pgid As String, meisu As Integer) As Boolean
 
         Dim ret As Boolean = False
         Dim dbc As New DBClient
@@ -536,7 +537,7 @@ Public Class WKDR070BDBAccess
         Dim meisuK As Integer = Math.Floor((meisu / 60) + 0.99)
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("insert into w_tutihyou (") '中間通知表データ
+        sql.AppendLine("insert into w_tsuchisho (") '中間通知表データ
         sql.AppendLine("    dtnengetu")
         sql.AppendLine("  , itakuno")
         sql.AppendLine("  , ownerno")
@@ -584,54 +585,60 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , crt_user_pg_id")
         sql.AppendLine(")")
         sql.AppendLine("select")
-        sql.AppendLine("    dtnengetu")
-        sql.AppendLine("  , itakuno")
-        sql.AppendLine("  , ownerno")
-        sql.AppendLine("  , filler")
+        sql.AppendLine("    tk.dtnengetu")
+        sql.AppendLine("  , tk.itakuno")
+        sql.AppendLine("  , tk.ownerno")
+        sql.AppendLine("  , tk.filler")
         sql.AppendLine("  , '' syokbn")
         sql.AppendLine("  , '' funocd")
         sql.AppendLine("  , '' syuunou")
-        sql.AppendLine("  , 0 hakymd")
-        sql.AppendLine("  , 0 fkkin")
-        sql.AppendLine("  , 0 tesur")
-        sql.AppendLine("  , tesur1nm")
-        sql.AppendLine("  , tesur1")
-        sql.AppendLine("  , tesur2nm")
-        sql.AppendLine("  , tesur2")
-        sql.AppendLine("  , tesur3nm")
-        sql.AppendLine("  , tesur3")
-        sql.AppendLine("  , tesur4nm")
-        sql.AppendLine("  , tesur4")
-        sql.AppendLine("  , tesur5nm")
-        sql.AppendLine("  , tesur5")
-        sql.AppendLine("  , tesur6nm")
-        sql.AppendLine("  , tesur6")
-        sql.AppendLine("  , tyosei")
-        sql.AppendLine("  , name")
-        sql.AppendLine("  , koumei")
-        sql.AppendLine("  , postno1")
-        sql.AppendLine("  , postno2")
-        sql.AppendLine("  , addr1")
-        sql.AppendLine("  , addr2")
-        sql.AppendLine("  , fuzken")
-        sql.AppendLine("  , fuzkin")
-        sql.AppendLine("  , fufken")
-        sql.AppendLine("  , fufkin")
-        sql.AppendLine("  , cszken")
-        sql.AppendLine("  , cszkin")
-        sql.AppendLine("  , csmken")
-        sql.AppendLine("  , csmkin")
-        sql.AppendLine("  , row_number() over (order by dtnengetu, itakuno, ownerno) meisu") ' ここで順番を生成
-        sql.AppendLine("  , floor((row_number() over (order by dtnengetu, itakuno, ownerno) / 60) + 0.99) page")
+        sql.AppendLine("  , 0  hakymd")
+        sql.AppendLine("  , 0  fkkin")
+        sql.AppendLine("  , 0  tesur")
+        sql.AppendLine("  , tk.tesur1nm")
+        sql.AppendLine("  , tk.tesur1")
+        sql.AppendLine("  , tk.tesur2nm")
+        sql.AppendLine("  , tk.tesur2")
+        sql.AppendLine("  , tk.tesur3nm")
+        sql.AppendLine("  , tk.tesur3")
+        sql.AppendLine("  , tk.tesur4nm")
+        sql.AppendLine("  , tk.tesur4")
+        sql.AppendLine("  , tk.tesur5nm")
+        sql.AppendLine("  , tk.tesur5")
+        sql.AppendLine("  , tk.tesur6nm")
+        sql.AppendLine("  , tk.tesur6")
+        sql.AppendLine("  , tk.tyosei")
+        sql.AppendLine("  , tk.name")
+        sql.AppendLine("  , tk.koumei")
+        sql.AppendLine("  , tk.postno1")
+        sql.AppendLine("  , tk.postno2")
+        sql.AppendLine("  , tk.addr1")
+        sql.AppendLine("  , tk.addr2")
+        sql.AppendLine("  , tk.fuzken")
+        sql.AppendLine("  , tk.fuzkin")
+        sql.AppendLine("  , tk.fufken")
+        sql.AppendLine("  , tk.fufkin")
+        sql.AppendLine("  , tk.cszken")
+        sql.AppendLine("  , tk.cszkin")
+        sql.AppendLine("  , tk.csmken")
+        sql.AppendLine("  , tk.csmkin")
+        sql.AppendLine("  , row_number() over (order by tk.dtnengetu, tk.itakuno, tk.ownerno) meisu") ' ここで順番を生成
+        sql.AppendLine("  , floor((row_number() over (order by tk.dtnengetu, tk.itakuno, tk.ownerno) / 60) + 0.99) page")
         sql.AppendLine("  , 0 maisu")
-        sql.AppendLine("  , fritesu")
+        sql.AppendLine("  , tk.fritesu")
         sql.AppendLine("  , 1 datkbn")
         sql.AppendLine("  , @crt_user_id")
         sql.AppendLine("  , @crt_user_dtm")
         sql.AppendLine("  , @crt_user_pg_id")
-        sql.AppendLine("from w_kahenkomoku")
-        sql.AppendLine("where dtnengetu = @shoriNengatu")
-        sql.AppendLine("order by dtnengetu, itakuno, ownerno, filler")
+        sql.AppendLine("from w_kahenkomoku tk")
+        'sql.AppendLine("left join w_furikae_kekka_meisai ok on tk.ownerno = ok.ownerno")
+        'sql.AppendLine("and tk.itakuno = ok.itakuno")
+        'sql.AppendLine("and tk.dtnengetu = ok.dtnengetu")
+        sql.AppendLine("where tk.dtnengetu = @shoriNengatu")
+        'sql.AppendLine("and ok.dtnengetu is null")
+        'sql.AppendLine("and ok.ownerno is null")
+        'sql.AppendLine("and ok.itakuno is null")
+        sql.AppendLine("order by tk.dtnengetu, tk.itakuno, tk.ownerno, tk.filler")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengatu", shoriNengatu),
@@ -648,7 +655,7 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function InsertWTutisyo1(shoriNengatu As String, pgid As String, meisu As Integer) As Boolean
+    Public Function InsertWTsuchisho2(shoriNengatu As String, pgid As String, meisu As Integer) As Boolean
 
         Dim ret As Boolean = False
         Dim dbc As New DBClient
@@ -657,7 +664,7 @@ Public Class WKDR070BDBAccess
         Dim meisuK As Integer = Math.Floor((meisu / 60) + 0.99)
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("insert into w_tutihyou (") '中間通書データ
+        sql.AppendLine("insert into w_tsuchisho (") '中間通書データ
         sql.AppendLine("    dtnengetu")
         sql.AppendLine("  , itakuno")
         sql.AppendLine("  , ownerno")
@@ -773,7 +780,7 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function GetWTutisyo(shoriNengatu As String) As DataTable
+    Public Function GetWTsuchisho(shoriNengatu As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -781,7 +788,7 @@ Public Class WKDR070BDBAccess
         Dim sql As New StringBuilder()
         sql.AppendLine("select")
         sql.AppendLine("*")
-        sql.AppendLine("from w_tutihyou")
+        sql.AppendLine("from w_tsuchisho")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
         'sql.AppendLine("group by syokbn")
         sql.AppendLine("order by dtnengetu, itakuno, ownerno, page, meisu")
@@ -797,7 +804,7 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function GetWTutisyokbn(shoriNengatu As String) As DataTable
+    Public Function GetWTsuchishokbn(shoriNengatu As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -805,7 +812,7 @@ Public Class WKDR070BDBAccess
         Dim sql As New StringBuilder()
         sql.AppendLine("select")
         sql.AppendLine("syokbn")
-        sql.AppendLine("from w_tutihyou")
+        sql.AppendLine("from w_tsuchisho")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
         sql.AppendLine("group by syokbn")
         sql.AppendLine("order by syokbn")
@@ -822,7 +829,7 @@ Public Class WKDR070BDBAccess
 
 
 
-    Public Function GetWTutisyo1(shoriNengatu As String, kouhuri As Integer, kbn As String) As DataTable
+    Public Function GetWTsuchisho1(shoriNengatu As String, kouhuri As Integer, kbn As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -847,10 +854,10 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , filler")
         sql.AppendLine("  , fkkin")
         sql.AppendLine("  , @kouhuri")
-        sql.AppendLine("from w_tutihyou")
+        sql.AppendLine("from w_tsuchisho")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
         sql.AppendLine("and syokbn = @kbn")
-        sql.AppendLine("order by dtnengetu, itakuno, ownerno, page, meisu")
+        sql.AppendLine("order by dtnengetu, itakuno, ownerno, filler")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@shoriNengatu", shoriNengatu),
@@ -864,7 +871,7 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function GetWTutisyo2(shoriNengatu As String, inshisyohi As Integer, konbini As Integer, inshi As Integer, kbn As String) As DataTable
+    Public Function GetWTsuchisho2(shoriNengatu As String, inshisyohi As Integer, konbini As Integer, inshi As Integer, kbn As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -879,10 +886,10 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , filler")
         sql.AppendLine("  , fkkin")
         sql.AppendLine("  , case when (fkkin >= @inshisyohi) then (@konbini + @inshi) else @konbini end")
-        sql.AppendLine("from w_tutihyou")
+        sql.AppendLine("from w_tsuchisho")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
         sql.AppendLine("and syokbn = @kbn")
-        sql.AppendLine("order by dtnengetu, itakuno, ownerno, page, meisu")
+        sql.AppendLine("order by dtnengetu, itakuno, ownerno, filler")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@shoriNengatu", shoriNengatu),
@@ -898,7 +905,7 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function GetWTutisyo3(shoriNengatu As String, kbn As String) As DataTable
+    Public Function GetWTsuchisho3(shoriNengatu As String, kbn As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -913,10 +920,10 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , '' || substr(filler,2,7)")
         sql.AppendLine("  , fkkin")
         sql.AppendLine("  , tesur")
-        sql.AppendLine("from w_tutihyou")
+        sql.AppendLine("from w_tsuchisho")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
         sql.AppendLine("and syokbn = @kbn")
-        sql.AppendLine("order by dtnengetu, itakuno, ownerno, page, meisu")
+        sql.AppendLine("order by dtnengetu, itakuno, ownerno, filler")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@shoriNengatu", shoriNengatu),
@@ -929,26 +936,28 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function GetWTutisyoKaisyu(shoriNengatu As String, kbn As String) As DataTable
+    Public Function GetWTsuchishoKaisyu(shoriNengatu As String, kbn As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
         sql.AppendLine("select")
-        sql.AppendLine("    ownerno")
-        sql.AppendLine("  , filler")
-        sql.AppendLine("  , dtnengetu")
-        sql.AppendLine("  , '指導者振込'")
-        sql.AppendLine("  , funocd")
-        sql.AppendLine("  , syuunou") '
-        sql.AppendLine("  , fkkin")
-        sql.AppendLine("  , case when syuunou <> '0' then 0 else tesur end")
-        sql.AppendLine("  , ''")
-        sql.AppendLine("from w_tutihyou")
+        sql.AppendLine("    ownerno オーナー№")
+        sql.AppendLine("  , filler 生徒№")
+        sql.AppendLine("  , dtnengetu 締年月")
+        sql.AppendLine("  , syokbn ""区分(1:振替,2:ｺﾝﾋﾞﾆ)""")
+        sql.AppendLine("  , funocd ""振替不能コード(0:振替済)""")
+        sql.AppendLine("  , syuunou ""コンビニ収納状況(0:収納済)""")
+        sql.AppendLine("  , fkkin 振替金額")
+        'sql.AppendLine("  , case when syuunou <> '0' then 0 else tesur end 手数料")
+        sql.AppendLine("  , tesur 手数料")
+        'sql.AppendLine("  , ''")
+        sql.AppendLine("from w_tsuchisho")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
-        sql.AppendLine("and syokbn = @kbn")
-        sql.AppendLine("order by dtnengetu, itakuno, ownerno, page, meisu")
+        sql.AppendLine("and ((syokbn = '1')")
+        sql.AppendLine("or (syokbn = '2' and syuunou = '0'))")
+        sql.AppendLine("order by dtnengetu, itakuno, ownerno, filler")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@shoriNengatu", shoriNengatu),
@@ -961,23 +970,23 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function GetWTutisyoShidosya(shoriNengatu As String, kbn As String) As DataTable
+    Public Function GetWTsuchishoShidosya(shoriNengatu As String, kbn As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
         sql.AppendLine("select")
-        sql.AppendLine("    ownerno")
-        sql.AppendLine("  , filler")
-        sql.AppendLine("  , dtnengetu")
-        sql.AppendLine("  , fkkin")
-        sql.AppendLine("  , tesur")
-        sql.AppendLine("  , ''")
-        sql.AppendLine("from w_tutihyou")
+        sql.AppendLine("    ownerno オーナー№")
+        sql.AppendLine("  , filler インストラクター№")
+        sql.AppendLine("  , dtnengetu 締年月")
+        sql.AppendLine("  , fkkin 振込金額（税引後）")
+        sql.AppendLine("  , tesur 源泉徴収税額")
+        'sql.AppendLine("  , ''")
+        sql.AppendLine("from w_tsuchisho")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
         sql.AppendLine("and syokbn = @kbn")
-        sql.AppendLine("order by dtnengetu, itakuno, ownerno, page, meisu")
+        sql.AppendLine("order by dtnengetu, itakuno, ownerno, filler")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@shoriNengatu", shoriNengatu),
@@ -990,49 +999,61 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function GetWTutisyoSyukeibu(shoriNengatu As String, ngZengetu As Integer, ngn As Integer, ngnPushback As String) As DataTable
+    Public Function GetWTsuchishoSyukeibu(shoriNengatu As String, ngZengetu As Integer, ngn As Integer, ngnPushback As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
         sql.AppendLine("select")
-        sql.AppendLine("    ownerno")
-        sql.AppendLine("  , koumei")
-        sql.AppendLine("  , @ngZengetu")
-        sql.AppendLine("  , @ngn")
-        sql.AppendLine("  , @ngnPushback")
-        sql.AppendLine("  , tesur1nm")
-        sql.AppendLine("  , tesur1")
-        sql.AppendLine("  , tesur2nm")
-        sql.AppendLine("  , tesur2")
-        sql.AppendLine("  , tesur3nm")
-        sql.AppendLine("  , tesur3")
-        sql.AppendLine("  , tesur4nm")
-        sql.AppendLine("  , tesur4")
-        sql.AppendLine("  , tesur5nm")
-        sql.AppendLine("  , tesur5")
-        sql.AppendLine("  , tesur6nm")
-        sql.AppendLine("  , tesur6")
-        sql.AppendLine("  , tyosei")
-        sql.AppendLine("  , fuzken")
-        sql.AppendLine("  , fuzkin")
-        sql.AppendLine("  , fufken")
-        sql.AppendLine("  , fufkin")
-        sql.AppendLine("  , cszken")
-        sql.AppendLine("  , cszkin")
-        sql.AppendLine("  , csmken")
-        sql.AppendLine("  , csmkin")
-        sql.AppendLine("  , fritesu")
-        sql.AppendLine("  , '０'")
-        sql.AppendLine("  , '０'")
-        sql.AppendLine("  , '０'")
-        sql.AppendLine("  , '０'")
-        sql.AppendLine("  , '０'")
-        sql.AppendLine("from w_tutihyou")
+        sql.AppendLine("    ownerno オーナー№")
+        sql.AppendLine("  , replace(rtrim(replace(koumei, '　', '')), ' ', '　') 校名")
+        sql.AppendLine("  , @ngZengetu 締年月")
+        sql.AppendLine("  , @ngn 結果発行日")
+        sql.AppendLine("  , @ngnPushback オーナー入金日")
+        'sql.AppendLine("  , tesur1nm 手数料１名称")
+        'sql.AppendLine("  , tesur1 手数料１金額")
+        'sql.AppendLine("  , tesur2nm 手数料２名称")
+        'sql.AppendLine("  , tesur2 手数料２金額")
+        'sql.AppendLine("  , tesur3nm 手数料３名称")
+        'sql.AppendLine("  , tesur3 手数料３金額")
+        'sql.AppendLine("  , tesur4nm 手数料４名称")
+        'sql.AppendLine("  , tesur4 手数料４金額")
+        'sql.AppendLine("  , tesur5nm 手数料５名称")
+        'sql.AppendLine("  , tesur5 手数料５金額")
+        'sql.AppendLine("  , tesur6nm 手数料６名称")
+        'sql.AppendLine("  , tesur6 手数料６金額")
+        sql.AppendLine("  , replace(rtrim(replace(tesur1nm, '　', '')), ' ', '　') 手数料１名称")
+        sql.AppendLine("  , tesur1 手数料１金額")
+        sql.AppendLine("  , replace(rtrim(replace(tesur2nm, '　', '')), ' ', '　') 手数料２名称")
+        sql.AppendLine("  , tesur2 手数料２金額")
+        sql.AppendLine("  , replace(rtrim(replace(tesur3nm, '　', '')), ' ', '　') 手数料３名称")
+        sql.AppendLine("  , tesur3 手数料３金額")
+        sql.AppendLine("  , replace(rtrim(replace(tesur4nm, '　', '')), ' ', '　') 手数料４名称")
+        sql.AppendLine("  , tesur4 手数料４金額")
+        sql.AppendLine("  , replace(rtrim(replace(tesur5nm, '　', '')), ' ', '　') 手数料５名称")
+        sql.AppendLine("  , tesur5 手数料５金額")
+        sql.AppendLine("  , replace(rtrim(replace(tesur6nm, '　', '')), ' ', '　') 手数料６名称")
+        sql.AppendLine("  , tesur6 手数料６金額")
+        sql.AppendLine("  , tyosei 調整額")
+        sql.AppendLine("  , fuzken 振込済件数")
+        sql.AppendLine("  , fuzkin 振込済金額")
+        sql.AppendLine("  , fufken 振込不能件数")
+        sql.AppendLine("  , fufkin 振込不能金額")
+        sql.AppendLine("  , cszken コンビニ収納件数")
+        sql.AppendLine("  , cszkin コンビニ収納金額")
+        sql.AppendLine("  , csmken コンビニ未納件数")
+        sql.AppendLine("  , csmkin コンビニ未納金額")
+        sql.AppendLine("  , fritesu 給与振込手数料")
+        sql.AppendLine("  , 0 クレジット引落件数")
+        sql.AppendLine("  , 0 クレジット引落金額")
+        sql.AppendLine("  , 0 クレジット未引落件数")
+        sql.AppendLine("  , 0 クレジット未引落金額")
+        sql.AppendLine("  , 0 印紙代合計")
+        sql.AppendLine("from w_tsuchisho")
         sql.AppendLine("where datkbn = '1'")
         sql.AppendLine("and dtnengetu = @shoriNengatu")
-        sql.AppendLine("order by dtnengetu, itakuno, ownerno, page, meisu")
+        sql.AppendLine("order by dtnengetu, itakuno, ownerno, filler")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@shoriNengatu", shoriNengatu),

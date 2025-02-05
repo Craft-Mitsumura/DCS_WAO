@@ -16,12 +16,14 @@ Public Class frmWKDR070B
         lblSysDate.Text = sysDate.ToString("yyyy/MM/dd")
         lblSysDate.AutoSize = True
 
-        Dim ngn As String = sysDate.ToString("yyyyMM") & txtNyukinbi.Text
+        Dim ngn As String = sysDate.ToString("yyyyMMdd")
 
         '翌日取得
         dt = dba.GetDayPushBack(ngn)
         If dt.Rows.Count > 0 Then
             txtNyukinbi.Text = dt.Rows(0)(0).ToString.Substring(6, 2)
+        Else
+            txtNyukinbi.Text = ngn.ToString.Substring(6, 2)
         End If
 
     End Sub
@@ -71,9 +73,8 @@ Public Class frmWKDR070B
             konbini = dtT.Rows(0)("konbini")
             inshi = dtT.Rows(0)("insi31500")
         Else
-            kouhuri = 0
-            konbini = 0
-            inshi = 0
+            MessageBox.Show("手数料マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
         End If
 
         dtI = dba.GetTZei(Now.AddMonths(-1).ToString("yyyyMM"))
@@ -89,60 +90,62 @@ Public Class frmWKDR070B
         End If
 
         '中間振替結果明細データ削除
-        If Not dba.DeleteWFurikaeKekkaMeisai(Now.ToString("yyyyMM")) Then
+        If Not dba.DeleteWFurikaeKekkaMeisai(Now.AddMonths(-1).ToString("yyyyMM")) Then
             Return
         End If
 
         '中間振替結果明細登録
-        If Not dba.InsertWFurikaeKekkaMeisai(Now.ToString("yyyyMM"), Me.ProductName) Then
+        If Not dba.InsertWFurikaeKekkaMeisai(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName) Then
             Return
         End If
 
         'オーナー別集計結果データ削除
-        If Not dba.DeleteTOwnerKekkaShukei(Now.ToString("yyyyMM")) Then
+        If Not dba.DeleteTOwnerKekkaShukei(Now.AddMonths(-1).ToString("yyyyMM")) Then
             Return
         End If
 
         'オーナー別結果集計データ登録
-        If Not dba.InsertTOwnerKekkaShukei(Now.ToString("yyyyMM"), Me.ProductName) Then
+        If Not dba.InsertTOwnerKekkaShukei(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName) Then
             Return
         End If
 
         '中間可変項目削除
-        If Not dba.DeleteWKahenkomoku(Now.ToString("yyyyMM")) Then
+        If Not dba.DeleteWKahenkomoku(Now.AddMonths(-1).ToString("yyyyMM")) Then
             Return
         End If
 
         '中間可変項目登録
-        If Not dba.InsertWKahenkomoku(Now.ToString("yyyyMM"), Me.ProductName) Then
+        If Not dba.InsertWKahenkomoku(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName) Then
             Return
         End If
 
         '中間振替結果明細登録2
-        If Not dba.InsertTWFurikaeKekkaMeisai2(Now.ToString("yyyyMM"), Me.ProductName) Then
+        If Not dba.InsertTWFurikaeKekkaMeisai2(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName) Then
             Return
         End If
 
         '指導者振込.csv
-        dtS = dba.GetShidosyaCsv(Now.ToString("yyyyMM"))
+        dtS = dba.GetShidosyaCsv(Now.AddMonths(-1).ToString("yyyyMM"))
         Dim msg As New StringBuilder()
+        msg.AppendLine("以下のCSVファイルが出力されました。")
+
         If dtS.Rows.Count > 0 Then
             ' ＣＳＶファイル出力
-            Dim fileName As String = "指導者振込CSV用データ.csv"
-            Dim filePath As String = WriteCsvData(dtS, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
-            msg.AppendLine("「" & filePath & "」が出力されました。")
+            Dim fileName As String = "instructor_detail.csv"
+            Dim filePath1 As String = WriteCsvData(dtS, SettingManager.GetInstance.OutputDirectory, fileName, True,, True)
+            msg.AppendLine("・" & filePath1)
             'Else
             '    MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             '    Return
         End If
 
         '中間通知書削除
-        If Not dba.DeleteWTutisyo(Now.ToString("yyyyMM")) Then
+        If Not dba.DeleteWTsuchisho(Now.AddMonths(-1).ToString("yyyyMM")) Then
             Return
         End If
 
         '中間可変項目取得
-        dtK = dba.GetWKahenkomoku(Now.ToString("yyyyMM"))
+        'dtK = dba.GetWKahenkomoku(Now.ToString("yyyyMM"))
 
         '明細数
         Dim meisai As Integer = 0
@@ -150,22 +153,22 @@ Public Class frmWKDR070B
         'For Each row As DataRow In dtK.Rows
 
         '中間振替結果明細取得
-        dtTa = dba.GetTWFurikaeKekkaMeisai(Now.ToString("yyyyMM"))
-        If dtTa.Rows.Count > 0 Then
-            '中間通知書データ登録
-            If Not dba.InsertWTutisyo1(Now.ToString("yyyyMM"), Me.ProductName, meisai) Then
-                Return
-            End If
-        ElseIf dtTa.Rows.Count = 0 Then
-            '中間通知書データ登録
-            If Not dba.InsertWTutisyo0(Now.ToString("yyyyMM"), Me.ProductName, meisai) Then
-                Return
-            End If
+        'dtTa = dba.GetTWFurikaeKekkaMeisai(Now.ToString("yyyyMM"))
+
+        '中間通知書データ登録
+        If Not dba.InsertWTsuchisho1(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName, meisai) Then
+            Return
         End If
+
+        '中間通知書データ登録
+        If Not dba.InsertWTsuchisho2(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName, meisai) Then
+            Return
+        End If
+
         'Next
 
         '振替結果通知書.csv
-        dtTu = dba.GetWTutisyokbn(Now.ToString("yyyyMM"))
+        dtTu = dba.GetWTsuchishokbn(Now.AddMonths(-1).ToString("yyyyMM"))
         If dtTu.Rows.Count = 0 Then
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
@@ -177,62 +180,66 @@ Public Class frmWKDR070B
 
             If syokbn = 1 Then
                 ' syokbn = 1 の場合の処理
-                dtTu1 = dba.GetWTutisyo1(Now.ToString("yyyyMM"), kouhuri, syokbn)
+                dtTu1 = dba.GetWTsuchisho1(Now.AddMonths(-1).ToString("yyyyMM"), kouhuri, syokbn)
 
                 ' ＣＳＶファイル出力
-                Dim fileName2 As String = "振替結果通知書.csv"
+                Dim fileName2 As String = "振替結果通知書_1.csv"
                 Dim filePath2 As String = WriteCsvData(dtTu1, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
-                msg.AppendLine("「" & filePath2 & "」が出力されました。")
+                msg.AppendLine("・" & filePath2)
 
             ElseIf syokbn = 2 Then
                 ' syokbn = 2 の場合の処理
-                dtTu2 = dba.GetWTutisyo2(Now.ToString("yyyyMM"), insiShohiZei, konbini, inshi, syokbn)
-                dtTu4 = dba.GetWTutisyoKaisyu(Now.ToString("yyyyMM"), syokbn)
+                dtTu2 = dba.GetWTsuchisho2(Now.AddMonths(-1).ToString("yyyyMM"), insiShohiZei, konbini, inshi, syokbn)
+                dtTu4 = dba.GetWTsuchishoKaisyu(Now.AddMonths(-1).ToString("yyyyMM"), syokbn)
 
                 ' ＣＳＶファイル出力 (振替結果通知書)
-                Dim fileName3 As String = "振替結果通知書2.csv"
+                Dim fileName3 As String = "振替結果通知書_2.csv"
                 Dim filePath3 As String = WriteCsvData(dtTu2, SettingManager.GetInstance.OutputDirectory, fileName3,,, True)
-                msg.AppendLine("「" & filePath3 & "」が出力されました。")
+                msg.AppendLine("・" & filePath3)
 
                 ' ＣＳＶファイル出力 (回収金額)
-                Dim fileName3a As String = "通知書（回収金額）.csv"
-                Dim filePath3a As String = WriteCsvData(dtTu4, SettingManager.GetInstance.OutputDirectory, fileName3a,,, True)
-                msg.AppendLine("「" & filePath3a & "」が出力されました。")
+                Dim fileName3a As String = "result_collect.csv"
+                Dim filePath3a As String = WriteCsvData(dtTu4, SettingManager.GetInstance.OutputDirectory, fileName3a, True,, True)
+                msg.AppendLine("・" & filePath3a)
 
             ElseIf syokbn = 3 Then
                 ' syokbn = 3 の場合の処理
-                dtTu3 = dba.GetWTutisyo3(Now.ToString("yyyyMM"), syokbn)
-                dtTu5 = dba.GetWTutisyoShidosya(Now.ToString("yyyyMM"), syokbn)
+                dtTu3 = dba.GetWTsuchisho3(Now.AddMonths(-1).ToString("yyyyMM"), syokbn)
+                dtTu5 = dba.GetWTsuchishoShidosya(Now.AddMonths(-1).ToString("yyyyMM"), syokbn)
 
                 ' ＣＳＶファイル出力 (振替結果通知書)
-                Dim fileName4 As String = "振替結果通知書3.csv"
+                Dim fileName4 As String = "振替結果通知書_3.csv"
                 Dim filePath4 As String = WriteCsvData(dtTu3, SettingManager.GetInstance.OutputDirectory, fileName4,,, True)
-                msg.AppendLine("「" & filePath4 & "」が出力されました。")
+                msg.AppendLine("・" & filePath4)
 
                 ' ＣＳＶファイル出力 (指導者振込)
-                Dim fileName4a As String = "通知書（指導者振込）.csv"
-                Dim filePath4a As String = WriteCsvData(dtTu5, SettingManager.GetInstance.OutputDirectory, fileName4a,,, True)
-                msg.AppendLine("「" & filePath4a & "」が出力されました。")
+                Dim fileName4a As String = "result_instructor.csv"
+                Dim filePath4a As String = WriteCsvData(dtTu5, SettingManager.GetInstance.OutputDirectory, fileName4a, True,, True)
+                msg.AppendLine("・" & filePath4a)
             End If
         Next
 
-        MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        'MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         '集計部csv
-        dtTs = dba.GetWTutisyoSyukeibu(Now.ToString("yyyyMM"), Now.AddMonths(-1).ToString("yyyyMM"), ngn, ngnpushback)
+        dtTs = dba.GetWTsuchishoSyukeibu(Now.AddMonths(-1).ToString("yyyyMM"), Now.AddMonths(-1).ToString("yyyyMM"), ngn, ngnpushback)
         If dtTs.Rows.Count > 0 Then
             ' ＣＳＶファイル出力
             Dim msg2 As New StringBuilder()
-            Dim fileName5 As String = "通知書（集計部）.csv"
-            Dim filePath5 As String = WriteCsvData(dtTs, SettingManager.GetInstance.OutputDirectory, fileName5,,, True)
-            msg2.AppendLine("「" & filePath5 & "」が出力されました。")
-            MessageBox.Show(msg2.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Dim fileName5 As String = "result_total.csv"
+            Dim filePath5 As String = WriteCsvData(dtTs, SettingManager.GetInstance.OutputDirectory, fileName5, True,, True)
+            msg.AppendLine("・" & filePath5)
 
-        Else
-            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Return
+            'Else
+            'MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            'Return
         End If
 
+        If msg.ToString() = "" Then
+            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        Else
+            MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End If
     End Sub
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click

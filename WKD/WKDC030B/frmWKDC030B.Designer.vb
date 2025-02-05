@@ -22,9 +22,6 @@ Partial Class frmWKDC030B
     'コード エディターを使って変更しないでください。
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.fraShoriKubun = New System.Windows.Forms.GroupBox()
-        Me.rdoShoriKubun_1 = New System.Windows.Forms.RadioButton()
-        Me.rdoShoriKubun_0 = New System.Windows.Forms.RadioButton()
         Me.lblSysDate = New System.Windows.Forms.Label()
         Me.MainMenu1 = New System.Windows.Forms.MenuStrip()
         Me.mnuFile = New System.Windows.Forms.ToolStripMenuItem()
@@ -34,55 +31,9 @@ Partial Class frmWKDC030B
         Me.btnClose = New System.Windows.Forms.Button()
         Me.btnOutput = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.txtShoriNendo = New System.Windows.Forms.TextBox()
-        Me.fraShoriKubun.SuspendLayout()
+        Me.txtShoriNengetsu = New System.Windows.Forms.TextBox()
         Me.MainMenu1.SuspendLayout()
         Me.SuspendLayout()
-        '
-        'fraShoriKubun
-        '
-        Me.fraShoriKubun.BackColor = System.Drawing.SystemColors.Control
-        Me.fraShoriKubun.Controls.Add(Me.rdoShoriKubun_1)
-        Me.fraShoriKubun.Controls.Add(Me.rdoShoriKubun_0)
-        Me.fraShoriKubun.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraShoriKubun.Location = New System.Drawing.Point(40, 40)
-        Me.fraShoriKubun.Name = "fraShoriKubun"
-        Me.fraShoriKubun.Padding = New System.Windows.Forms.Padding(0)
-        Me.fraShoriKubun.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.fraShoriKubun.Size = New System.Drawing.Size(155, 42)
-        Me.fraShoriKubun.TabIndex = 2
-        Me.fraShoriKubun.TabStop = False
-        Me.fraShoriKubun.Text = "処理区分"
-        Me.fraShoriKubun.Visible = False
-        '
-        'rdoShoriKubun_1
-        '
-        Me.rdoShoriKubun_1.BackColor = System.Drawing.SystemColors.Control
-        Me.rdoShoriKubun_1.Cursor = System.Windows.Forms.Cursors.Default
-        Me.rdoShoriKubun_1.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.rdoShoriKubun_1.Location = New System.Drawing.Point(82, 15)
-        Me.rdoShoriKubun_1.Name = "rdoShoriKubun_1"
-        Me.rdoShoriKubun_1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.rdoShoriKubun_1.Size = New System.Drawing.Size(66, 16)
-        Me.rdoShoriKubun_1.TabIndex = 1
-        Me.rdoShoriKubun_1.TabStop = True
-        Me.rdoShoriKubun_1.Text = "再出力"
-        Me.rdoShoriKubun_1.UseVisualStyleBackColor = False
-        '
-        'rdoShoriKubun_0
-        '
-        Me.rdoShoriKubun_0.BackColor = System.Drawing.SystemColors.Control
-        Me.rdoShoriKubun_0.Checked = True
-        Me.rdoShoriKubun_0.Cursor = System.Windows.Forms.Cursors.Default
-        Me.rdoShoriKubun_0.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.rdoShoriKubun_0.Location = New System.Drawing.Point(16, 15)
-        Me.rdoShoriKubun_0.Name = "rdoShoriKubun_0"
-        Me.rdoShoriKubun_0.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.rdoShoriKubun_0.Size = New System.Drawing.Size(66, 16)
-        Me.rdoShoriKubun_0.TabIndex = 0
-        Me.rdoShoriKubun_0.TabStop = True
-        Me.rdoShoriKubun_0.Text = "新規"
-        Me.rdoShoriKubun_0.UseVisualStyleBackColor = False
         '
         'lblSysDate
         '
@@ -164,43 +115,37 @@ Partial Class frmWKDC030B
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(53, 12)
         Me.Label1.TabIndex = 3
-        Me.Label1.Text = "処理年度"
+        Me.Label1.Text = "処理年月"
         '
-        'txtShoriNendo
+        'txtShoriNengetsu
         '
-        Me.txtShoriNendo.ImeMode = System.Windows.Forms.ImeMode.Disable
-        Me.txtShoriNendo.Location = New System.Drawing.Point(115, 95)
-        Me.txtShoriNendo.MaxLength = 4
-        Me.txtShoriNendo.Name = "txtShoriNendo"
-        Me.txtShoriNendo.Size = New System.Drawing.Size(41, 19)
-        Me.txtShoriNendo.TabIndex = 4
-        Me.txtShoriNendo.Text = "9999"
+        Me.txtShoriNengetsu.ImeMode = System.Windows.Forms.ImeMode.Disable
+        Me.txtShoriNengetsu.Location = New System.Drawing.Point(115, 95)
+        Me.txtShoriNengetsu.MaxLength = 7
+        Me.txtShoriNengetsu.Name = "txtShoriNengetsu"
+        Me.txtShoriNengetsu.Size = New System.Drawing.Size(53, 19)
+        Me.txtShoriNengetsu.TabIndex = 7
+        Me.txtShoriNengetsu.Text = "9999/99"
         '
         'frmWKDC030B
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(466, 333)
-        Me.Controls.Add(Me.txtShoriNendo)
+        Me.Controls.Add(Me.txtShoriNengetsu)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnOutput)
         Me.Controls.Add(Me.btnClose)
-        Me.Controls.Add(Me.fraShoriKubun)
         Me.Controls.Add(Me.lblSysDate)
         Me.Controls.Add(Me.MainMenu1)
         Me.Name = "frmWKDC030B"
         Me.Text = "予定表還元データ作成"
-        Me.fraShoriKubun.ResumeLayout(False)
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
-
-    Public WithEvents fraShoriKubun As Windows.Forms.GroupBox
-    Public WithEvents rdoShoriKubun_1 As Windows.Forms.RadioButton
-    Public WithEvents rdoShoriKubun_0 As Windows.Forms.RadioButton
     Public WithEvents lblSysDate As Windows.Forms.Label
     Public WithEvents MainMenu1 As Windows.Forms.MenuStrip
     Public WithEvents mnuFile As Windows.Forms.ToolStripMenuItem
@@ -210,5 +155,5 @@ Partial Class frmWKDC030B
     Public WithEvents btnClose As Windows.Forms.Button
     Public WithEvents btnOutput As Windows.Forms.Button
     Friend WithEvents Label1 As Windows.Forms.Label
-    Friend WithEvents txtShoriNendo As Windows.Forms.TextBox
+    Friend WithEvents txtShoriNengetsu As Windows.Forms.TextBox
 End Class

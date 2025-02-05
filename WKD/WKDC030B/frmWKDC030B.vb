@@ -14,12 +14,8 @@ Public Class frmWKDC030B
         lblSysDate.AutoSize = True
 
         ' 処理年度
-        If sysDate.Month < 4 Then
-            txtShoriNendo.Text = sysDate.AddYears(-1).ToString("yyyy")
-        Else
-            txtShoriNendo.Text = sysDate.ToString("yyyy")
-        End If
-        txtShoriNendo.Enabled = False
+        txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
+        'txtShoriNendo.Enabled = False
 
     End Sub
 
@@ -27,7 +23,7 @@ Public Class frmWKDC030B
 
         Dim dba As New WKDC030BDBAccess
 
-        ' 年調作表データ取得
+        ' 手数料マスタ取得
         Dim dt As DataTable = dba.GetTesuryo()
         If dt.Rows.Count <= 0 Then
             MessageBox.Show("手数料マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -45,9 +41,18 @@ Public Class frmWKDC030B
             Return
         End If
 
-        dt = dba.GetCsvData(DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("yyyyMM"))
+        Dim shoriNengetsu As String = txtShoriNengetsu.Text.Replace("/", "")
 
-        If dt.Rows.Count <= 0 Then
+        ' オーナーマスタ取得
+        Dim dt2 As DataTable = dba.GetOwner(shoriNengetsu)
+        If dt2.Rows.Count <= 0 Then
+            MessageBox.Show("オーナーマスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim dt3 As DataTable = dba.GetTesuryo()
+        dt3 = dba.GetCsvData(shoriNengetsu & 27, shoriNengetsu & 25, shoriNengetsu)
+        If dt3.Rows.Count <= 0 Then
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If

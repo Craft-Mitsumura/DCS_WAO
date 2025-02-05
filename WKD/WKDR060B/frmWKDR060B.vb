@@ -63,7 +63,7 @@ Public Class frmWKDR060B
         End If
 
         ' ＣＳＶファイル出力
-        Dim fileName As String = "総括書_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
+        Dim fileName As String = "SOUKATUHYO.CSV"
         Dim filePath As String = WriteCsvData(dtkahen, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
 
         '出力完了メッセージ
