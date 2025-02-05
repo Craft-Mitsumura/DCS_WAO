@@ -9,6 +9,7 @@ Public Class WKDR040BDBAccess
         Dim dt As DataTable = Nothing
 
         Dim sql As New StringBuilder()
+
         sql.AppendLine("select * ")
         sql.AppendLine("from wao.t_kahenkomoku ")
         sql.AppendLine("where dtnengetu = @dtnengetu ")
@@ -29,6 +30,7 @@ Public Class WKDR040BDBAccess
         Dim dt As DataTable = Nothing
 
         Dim sql As New StringBuilder()
+
         sql.AppendLine("select * ")
         sql.AppendLine("from wao.t_kahenkomoku t1 ")
         sql.AppendLine("    left join public.tbkeiyakushamaster t2 ")
@@ -54,6 +56,7 @@ Public Class WKDR040BDBAccess
         Dim dt As DataTable = Nothing
 
         Dim sql As New StringBuilder()
+
         sql.AppendLine("select * ")
         sql.AppendLine("from wao.t_instructor_furikomi ")
         sql.AppendLine("where dtnengetu = @dtnengetu ")
@@ -74,6 +77,7 @@ Public Class WKDR040BDBAccess
         Dim dt As DataTable = Nothing
 
         Dim sql As New StringBuilder()
+
         sql.AppendLine("select * ")
         sql.AppendLine("from wao.t_furikae_kekka_meisai ")
         sql.AppendLine("where dtnengetu = @dtnengetu ")
