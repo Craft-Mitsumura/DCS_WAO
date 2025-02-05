@@ -113,15 +113,17 @@ Public Class frmWKDR020B
                     Dim entity As New TKozafurikaeSeikyuEntity
 
                     '該当年月の設定を行う
-                    gaitonengetu = hhkdate.Substring(0, 2)
-                    If hhkdate.Substring(0, 2) <> "12" Then
-                        gaitounen = dtnengetu.Substring(0, 4)
-                    ElseIf hhkdate.Substring(0, 2) = "12" AndAlso dtnengetu.Substring(4, 2) = "12" Then
-                        gaitounen = dtnengetu.Substring(0, 4)
-                    ElseIf hhkdate.Substring(0, 2) = "12" AndAlso dtnengetu.Substring(4, 2) <> "12" Then
-                        gaitounen = sysDate.AddYears(-1).ToString("yyyy")
+                    If hhkdate <> "" Then
+                        gaitonengetu = hhkdate.Substring(0, 2)
+                        If hhkdate.Substring(0, 2) <> "12" Then
+                            gaitounen = dtnengetu.Substring(0, 4)
+                        ElseIf hhkdate.Substring(0, 2) = "12" AndAlso dtnengetu.Substring(4, 2) = "12" Then
+                            gaitounen = dtnengetu.Substring(0, 4)
+                        ElseIf hhkdate.Substring(0, 2) = "12" AndAlso dtnengetu.Substring(4, 2) <> "12" Then
+                            gaitounen = sysDate.AddYears(-1).ToString("yyyy")
+                        End If
+                        gaitonengetu = gaitounen + gaitonengetu
                     End If
-                    gaitonengetu = gaitounen + gaitonengetu
 
                     entity.dtnengetu = gaitonengetu ' データ年月
                     entity.itakuno = GetMidByte((fields(11)), 1, 5) ' 顧客番号（委託者Ｎｏ）
@@ -161,12 +163,16 @@ Public Class frmWKDR020B
         Dim errorRecords As New List(Of String)
         Dim row As Integer = 2
 
+
         ' コンビニ振込情報データ取得
-        Dim tbConvenifurikomikakuho As DataTable = dba.getConvenifurikomikakuho(gaitonengetu)
-        ' コンビニ振込確報データが存在しない場合はエラーメッセージを表示し、処理中断、存在する場合は後ほど取得データをentitiyに格納
-        If tbConvenifurikomikakuho.Rows.Count = 0 Then
-            MessageBox.Show("コンビニ振込確報データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
+        Dim tbConvenifurikomikakuho As DataTable
+        If gaitonengetu <> "" Then
+            tbConvenifurikomikakuho = dba.getConvenifurikomikakuho(gaitonengetu)
+            ' コンビニ振込確報データが存在しない場合はエラーメッセージを表示し、処理中断、存在する場合は後ほど取得データをentitiyに格納
+            If tbConvenifurikomikakuho.Rows.Count = 0 Then
+                MessageBox.Show("コンビニ振込確報データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
         End If
 
         ' ①先頭レコードは、データ区分=1以外であればエラーとする
