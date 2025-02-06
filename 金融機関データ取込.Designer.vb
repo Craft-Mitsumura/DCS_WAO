@@ -49,6 +49,10 @@
         Me.dlgFileColor = New System.Windows.Forms.ColorDialog()
         Me.dlgFilePrint = New System.Windows.Forms.PrintDialog()
         Me.lblSysDate = New System.Windows.Forms.Label()
+        Me.pgrProgressBar = New System.Windows.Forms.ProgressBar()
+        Me.lblFilecntBunbo = New System.Windows.Forms.Label()
+        Me.lblFilecntBunsi = New System.Windows.Forms.Label()
+        Me.lblslash = New System.Windows.Forms.Label()
         Me.MainMenu1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -64,26 +68,26 @@
         '
         Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuEnd})
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(61, 20)
+        Me.mnuFile.Size = New System.Drawing.Size(57, 20)
         Me.mnuFile.Text = "Ãß≤Ÿ(&F)"
         '
         'mnuEnd
         '
         Me.mnuEnd.Name = "mnuEnd"
-        Me.mnuEnd.Size = New System.Drawing.Size(115, 22)
+        Me.mnuEnd.Size = New System.Drawing.Size(113, 22)
         Me.mnuEnd.Text = "èIóπ(&X)"
         '
         'mnuHelp
         '
         Me.mnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuVersion})
         Me.mnuHelp.Name = "mnuHelp"
-        Me.mnuHelp.Size = New System.Drawing.Size(64, 20)
+        Me.mnuHelp.Size = New System.Drawing.Size(60, 20)
         Me.mnuHelp.Text = "ÕŸÃﬂ(&H)"
         '
         'mnuVersion
         '
         Me.mnuVersion.Name = "mnuVersion"
-        Me.mnuVersion.Size = New System.Drawing.Size(165, 22)
+        Me.mnuVersion.Size = New System.Drawing.Size(156, 22)
         Me.mnuVersion.Text = " ﬁ∞ºﬁÆ›èÓïÒ(&A)"
         '
         'cmdImport
@@ -91,10 +95,10 @@
         Me.cmdImport.BackColor = System.Drawing.SystemColors.Control
         Me.cmdImport.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdImport.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdImport.Location = New System.Drawing.Point(32, 212)
+        Me.cmdImport.Location = New System.Drawing.Point(32, 196)
         Me.cmdImport.Name = "cmdImport"
         Me.cmdImport.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdImport.Size = New System.Drawing.Size(93, 31)
+        Me.cmdImport.Size = New System.Drawing.Size(93, 29)
         Me.cmdImport.TabIndex = 1
         Me.cmdImport.Text = "éÊçû(&I)"
         Me.cmdImport.UseVisualStyleBackColor = False
@@ -105,10 +109,10 @@
         Me.cmdEnd.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdEnd.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.cmdEnd.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdEnd.Location = New System.Drawing.Point(264, 212)
+        Me.cmdEnd.Location = New System.Drawing.Point(264, 196)
         Me.cmdEnd.Name = "cmdEnd"
         Me.cmdEnd.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdEnd.Size = New System.Drawing.Size(89, 31)
+        Me.cmdEnd.Size = New System.Drawing.Size(89, 29)
         Me.cmdEnd.TabIndex = 0
         Me.cmdEnd.Text = "èIóπ(&X)"
         Me.cmdEnd.UseVisualStyleBackColor = False
@@ -118,22 +122,69 @@
         Me.lblSysDate.BackColor = System.Drawing.SystemColors.Control
         Me.lblSysDate.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblSysDate.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblSysDate.Location = New System.Drawing.Point(268, 26)
+        Me.lblSysDate.Location = New System.Drawing.Point(268, 24)
         Me.lblSysDate.Name = "lblSysDate"
         Me.lblSysDate.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblSysDate.Size = New System.Drawing.Size(93, 18)
+        Me.lblSysDate.Size = New System.Drawing.Size(93, 17)
         Me.lblSysDate.TabIndex = 3
         Me.lblSysDate.Text = "Label26"
+        '
+        'pgrProgressBar
+        '
+        Me.pgrProgressBar.Location = New System.Drawing.Point(32, 167)
+        Me.pgrProgressBar.Name = "pgrProgressBar"
+        Me.pgrProgressBar.Size = New System.Drawing.Size(321, 23)
+        Me.pgrProgressBar.TabIndex = 6
+        '
+        'lblFilecntBunbo
+        '
+        Me.lblFilecntBunbo.BackColor = System.Drawing.SystemColors.Control
+        Me.lblFilecntBunbo.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lblFilecntBunbo.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.lblFilecntBunbo.Location = New System.Drawing.Point(322, 145)
+        Me.lblFilecntBunbo.Name = "lblFilecntBunbo"
+        Me.lblFilecntBunbo.RightToLeft = System.Windows.Forms.RightToLeft.Yes
+        Me.lblFilecntBunbo.Size = New System.Drawing.Size(19, 15)
+        Me.lblFilecntBunbo.TabIndex = 7
+        Me.lblFilecntBunbo.Text = "0"
+        '
+        'lblFilecntBunsi
+        '
+        Me.lblFilecntBunsi.BackColor = System.Drawing.SystemColors.Control
+        Me.lblFilecntBunsi.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lblFilecntBunsi.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.lblFilecntBunsi.Location = New System.Drawing.Point(293, 145)
+        Me.lblFilecntBunsi.Name = "lblFilecntBunsi"
+        Me.lblFilecntBunsi.RightToLeft = System.Windows.Forms.RightToLeft.Yes
+        Me.lblFilecntBunsi.Size = New System.Drawing.Size(19, 15)
+        Me.lblFilecntBunsi.TabIndex = 8
+        Me.lblFilecntBunsi.Text = "0"
+        '
+        'lblslash
+        '
+        Me.lblslash.BackColor = System.Drawing.SystemColors.Control
+        Me.lblslash.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lblslash.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.lblslash.Location = New System.Drawing.Point(312, 145)
+        Me.lblslash.Name = "lblslash"
+        Me.lblslash.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblslash.Size = New System.Drawing.Size(10, 15)
+        Me.lblslash.TabIndex = 9
+        Me.lblslash.Text = "/"
         '
         'frmBankDataImport
         '
         Me.AcceptButton = Me.cmdEnd
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.CancelButton = Me.cmdEnd
-        Me.ClientSize = New System.Drawing.Size(376, 268)
+        Me.ClientSize = New System.Drawing.Size(376, 247)
         Me.ControlBox = False
+        Me.Controls.Add(Me.lblslash)
+        Me.Controls.Add(Me.lblFilecntBunsi)
+        Me.Controls.Add(Me.lblFilecntBunbo)
+        Me.Controls.Add(Me.pgrProgressBar)
         Me.Controls.Add(Me.cmdImport)
         Me.Controls.Add(Me.cmdEnd)
         Me.Controls.Add(Me.lblSysDate)
@@ -152,5 +203,10 @@
         Me.PerformLayout()
 
     End Sub
+
+    Public WithEvents pgrProgressBar As ProgressBar
+    Public WithEvents lblFilecntBunbo As Label
+    Public WithEvents lblFilecntBunsi As Label
+    Public WithEvents lblslash As Label
 #End Region
 End Class
