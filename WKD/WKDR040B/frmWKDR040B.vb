@@ -19,230 +19,194 @@ Public Class frmWKDR040B
     Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click
 
         Dim targetFilePath As String = String.Empty
-        Dim targetList As New List(Of TKahenkomokuEntity)
         Dim dba As New WKDR040BDBAccess
-        Dim tKahenkomoku As New DataTable
-        Dim mItakushaiList As New DataTable
-        Dim tInstructorFurikomiList As New DataTable
 
-        Dim recordListCsv3 As New DataTable
-        Dim recordListCsv4 As New DataTable
-        Dim recordListCsv5 As New DataTable
-        Dim recordListCsv6 As New DataTable
-        Dim recordListCsv78 As New DataTable
         ' システム日付
         Dim sysDate As Date = Now
-        sysDate = sysDate.AddMonths(-1)
+        ' 処理日の前月の年月を保持する
+        Dim monthAgo As String = sysDate.AddMonths(-1).ToString("yyyyMM")
 
-        Dim dt As DataTable = Nothing
+        Dim recordListSougouFile As New DataTable
+        Dim recordListHikiwatasiFile As New DataTable
 
-        ' 年調作表データ取得
-        dt = dba.GetTKahenkomoku(sysDate.ToString("yyyyMM"))
-        ' 年調作表データ作成
-        If Not dba.InsertTKahenkomoku(dt) Then
-            Return
+        Dim entityList As New List(Of TKozafurikaeIraiEntity)
+        Dim entityList2 As New List(Of TChoseigakuEntity)
+
+        Dim tKahenkomoku As New DataTable
+
+        ' 可変項目データ取得
+        tKahenkomoku = dba.GetTKahenkomoku(monthAgo)
+        If tKahenkomoku.Rows.Count = 0 Then
+            MessageBox.Show("該当データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
         End If
 
-        tKahenkomoku = dba.GetTKahenkomoku_2(sysDate.ToString("yyyyMM"))
+        ' オーナーマスタ存在チェック
+        Dim tbKeiyakushamaster As New DataTable
+        tbKeiyakushamaster = dba.GetTbKeiyakushamaster(monthAgo)
+        If tbKeiyakushamaster.Rows.Count > 0 Then
+            MessageBox.Show("オーナーマスタが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
 
-        For Each row As DataRow In tKahenkomoku.Rows
-            dba.UpdateTKahenkomoku(sysDate.ToString("yyyyMM"), "33948", row(2), "00000000",
-                                   row(9), row(16), row(9), row(16), row(9), row(16), row(9), row(16), row(9),
-                                   row(17), row(18), row(19))
-        Next
+        ' インストラクター向け振込データ存在チェック
+        Dim tbInstructorfurikomi As New DataTable
+        tbInstructorfurikomi = dba.GetTbInstructorfurikomi(monthAgo)
+        If tbInstructorfurikomi.Rows.Count = 0 Then
+            MessageBox.Show("該当データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
 
-        tKahenkomoku = dba.GetTKahenkomoku_3(sysDate.ToString("yyyyMM"))
+        ' 振替結果明細データ存在チェック
+        Dim tbFurikaekekkameisai As New DataTable
+        tbFurikaekekkameisai = dba.GetTbFurikaekekkameisai(monthAgo)
+        If tbFurikaekekkameisai.Rows.Count = 0 Then
+            MessageBox.Show("該当データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
 
-        For Each row As DataRow In tKahenkomoku.Rows
-            dba.UpdateTKahenkomoku_2(sysDate.ToString("yyyyMM"), "33948", row(2), "00000000", row(14))
-        Next
-
-        tKahenkomoku = dba.GetTKahenkomoku_4(sysDate.ToString("yyyyMM"))
-
-        For Each row As DataRow In tKahenkomoku.Rows
-            dba.UpdateTKahenkomoku_3(sysDate.ToString("yyyyMM"), "33948", row(0), "00000000", row(1), row(2), row(3),
-                                    row(4), row(5), row(6), row(7), row(8), row(9), row(10), row(11))
-        Next
-
-        '①初期処理で振込日パラメータのチェックとして
+        ' 振込日：日付論理チェック
         Dim day As String = txtShoriNengetsu.Text
-
+        ' 0パディング
+        If day.Length < 2 Then
+            day = day.PadLeft(2, "0")
+        End If
         If String.IsNullOrWhiteSpace(day) Or day.Length > 2 Or DateTime.TryParseExact(day & "/" & DateTime.Now.Month.ToString("D2") & "/" & DateTime.Now.Year, "dd/MM/yyyy", Nothing, Globalization.DateTimeStyles.None, Nothing) = False Then
             MessageBox.Show("振込日が正しくありません。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
-        If day.Length < 2 Then
-            day = day.PadLeft(2, "0")
-        End If
-
+        ' 委託者マスタ取得
+        Dim mItakushaiList As New DataTable
         mItakushaiList = dba.geMItakushaByItakuno(CnvInt("0000033948"))
-        '④初期処理でインストラクター向け口座振込依頼ファイル(ヘッダー部、明細部、合計部)を全件削除する。
-
-        '⑤初期処理でインストラクター向け振込データのデータ年月がシステム日付の前月のデータが１件数でもあれば、
-        tInstructorFurikomiList = dba.geTInstructorFurikomiByDtnengetu(sysDate.ToString("yyyyMM"))
-
-        If tInstructorFurikomiList.Rows.Count <= 0 Then
-            MessageBox.Show("該当データが存在しません。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        If mItakushaiList.Rows.Count = 0 Then
+            MessageBox.Show("委託者マスタが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
-        Dim msg As New StringBuilder()
+        ' 可変項目データ(編集後)取得・更新
+        ' 結果・手数料、調整額、オーナー情報設定
+        If Not dba.UpdateTKahenkomoku(monthAgo) Then
+            Return
+        End If
 
-        Dim columnNamesCsv3 As String() = {"データ区分", "種別コード", "使用コード", "委託者コード", "委託者名", "振込日", "取引銀行コード", "取引銀行名", "取引支店コード", "取引支店名", "預金種目", "口座番号"}
+        ' 可変項目データ再取得
+        tKahenkomoku = dba.GetTKahenkomoku(monthAgo)
+        If tKahenkomoku.Rows.Count = 0 Then
+            MessageBox.Show("該当データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        ' システム日付+画面.振込日を振込年月日とし、その日が休業日であれば前営業日算出(共通関数「getdaybringforward」を使用)
+        Dim hurikomibi As String = ""
+        Dim tDaybringforward As New DataTable
+        tDaybringforward = dba.getdaybringforward(sysDate.ToString("yyyyMM") & day)
+        If tDaybringforward.Rows.Count <> 0 Then
+            Dim dtrow As DataRow = tDaybringforward.Rows(0)
+            hurikomibi = dtrow("getdaybringforward")
+        End If
+
+        ' 口座振込依頼ファイル(ヘッダー部)設定
         Dim itakuno As String = ""
         Dim itaknm As String = ""
+        Dim headerrow As DataRow = mItakushaiList.Rows(0)
+        itakuno = headerrow("itakuno")
+        itaknm = headerrow("itaknm")
+        recordListSougouFile.Columns.Add("データ", GetType(String))
+        recordListSougouFile.Rows.Add("1" & "21" & " " & "00000" & itakuno & GetMidByte(itaknm & StrDup(40, " "), 1, 40) & hurikomibi.Substring(4, 4) & CnvDec(headerrow("bankcd")).ToString("0000") & GetMidByte(headerrow("banknm") & StrDup(15, " "), 1, 15) & CnvDec(headerrow("sitencd")).ToString("000") & GetMidByte(headerrow("sitennm") & StrDup(15, " "), 1, 15) & headerrow("syumoku") & headerrow("kouzano") & StrDup(17, " "))
 
-        For Each columnName In columnNamesCsv3
-            recordListCsv3.Columns.Add(columnName, GetType(String))
-        Next
+        ' 口座振込依頼ファイル(明細部)設定
+        Dim cnt As Integer = 0
+        Dim goukei As Integer = 0
+        For Each meisairow As DataRow In tKahenkomoku.Rows
+            Dim frikingaku As Decimal = 0
+            frikingaku = CnvDec(meisairow("fuzkin")) + CnvDec(meisairow("cszkin")) + CnvDec(meisairow("tyosei")) - (CnvDec(meisairow("tesur1")) + CnvDec(meisairow("tesur2")) + CnvDec(meisairow("tesur3")) + CnvDec(meisairow("tesur4")) + CnvDec(meisairow("tesur5")) + CnvDec(meisairow("tesur6"))) - CnvDec(meisairow("fritesu"))
+            If 1 <= frikingaku Then
+                recordListSougouFile.Rows.Add("2" & CnvDec(meisairow("bankcd")).ToString("0000") & StrDup(15, " ") & CnvDec(meisairow("sitencd")).ToString("000") & StrDup(15, " ") & StrDup(4, " ") & meisairow("syumoku") & meisairow("kouzano") & GetMidByte(meisairow("kouzanm") & StrDup(30, " "), 1, 30) & CnvDec(frikingaku).ToString("0000000000") & "1" & meisairow("itakuno") & meisairow("ownerno") & meisairow("filler") & "0" & StrDup(8, " "))
 
-        For Each row As DataRow In mItakushaiList.Rows
-            itakuno = row(0)
-            itaknm = row(1)
-            Dim newRowCsv3 As DataRow = recordListCsv3.NewRow()
-            newRowCsv3("データ区分") = "1"
-            newRowCsv3("種別コード") = "11"
-            newRowCsv3("使用コード") = ""
-            newRowCsv3("委託者コード") = "0000" & row(0)
-            newRowCsv3("委託者名") = row(1)
-            newRowCsv3("振込日") = dba.getdaybringforward(sysDate.ToString("yyyyMM") & day)
-            newRowCsv3("取引銀行コード") = row(2)
-            newRowCsv3("取引銀行名") = row(3)
-            newRowCsv3("取引支店コード") = row(4)
-            newRowCsv3("取引支店名") = row(5)
-            newRowCsv3("預金種目") = row(6)
-            newRowCsv3("口座番号") = row(7)
-            recordListCsv3.Rows.Add(newRowCsv3)
-        Next
+                ' 口座振込依頼データentityへセット
+                Dim entity As New TKozafurikaeIraiEntity
+                entity.dtnengetu = monthAgo ' データ年月
+                entity.itakuno = meisairow("itakuno") ' 委託者Ｎｏ
+                entity.ownerno = meisairow("ownerno") ' オーナーＮｏ
+                entity.seitono = meisairow("filler") ' 生徒Ｎｏ
+                entity.kseqno = "0" ' ＳＥＱ番号
+                entity.hkdate = hurikomibi.Substring(4, 4) ' 振込日
+                entity.bankcd = meisairow("bankcd") ' 振込先銀行コード
+                entity.banmnm = "" ' 振込先銀行名
+                entity.sitencd = meisairow("sitencd") ' 支店コード
+                entity.sitennm = "" ' 振込先支店名
+                entity.syumoku = meisairow("syumoku") ' 預金種目
+                entity.kouzano = meisairow("kouzano") ' 口座番号
+                entity.kouzanm = meisairow("kouzanm") ' 預金者名義人名
+                entity.kingaku = frikingaku ' 振込金額
+                entity.sinkicd = "1" ' 新規コード
+                entity.fkekkacd = "0" ' 振込区分
+                entity.crt_user_id = SettingManager.GetInstance.LoginUserName ' 登録ユーザーID
+                entity.crt_user_dtm = sysDate ' 登録日時
+                entity.crt_user_pg_id = Me.ProductName ' 登録プログラムID
+                entityList.Add(entity)
+                cnt += 1
+                goukei = goukei + frikingaku
+            ElseIf -9999 <= frikingaku AndAlso frikingaku <= -1 Then
+                ' 調整額データentityへセット
+                Dim entity2 As New TChoseigakuEntity
+                entity2.dtnengetu = sysDate.ToString("yyyyMM") ' データ年月
+                entity2.ownerno = meisairow("ownerno") ' オーナーＮｏ
+                entity2.tyouseigaku = frikingaku ' 調整額
+                entity2.crt_user_id = SettingManager.GetInstance.LoginUserName ' 登録ユーザーID
+                entity2.crt_user_dtm = sysDate ' 登録日時
+                entity2.crt_user_pg_id = Me.ProductName ' 登録プログラムID
+                entityList2.Add(entity2)
 
-        '⑥メイン処理として　インストラクター向け振込データを順に繰り返し処理をする。
-        Dim columnNamesCsv4 As String() = {"データ区分", "振込先銀行コード", "振込先銀行名", "振込先支店コード", "振込先支店名", "預金種目", "口座番号", "預金者名義人名", "振込金額", "新規コード", "契約者番号", "振込区分"}
-        Dim fkinzemSum As Integer = 0
-        Dim tInstructorFurikomiCount As Integer = 0
-
-        For Each columnName In columnNamesCsv4
-            recordListCsv4.Columns.Add(columnName, GetType(String))
-        Next
-
-        For Each row As DataRow In tInstructorFurikomiList.Rows
-            If CnvInt(row(10)) > 0 Then
-                tInstructorFurikomiCount += 1
-                fkinzemSum += CnvInt(row(4))
-                Dim newRowCsv4 As DataRow = recordListCsv4.NewRow()
-                newRowCsv4("データ区分") = "2"
-                newRowCsv4("振込先銀行コード") = row(5)
-                newRowCsv4("振込先銀行名") = ""
-                newRowCsv4("振込先支店コード") = row(6)
-                newRowCsv4("振込先支店名") = ""
-                newRowCsv4("預金種目") = row(7)
-                newRowCsv4("口座番号") = row(8)
-                newRowCsv4("預金者名義人名") = row(9)
-                newRowCsv4("振込金額") = row(10)
-                newRowCsv4("新規コード") = "1"
-                newRowCsv4("契約者番号") = row(1) & row(2) & row(3)
-                newRowCsv4("振込区分") = "0"
-                recordListCsv4.Rows.Add(newRowCsv4)
+            ElseIf frikingaku = 0 OrElse frikingaku <= -100000 Then
+                ' 対象外データとして処理しない
             End If
         Next
 
-        '⑦終了処理として、上記⑥(2)の件数合計・振込金額合計をインストラクター向け口座振込依頼ファイル(合計部)として出力する。
-        Dim columnNamesCsv5 As String() = {"データ区分", "合計件数", "合計金額", "登録年月日", "登録時刻", "更新年月日", "更新時刻"}
+        ' 口座振込依頼データ
+        If entityList.Count <> 0 Then
+            ' データ年月がシステム日付の前月と同一のデータを削除
+            If Not dba.deleteTkozafurikaeirai(monthAgo) Then
+                Return
+            End If
+            ' 作成
+            If Not dba.InsertTkozafurikaeirai(entityList) Then
+                Return
+            End If
+        End If
 
-        For Each columnName In columnNamesCsv5
-            recordListCsv5.Columns.Add(columnName, GetType(String))
-        Next
+        ' 調整額データ
+        If entityList2.Count <> 0 Then
+            ' データ年月がシステム日付と同一のデータを削除
+            If Not dba.deleteTChoseigaku(sysDate.ToString("yyyyMM")) Then
+                Return
+            End If
+            ' 作成
+            If Not dba.InsertTChoseigakuEntity(entityList2) Then
+                Return
+            End If
+        End If
 
-        Dim newRowCsv5 As DataRow = recordListCsv5.NewRow()
-        newRowCsv5("データ区分") = "8"
-        newRowCsv5("合計件数") = tInstructorFurikomiCount.ToString()
-        newRowCsv5("合計金額") = fkinzemSum.ToString()
-        newRowCsv5("登録年月日") = Now.Date().ToString("yyyyMMdd")
-        newRowCsv5("登録時刻") = Now.TimeOfDay().ToString("hhmmss")
-        newRowCsv5("更新年月日") = Now.Date().ToString("yyyyMMdd")
-        newRowCsv5("更新時刻") = Now.TimeOfDay().ToString("hhmmss")
-        recordListCsv5.Rows.Add(newRowCsv5)
+        ' 口座振込依頼ファイル(合計部)設定
+        recordListSougouFile.Rows.Add("8" & cnt.ToString("000000") & goukei.ToString("000000000000") & StrDup(101, " "))
 
-        '⑧終了処理として、⑤のヘッダー情報と上記⑥(2)の件数合計・振込金額合計を引渡票データに出力する。（テキスト項目転送仕様(6.引渡票)参照）
+        ' 口座振込依頼ファイル(エンドレコード部)設定
+        recordListSougouFile.Rows.Add("9" & StrDup(119, " "))
 
-        Dim columnNamesCsv6 As String() = {"ヘッダー１", "タイトル", "ヘッダー２1", "ヘッダー２2", "ヘッダー３1", "ヘッダー３2", "ヘッダー４1", "ヘッダー４2", "ヘッダー４3", "ヘッダー４4", "明細1", "明細2", "明細3", "明細4"}
-
-        For Each columnName In columnNamesCsv6
-            recordListCsv6.Columns.Add(columnName, GetType(String))
-        Next
-
-        Dim newRowCsv6 As DataRow = recordListCsv6.NewRow()
-        newRowCsv6("ヘッダー１") = "三菱ＵＦＪ銀行御中"
-        newRowCsv6("タイトル") = "＊＊＊　給与振込データＭＴ引渡票　＊＊＊"
-        newRowCsv6("ヘッダー２1") = "作成日："
-        newRowCsv6("ヘッダー２2") = sysDate.ToString("yyyyMMdd")
-        newRowCsv6("ヘッダー３1") = "振込日："
-        newRowCsv6("ヘッダー３2") = sysDate.ToString("yyyyMMdd")
-        newRowCsv6("ヘッダー４1") = "委託者コード　　"
-        newRowCsv6("ヘッダー４2") = "委託者名"
-        newRowCsv6("ヘッダー４3") = "振込件数"
-        newRowCsv6("ヘッダー４4") = "振込金額"
-        newRowCsv6("明細1") = itakuno
-        newRowCsv6("明細2") = itaknm
-        newRowCsv6("明細3") = tInstructorFurikomiCount.ToString().PadLeft(6, "0")
-        newRowCsv6("明細4") = fkinzemSum.ToString().PadLeft(12, "0")
-        recordListCsv6.Rows.Add(newRowCsv6)
-
-        '2．口座振込データ引渡し（給与振込ファイル作成
-        For i As Integer = 1 To 14
-            recordListCsv78.Columns.Add()
-        Next
-
-        For Each row As DataRow In recordListCsv3.Rows
-            Dim newRowCsv78 As DataRow = recordListCsv78.NewRow()
-            newRowCsv78(0) = row(0)
-            newRowCsv78(1) = row(1)
-            newRowCsv78(2) = row(2)
-            newRowCsv78(3) = row(3)
-            newRowCsv78(4) = row(4)
-            newRowCsv78(5) = row(5)
-            newRowCsv78(6) = row(6)
-            newRowCsv78(7) = row(7)
-            newRowCsv78(8) = row(8)
-            newRowCsv78(9) = row(9)
-            newRowCsv78(10) = row(10)
-            newRowCsv78(11) = row(11)
-            newRowCsv78(12) = ""
-            recordListCsv78.Rows.Add(newRowCsv78)
-        Next
-
-        For Each row As DataRow In recordListCsv4.Rows
-            Dim newRowCsv78 As DataRow = recordListCsv78.NewRow()
-            newRowCsv78(0) = row(0)
-            newRowCsv78(1) = row(1)
-            newRowCsv78(2) = row(2)
-            newRowCsv78(3) = row(3)
-            newRowCsv78(4) = row(4)
-            newRowCsv78(5) = row(5)
-            newRowCsv78(6) = ""
-            newRowCsv78(7) = row(6)
-            newRowCsv78(8) = row(7)
-            newRowCsv78(9) = row(8)
-            newRowCsv78(10) = row(9)
-            newRowCsv78(11) = row(10)
-            newRowCsv78(12) = row(11)
-            newRowCsv78(13) = ""
-            recordListCsv78.Rows.Add(newRowCsv78)
-        Next
-
-        For Each row As DataRow In recordListCsv5.Rows
-            Dim newRowCsv78 As DataRow = recordListCsv78.NewRow()
-            newRowCsv78(0) = row(0)
-            newRowCsv78(1) = row(1)
-            newRowCsv78(2) = row(2)
-            newRowCsv78(3) = ""
-            recordListCsv78.Rows.Add(newRowCsv78)
-        Next
-
-        Dim newRowCsv78End As DataRow = recordListCsv78.NewRow()
-        newRowCsv78End(0) = "9"
-        newRowCsv78End(1) = ""
-        recordListCsv78.Rows.Add(newRowCsv78End)
+        '引渡票を出力する
+        Dim strcnt As String = cnt.ToString("#,##0")
+        Dim strgoukei As String = goukei.ToString("#,##0")
+        recordListHikiwatasiFile.Columns.Add("委託者コード", GetType(String))
+        recordListHikiwatasiFile.Columns.Add("委託者名", GetType(String))
+        recordListHikiwatasiFile.Columns.Add("振込件数", GetType(String))
+        recordListHikiwatasiFile.Columns.Add("振込金額", GetType(String))
+        recordListHikiwatasiFile.Rows.Add("三菱UFJ銀行御中")
+        recordListHikiwatasiFile.Rows.Add("＊＊＊ 総合振込データＭＴ引渡票 ＊＊＊")
+        recordListHikiwatasiFile.Rows.Add("作成日：" & sysDate.ToString("yyyy.MM.dd"))
+        recordListHikiwatasiFile.Rows.Add("振込日：" & CnvDat(hurikomibi).ToString("yyyy.MM.dd"))
+        recordListHikiwatasiFile.Rows.Add("委託者コード", "委託者名", "振込件数", "振込金額")
+        recordListHikiwatasiFile.Rows.Add(itakuno, itaknm, strcnt, strgoukei)
 
         ' ＣＳＶファイル出力
         Dim folderDialog As New FolderBrowserDialog()
@@ -250,22 +214,23 @@ Public Class frmWKDR040B
         If folderDialog.ShowDialog() = DialogResult.OK Then
             Dim directoryPath As String = folderDialog.SelectedPath
 
-            Dim fileNames As String() = {"引渡票.csv", "給与振込ファイル.csv"}
+            Dim fileNames As String() = {"引渡票.csv", "総合振込ファイル.csv"}
+            Dim hikiwatasiFilePath As String = ""
+            Dim sougouFilePath As String = ""
+            Dim sougouFilePath2 As String = ""
 
             For Each fileName As String In fileNames
                 Dim fullPath As String = Path.Combine(directoryPath, fileName)
                 If fileName = "引渡票.csv" Then
-                    WriteCsvData(recordListCsv6, directoryPath, fileName,,, True)
+                    hikiwatasiFilePath = WriteCsvData(recordListHikiwatasiFile, directoryPath, fileName,,, True)
                 Else
-                    WriteCsvData(recordListCsv78, directoryPath, fileName,,, True)
+                    sougouFilePath = WriteCsvData(recordListSougouFile, directoryPath, fileName)
+                    sougouFilePath2 = WriteCsvData(recordListSougouFile, directoryPath, "総合振込ファイル2.csv")
                 End If
             Next
 
-            MessageBox.Show("「" & directoryPath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("「" & hikiwatasiFilePath & "」" & vbCrLf & "「 " & sougouFilePath & "」" & vbCrLf & "「 " & sougouFilePath2 & "」" & vbCrLf & "が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
         End If
-
-        MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
     End Sub
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click

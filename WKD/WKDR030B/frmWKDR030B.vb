@@ -78,6 +78,9 @@ Public Class frmWKDR030B
         Dim lastCnt As Integer = 0
         Dim cnt As Integer = 0
 
+        Dim savefirstitaku As String = ""
+        Dim saveflg As Boolean = False
+
         ' TextFieldParserを使って固定長のファイルを読み込む（Shift-JIS指定）
         Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("Shift_JIS"))
             ' 最終行を取得
@@ -88,18 +91,26 @@ Public Class frmWKDR030B
         Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("Shift_JIS"))
             parser.TextFieldType = FieldType.Delimited
             While Not parser.EndOfData
+                Dim rec As String = parser.ReadLine
+                Dim firstitaku As String = rec.Substring(0, 5)
+
+                If Not saveflg Then
+                    savefirstitaku = firstitaku
+                    saveflg = True
+                End If
+
                 cnt += 1
                 ' 固定長のフィールドの幅を指定
                 If 1 = cnt Then
                     ' 1行目（ヘッダーレコード）
-                    Dim fields As String() = GetFieldString(parser.ReadLine, 20, 6)
+                    Dim fields As String() = GetFieldString(rec, 20, 6)
                     dtnengetu = fields(1) ' データ年月
                 ElseIf lastCnt = cnt Then
                     '　最終行目（合計レコード）
-                    Dim fields As String() = GetFieldString(parser.ReadLine, 5, 7, 8, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11)
+                    Dim fields As String() = GetFieldString(rec, 5, 7, 8, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11)
                 Else
                     ' 2行目以降（明細レコード）
-                    Dim fields As String() = GetFieldString(parser.ReadLine, 5, 7, 8, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11)
+                    Dim fields As String() = GetFieldString(rec, 5, 7, 8, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11, 40, 11)
                     Dim entity As New TKahenkomokuEntity
                     entity.dtnengetu = dtnengetu ' データ年月
                     entity.itakuno = fields(0) ' 顧客番号（委託者Ｎｏ）
@@ -134,6 +145,11 @@ Public Class frmWKDR030B
         Dim errorList As New List(Of String)
         Dim errorRecords As New List(Of String)
         Dim row As Integer = 2
+
+        ' ⑥先頭レコードの委託者Ｎｏは(先頭5桁)が00000以外であればエラーとする
+        If savefirstitaku <> "00000" Then
+            errorRecords.Add("1,委託者Ｎｏ" & "," & "ファイルの先頭がヘッダーレコードになっていません。 ")
+        End If
 
         ' ⑤ヘッダーレコードのデータ年月のNULLチェック
         If dtnengetu Is Nothing OrElse dtnengetu.Trim = "" Then
@@ -222,6 +238,9 @@ Public Class frmWKDR030B
         Dim lastCnt As Integer = 0
         Dim cnt As Integer = 0
 
+        Dim savefirstitaku As String = ""
+        Dim saveflg As Boolean = False
+
         Dim strName As String = ""
 
         ' TextFieldParserを使って固定長のファイルを読み込む（Shift-JIS指定）
@@ -234,18 +253,26 @@ Public Class frmWKDR030B
         Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("Shift_JIS"))
             parser.TextFieldType = FieldType.Delimited
             While Not parser.EndOfData
+                Dim rec As String = parser.ReadLine
+                Dim firstitaku As String = rec.Substring(0, 5)
+
+                If Not saveflg Then
+                    savefirstitaku = firstitaku
+                    saveflg = True
+                End If
+
                 cnt += 1
                 ' 固定長のフィールドの幅を指定
                 If 1 = cnt Then
                     ' 1行目（ヘッダーレコード）
-                    Dim fields As String() = GetFieldString(parser.ReadLine, 20, 6)
+                    Dim fields As String() = GetFieldString(rec, 20, 6)
                     dtnengetu = fields(1) ' データ年月
                 ElseIf lastCnt = cnt Then
                     '　最終行目（合計レコード）
-                    Dim fields As String() = GetFieldString(parser.ReadLine, 5, 7, 8, 11, 47)
+                    Dim fields As String() = GetFieldString(rec, 5, 7, 8, 11, 47)
                 Else
                     ' 2行目以降（明細レコード）
-                    Dim fields As String() = GetFieldString(parser.ReadLine, 5, 7, 8, 11, 4, 3, 1, 7, 30, 8, 80, 40, 30, 4, 2, 2, 4, 2, 2, 4, 2, 2, 100, 80)
+                    Dim fields As String() = GetFieldString(rec, 5, 7, 8, 11, 4, 3, 1, 7, 30, 8, 80, 40, 30, 4, 2, 2, 4, 2, 2, 4, 2, 2, 100, 80)
                     Dim entity As New TInstructorFurikomiEntity
                     entity.dtnengetu = dtnengetu ' データ年月
                     entity.itakuno = fields(0) ' 顧客番号（委託者Ｎｏ）
@@ -289,6 +316,11 @@ Public Class frmWKDR030B
         Dim errorRecords As New List(Of String)
         Dim row As Integer = 2
 
+        ' ⑥先頭レコードの委託者Ｎｏは(先頭5桁)が00000以外であればエラーとする
+        If savefirstitaku <> "00000" Then
+            errorRecords.Add("1,委託者Ｎｏ" & "," & "ファイルの先頭がヘッダーレコードになっていません。 ")
+        End If
+
         ' ⑤ヘッダーレコードのデータ年月のNULLチェック
         If dtnengetu Is Nothing OrElse dtnengetu.Trim = "" Then
             errorRecords.Add(1 & "," & "データ年月" & "," & "データ年月がNULLです。")
@@ -327,8 +359,13 @@ Public Class frmWKDR030B
 
         Dim dba As New WKDR030BDBAccess
 
+        ' インストラクター向け振込データ削除（中間WK）
+        If Not dba.DeleteInstructorfurikomi(monthAgo, "w_instructor_furikomi") Then
+            Return
+        End If
+
         ' インストラクター向け振込データ削除
-        If Not dba.DeleteTinstructorfurikomi(monthAgo) Then
+        If Not dba.DeleteInstructorfurikomi(monthAgo, "t_instructor_furikomi") Then
             Return
         End If
 

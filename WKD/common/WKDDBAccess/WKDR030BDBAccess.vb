@@ -223,13 +223,13 @@ Public Class WKDR030BDBAccess
 
     End Function
 
-    Public Function DeleteTinstructorfurikomi(dtnengetu As String) As Boolean
+    Public Function DeleteInstructorfurikomi(dtnengetu As String, tbname As String) As Boolean
 
         Dim ret As Boolean = False
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("delete from t_instructor_furikomi where dtnengetu = @dtnengetu")
+        sql.AppendLine("delete from " & tbname & " where dtnengetu = @dtnengetu")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)
@@ -324,11 +324,11 @@ Public Class WKDR030BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("select a.ownerno ownerno_inst, b.bakycd ownerno_owner ")
+        sql.AppendLine("select a.ownerno ownerno_inst, a.instno, b.bakycd ownerno_owner ")
         sql.AppendLine("from t_instructor_furikomi a ")
         sql.AppendLine(" left join tbkeiyakushamaster b ")
         sql.AppendLine(" on a.ownerno = b.bakycd ")
-        sql.AppendLine(" and bakome is not null and bakyfg = '0' ")
+        sql.AppendLine(" and bakome is not null ")
         sql.AppendLine(" and bakyfg = '0' ")
         sql.AppendLine("where a.dtnengetu = @dtnengetu ")
         sql.AppendLine(" order by a.itakuno, a.ownerno ")
@@ -353,7 +353,7 @@ Public Class WKDR030BDBAccess
         sql.AppendLine("from t_kahenkomoku a ")
         sql.AppendLine(" left join tbkeiyakushamaster b ")
         sql.AppendLine(" on a.ownerno = b.bakycd ")
-        sql.AppendLine(" and bakome is not null and bakyfg = '0' ")
+        sql.AppendLine(" and bakome is not null ")
         sql.AppendLine(" and bakyfg = '0' ")
         sql.AppendLine("where a.dtnengetu = @dtnengetu ")
         sql.AppendLine(" order by a.itakuno, a.ownerno ")
