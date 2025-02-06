@@ -220,10 +220,12 @@ Public Class frmWKDR020B
         Dim tbTesuryo As DataTable = dba.getTesuryo("")
         Dim koufuri As String = ""
         Dim konbini As String = ""
+        Dim insi31500 As String = ""
         If tbTesuryo.Rows.Count <> 0 Then
             Dim dtrow2 As DataRow = tbTesuryo.Rows(0)
             koufuri = dtrow2("koufuri")
             konbini = dtrow2("konbini")
+            insi31500 = dtrow2("insi31500")
         Else
             MessageBox.Show("手数料テーブルからデータを取得できませんでした", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
@@ -280,7 +282,7 @@ Public Class frmWKDR020B
             Dim tesuryo As String = ""
             Dim intkonbini As Integer = CnvDec(konbini)
             If dtrow("insiflg") = "1" Then
-                intkonbini += 31500
+                intkonbini += insi31500
             End If
             entity.tesur = intkonbini.ToString ' 手数料金額
             entity.bankcd = "" ' 振込先銀行番号
