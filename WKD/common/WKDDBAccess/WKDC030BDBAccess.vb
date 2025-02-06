@@ -71,7 +71,7 @@ Public Class WKDC030BDBAccess
         sql.AppendLine(", caybtn ")
         sql.AppendLine(", cakznm ")
         sql.AppendLine(", cafkst ")
-        sql.AppendLine(", '' onlinefg ")
+        sql.AppendLine(", onlinekb ")
         sql.AppendLine("from")
         sql.AppendLine("    t_yoteihyo ytd ")
         sql.AppendLine("left join")
