@@ -64,7 +64,7 @@ Public Class frmWKDR060B
 
         ' ＣＳＶファイル出力
         Dim fileName As String = "SOUKATUHYO.CSV"
-        Dim filePath As String = WriteCsvData(dtkahen, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+        Dim filePath As String = WriteCsvData(dtkahen, SettingManager.GetInstance.OutputDirectory, fileName,,, False)
 
         '出力完了メッセージ
         MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)

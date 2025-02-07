@@ -634,13 +634,13 @@ Public Class WKDC020BDBAccess
 
     End Function
 
-    Public Function GetMItakusha() As DataTable
+    Public Function GetMItakusha(dtnengetu As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("select * from m_itakusha where itakuno = '33948'")
+        sql.AppendLine("select * from m_itakusha")
 
         Dim params As New List(Of NpgsqlParameter)
 

@@ -292,7 +292,8 @@ Friend Class frmFurikaeReqImportAuto
         sql = sql & "CATRFG," & vbCrLf '//伝送更新フラグ
         sql = sql & "CAUSID," & vbCrLf '//作成日
         sql = sql & "CAADDT," & vbCrLf '//更新日
-        sql = sql & "CANWDT " & vbCrLf '//新規データ扱い日
+        sql = sql & "CANWDT," & vbCrLf '//新規データ扱い日
+        sql = sql & "onlinekb " & vbCrLf '//オンライン区分
         sql = sql & ") VALUES ( " & vbCrLf
         sql = sql & "0" & "," & vbCrLf '//委託者区分
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & "," & vbCrLf '//契約者番号
@@ -313,7 +314,8 @@ Friend Class frmFurikaeReqImportAuto
         sql = sql & "  NULL," & vbCrLf '//伝送更新フラグ
         sql = sql & gdDBS.ColumnDataSet((MainModule.gcImportHogoshaUser)) & vbCrLf '//更新者ＩＤ
         sql = sql & "current_timestamp," & vbCrLf '//更新日
-        sql = sql & "   NULL )" & vbCrLf '//新規データ扱い日
+        sql = sql & "   NULL," & vbCrLf '//新規データ扱い日
+        sql = sql & "   1 )" & vbCrLf '//オンライン区分
 
         cmd.CommandText = sql
         cmd.ExecuteNonQuery()
@@ -334,7 +336,8 @@ Friend Class frmFurikaeReqImportAuto
         sql = sql & " CAKYST = " & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & "," & vbCrLf
         sql = sql & " CAFKST = " & gdDBS.ColumnDataSet(arrContent(row, 4) & "01", vEnd:=True) & "," & vbCrLf
         sql = sql & " CAUSID = " & gdDBS.ColumnDataSet((MainModule.gcImportHogoshaUser)) & vbCrLf
-        sql = sql & " CAUPDT = current_timestamp" & vbCrLf
+        sql = sql & " CAUPDT = current_timestamp," & vbCrLf
+        sql = sql & " onlinekb = 1" & vbCrLf
         sql = sql & " WHERE CAKYCD = " & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & vbCrLf
         sql = sql & "   AND CAHGCD = " & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & vbCrLf
         sql = sql & "   AND CASQNO = " & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & vbCrLf
@@ -355,6 +358,7 @@ Friend Class frmFurikaeReqImportAuto
         sql = sql & ",CAKYED = " & chgDate
         sql = sql & ",CAUSID = '" & MainModule.gcImportHogoshaUser & "_Adjust'"
         sql = sql & ",CAUPDT = current_timestamp"
+        sql = sql & ",onlinekb = 1" & vbCrLf
         sql = sql & " WHERE CAKYCD = " & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & vbCrLf
         sql = sql & "   AND CAHGCD = " & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & vbCrLf
         sql = sql & "   AND CASQNO <> " & gdDBS.ColumnDataSet(arrContent(row, 0), "L", vEnd:=True) & vbCrLf
