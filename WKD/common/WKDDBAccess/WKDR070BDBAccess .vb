@@ -335,7 +335,9 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , tk.cszken")
         sql.AppendLine("  , tk.cszkin")
         sql.AppendLine("  , tk.csmken + coalesce(ok.mnokensu, 0) csmken")
+        'sql.AppendLine("  , coalesce(ok.mnokensu, 0) csmken")
         sql.AppendLine("  , tk.csmkin + coalesce(ok.mnokingk, 0) csmkin")
+        'sql.AppendLine("  , coalesce(ok.mnokingk, 0) csmkin")
         sql.AppendLine("  , tk.fritesu")
         sql.AppendLine("  , @crt_user_id")
         sql.AppendLine("  , @crt_user_dtm")
@@ -978,7 +980,7 @@ Public Class WKDR070BDBAccess
         Dim sql As New StringBuilder()
         sql.AppendLine("select")
         sql.AppendLine("    ownerno オーナー№")
-        sql.AppendLine("  , filler インストラクター№")
+        sql.AppendLine("  , substr(filler,2,7) インストラクター№")
         sql.AppendLine("  , dtnengetu 締年月")
         sql.AppendLine("  , fkkin 振込金額（税引後）")
         sql.AppendLine("  , tesur 源泉徴収税額")
@@ -999,7 +1001,7 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function GetWTsuchishoSyukeibu(shoriNengatu As String, ngZengetu As Integer, ngn As Integer, ngnPushback As String) As DataTable
+    Public Function GetWTsuchishoSyukeibu(shoriNengatu As String, ngZengetu As Integer, ngn As String, ngnPushback As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
