@@ -58,7 +58,7 @@ Public Class frmWKDC030B
 
         '' ＣＳＶファイル出力
         Dim fileName As String = "claim.csv"
-        Dim filePath As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+        Dim filePath As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName, True,, True)
 
         MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 

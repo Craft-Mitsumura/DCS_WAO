@@ -42,7 +42,7 @@ Public Class frmWKDC020B
         Dim dtI As DataTable = Nothing
 
         ' 委託者マスタ取得
-        dtI = dba.GetMItakusha(shoriNengetsu)
+        dtI = dba.GetMItakusha()
         If dtI.Rows.Count <= 0 Then
             MessageBox.Show("委託者マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
@@ -123,9 +123,9 @@ Public Class frmWKDC020B
             Else
                 rec.Append(StrDup(15, " ")) ' 引落銀行名
             End If
-            rec.Append(StrDup(4, " ")) ' ダミー
             rec.Append(row(20).ToString) ' 引落支店コード
             rec.Append(StrDup(15, " ")) ' 引落支店名
+            rec.Append(StrDup(4, " ")) ' ダミー
             rec.Append(row(21).ToString) ' 預金種目
             rec.Append(row(22).ToString) ' 口座番号
             rec.Append(GetMidByte(row(24).ToString & StrDup(30, " "), 1, 30)) ' 預金者名義人名
