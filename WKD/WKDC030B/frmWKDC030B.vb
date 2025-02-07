@@ -5,7 +5,7 @@ Imports System.Windows.Forms
 
 Public Class frmWKDC030B
 
-    Private Sub frmWKDT020B_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub frmWKDC030B_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         ' システム日付
         Dim sysDate As Date = Now
@@ -56,9 +56,9 @@ Public Class frmWKDC030B
             Return
         End If
 
-        '' ＣＳＶファイル出力
+        ' ＣＳＶファイル出力
         Dim fileName As String = "claim.csv"
-        Dim filePath As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+        Dim filePath As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName, True,, True)
 
         MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
