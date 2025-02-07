@@ -265,7 +265,7 @@ Public Class WKDR030BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("select * from m_zeigakuhyo where @fkinzem between kingakfrom and kingakto")
+        sql.AppendLine("select * from m_zeigakuhyo where @fkinzem between kingakfrom and kingakto -1 ")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@fkinzem", Integer.Parse(fkinzem))

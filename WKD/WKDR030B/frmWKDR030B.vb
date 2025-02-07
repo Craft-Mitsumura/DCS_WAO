@@ -386,7 +386,7 @@ Public Class frmWKDR030B
             If tbZeigakuhyo.Rows.Count <> 0 Then
                 Dim dtrow2 As DataRow = tbZeigakuhyo.Rows(0)
                 ' 源泉徴収税額の計算
-                zeigak = ((CnvDec(dtrow("fkinzem")) - CnvDec(dtrow2("kingakfrom"))) * CnvDec(dtrow2("ritu")) / 100) + CnvDec(dtrow2("gaku"))
+                zeigak = (GetRound((CnvDec(dtrow("fkinzem")) - CnvDec(dtrow2("kingakfrom"))) * CnvDec(dtrow2("ritu")) / 100, 0)) + CnvDec(dtrow2("gaku"))
                 ' 振込金額（税引後）の計算
                 fkinzeg = CnvDec(dtrow("fkinzem")) - zeigak
             Else

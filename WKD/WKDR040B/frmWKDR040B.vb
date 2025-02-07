@@ -78,7 +78,7 @@ Public Class frmWKDR040B
 
         ' 委託者マスタ取得
         Dim mItakushaiList As New DataTable
-        mItakushaiList = dba.geMItakushaByItakuno(CnvInt("0000033948"))
+        mItakushaiList = dba.geMItakushaByItakuno(3000044989)
         If mItakushaiList.Rows.Count = 0 Then
             MessageBox.Show("委託者マスタが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
@@ -113,7 +113,7 @@ Public Class frmWKDR040B
         itakuno = headerrow("itakuno")
         itaknm = headerrow("itaknm")
         recordListSougouFile.Columns.Add("データ", GetType(String))
-        recordListSougouFile.Rows.Add("1" & "21" & " " & "00000" & itakuno & GetMidByte(itaknm & StrDup(40, " "), 1, 40) & hurikomibi.Substring(4, 4) & CnvDec(headerrow("bankcd")).ToString("0000") & GetMidByte(headerrow("banknm") & StrDup(15, " "), 1, 15) & CnvDec(headerrow("sitencd")).ToString("000") & GetMidByte(headerrow("sitennm") & StrDup(15, " "), 1, 15) & headerrow("syumoku") & headerrow("kouzano") & StrDup(17, " "))
+        recordListSougouFile.Rows.Add("1" & "21" & " " & itakuno & GetMidByte(itaknm & StrDup(40, " "), 1, 40) & hurikomibi.Substring(4, 4) & CnvDec(headerrow("bankcd")).ToString("0000") & GetMidByte(headerrow("banknm") & StrDup(15, " "), 1, 15) & CnvDec(headerrow("sitencd")).ToString("000") & GetMidByte(headerrow("sitennm") & StrDup(15, " "), 1, 15) & headerrow("syumoku") & headerrow("kouzano") & StrDup(17, " "))
 
         ' 口座振込依頼ファイル(明細部)設定
         Dim cnt As Integer = 0
