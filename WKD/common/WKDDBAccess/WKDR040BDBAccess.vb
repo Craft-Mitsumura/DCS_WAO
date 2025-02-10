@@ -13,6 +13,7 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("select * ")
         sql.AppendLine("from wao.t_kahenkomoku ")
         sql.AppendLine("where dtnengetu = @dtnengetu ")
+        sql.AppendLine("order by itakuno, ownerno ")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)
@@ -92,7 +93,7 @@ Public Class WKDR040BDBAccess
 
     End Function
 
-    Public Function geMItakushaByItakuno(itakuno As Integer) As DataTable
+    Public Function geMItakushaByItakuno(itakuno As Decimal) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -122,7 +123,8 @@ Public Class WKDR040BDBAccess
         Dim sql As New StringBuilder()
         sql.AppendLine("update wao.t_kahenkomoku  ")
         sql.AppendLine("set  ")
-        '結果・手数料設定 
+        '結果・手数料設定
+        sql.AppendLine("   tesur1 = t2.tesur1, ")
         sql.AppendLine("   tesur3 = t2.tesur3, ")
         sql.AppendLine("   fuzken = t2.fuzken, ")
         sql.AppendLine("   fuzkin = t2.fuzkin, ")
@@ -153,9 +155,11 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("   upd_user_pg_id = @upd_user_pg_id ")
         sql.AppendLine("from ")
         sql.AppendLine(" (select a.dtnengetu,  ")
-        sql.AppendLine(" 	  		a.ownerno,   ")
+        sql.AppendLine(" 	  		a.itakuno, ")
+        sql.AppendLine(" 	  		a.ownerno, ")
+        sql.AppendLine(" 		  	b.tesur1, ")
         sql.AppendLine(" 		  	b.tesur3, ")
-        sql.AppendLine(" 		  	b.fuzken,	  ")
+        sql.AppendLine(" 		  	b.fuzken, ")
         sql.AppendLine(" 		  	b.fuzkin, ")
         sql.AppendLine(" 		  	b.fufken, ")
         sql.AppendLine(" 		  	b.fufkin, ")
@@ -166,7 +170,8 @@ Public Class WKDR040BDBAccess
         sql.AppendLine(" 		  	e.fritesu ")
         sql.AppendLine(" 	from wao.t_kahenkomoku a ")
         sql.AppendLine(" 	left join (select d.dtnengetu, d.ownerno, ")
-        sql.AppendLine(" 					SUM(case when d.syokbn <> '3' then d.fkkin else c.fkinzeg end) as tesur3, ")
+        sql.AppendLine(" 					SUM(case when d.syokbn <> '3' then d.tesur else '0' end) as tesur1, ")
+        sql.AppendLine(" 					MAX(case when d.syokbn <> '3' then c.fkinzeg else '0' end) as tesur3, ")
         sql.AppendLine(" 				  	SUM(case when d.syokbn = '1' and d.funocd = '0' then 1 else 0 end ) as fuzken, ")
         sql.AppendLine(" 				  	SUM(case when d.syokbn = '1' and d.funocd = '0' then d.fkkin else 0 end ) as fuzkin, ")
         sql.AppendLine(" 				  	SUM(case when d.syokbn = '1' and d.funocd <> '0' then 1 else 0 end ) as fufken, ")

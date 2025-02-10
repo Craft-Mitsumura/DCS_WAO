@@ -67,7 +67,7 @@ Public Class frmWKDR050B
         '委託者マスタを取得し、ヘッダに出力する
         Dim itakuno As String = ""
         Dim itaknm As String = ""
-        Dim mItakushaiList As DataTable = dba.geMItakushaByItakuno(CnvInt("0000033948"))
+        Dim mItakushaiList As DataTable = dba.geMItakushaByItakuno(3000045057)
         If mItakushaiList.Rows.Count <= 0 Then
             MessageBox.Show("委託者マスタにデータが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
@@ -76,7 +76,7 @@ Public Class frmWKDR050B
             itakuno = headerrow("itakuno")
             itaknm = headerrow("itaknm")
             recordListKyuyoFile.Columns.Add("データ", GetType(String))
-            recordListKyuyoFile.Rows.Add("1" & "11" & " " & "00000" & itakuno & GetMidByte(itaknm & StrDup(40, " "), 1, 40) & hurikomibi.Substring(4, 4) & CnvDec(headerrow("bankcd")).ToString("0000") & GetMidByte(headerrow("banknm") & StrDup(15, " "), 1, 15) & CnvDec(headerrow("sitencd")).ToString("000") & GetMidByte(headerrow("sitennm") & StrDup(15, " "), 1, 15) & headerrow("syumoku") & headerrow("kouzano") & StrDup(17, " "))
+            recordListKyuyoFile.Rows.Add("1" & "11" & " " & itakuno & GetMidByte(itaknm & StrDup(40, " "), 1, 40) & hurikomibi.Substring(4, 4) & CnvDec(headerrow("bankcd")).ToString("0000") & GetMidByte(headerrow("banknm") & StrDup(15, " "), 1, 15) & CnvDec(headerrow("sitencd")).ToString("000") & GetMidByte(headerrow("sitennm") & StrDup(15, " "), 1, 15) & headerrow("syumoku") & headerrow("kouzano") & StrDup(17, " "))
         End If
 
         'システム日付が前月のインストラクター向け振込データを取得し、明細に出力する

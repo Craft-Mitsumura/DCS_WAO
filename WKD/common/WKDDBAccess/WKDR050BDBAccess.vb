@@ -3,7 +3,7 @@ Imports NpgsqlTypes
 Imports System.Text
 
 Public Class WKDR050BDBAccess
-    Public Function geMItakushaByItakuno(itakuno As Integer) As DataTable
+    Public Function geMItakushaByItakuno(itakuno As Decimal) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -13,7 +13,7 @@ Public Class WKDR050BDBAccess
         sql.AppendLine(" * ")
         sql.AppendLine(" from ")
         sql.AppendLine(" m_itakusha ")
-        sql.AppendLine(" where itakuno = cast(@itakuno as integer) ")
+        sql.AppendLine(" where itakuno = @itakuno ")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@itakuno", itakuno)
