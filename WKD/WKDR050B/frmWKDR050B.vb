@@ -11,14 +11,27 @@ Public Class frmWKDR050B
 
         ' システム日付
         Dim sysDate As Date = Now
+        Dim dt As DataTable = Nothing
+        Dim dba As New WKDR050BDBAccess
 
         lblSysDate.Text = sysDate.ToString("yyyy/MM/dd")
         lblSysDate.AutoSize = True
 
+        Dim ngn As String = sysDate.ToString("yyyyMMdd")
+
+        dt = dba.getdaybringforward(ngn)
+        If dt.Rows.Count > 0 Then
+            txtShoriNengetsu.Text = dt.Rows(0)(0).ToString.Substring(6, 2)
+        Else
+            txtShoriNengetsu.Text = ngn.ToString.Substring(6, 2)
+        End If
+
         ' 処理年月
-        txtShoriNengetsu.Text = sysDate.ToString("dd")
+        'txtShoriNengetsu.Text = sysDate.ToString("dd")
         txtShoriNengetsu.Enabled = True
 
+        txtshorinengetu.Text = sysDate.ToString("yyyy/MM")
+        txtshorinengetu.Enabled = False
     End Sub
 
     Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click

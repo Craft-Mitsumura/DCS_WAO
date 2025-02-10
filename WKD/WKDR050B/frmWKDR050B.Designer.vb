@@ -32,6 +32,8 @@ Partial Class frmWKDR050B
         Me.Label1 = New System.Windows.Forms.Label()
         Me.btnOutput = New System.Windows.Forms.Button()
         Me.btnClose = New System.Windows.Forms.Button()
+        Me.txtshorinengetu = New System.Windows.Forms.TextBox()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.MainMenu1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -86,7 +88,7 @@ Partial Class frmWKDR050B
         '
         Me.txtShoriNengetsu.AcceptsReturn = True
         Me.txtShoriNengetsu.ImeMode = System.Windows.Forms.ImeMode.Disable
-        Me.txtShoriNengetsu.Location = New System.Drawing.Point(115, 65)
+        Me.txtShoriNengetsu.Location = New System.Drawing.Point(115, 130)
         Me.txtShoriNengetsu.MaxLength = 2
         Me.txtShoriNengetsu.Name = "txtShoriNengetsu"
         Me.txtShoriNengetsu.Size = New System.Drawing.Size(20, 19)
@@ -96,7 +98,7 @@ Partial Class frmWKDR050B
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(54, 68)
+        Me.Label1.Location = New System.Drawing.Point(54, 133)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(41, 12)
         Me.Label1.TabIndex = 16
@@ -128,11 +130,32 @@ Partial Class frmWKDR050B
         Me.btnClose.Text = "終了(&X)"
         Me.btnClose.UseVisualStyleBackColor = False
         '
+        'txtshorinengetu
+        '
+        Me.txtshorinengetu.ImeMode = System.Windows.Forms.ImeMode.Disable
+        Me.txtshorinengetu.Location = New System.Drawing.Point(115, 95)
+        Me.txtshorinengetu.MaxLength = 8
+        Me.txtshorinengetu.Name = "txtshorinengetu"
+        Me.txtshorinengetu.Size = New System.Drawing.Size(53, 19)
+        Me.txtshorinengetu.TabIndex = 21
+        Me.txtshorinengetu.Text = "yyyy/MM"
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(54, 98)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(53, 12)
+        Me.Label2.TabIndex = 20
+        Me.Label2.Text = "処理年月"
+        '
         'frmWKDR050B
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(466, 333)
+        Me.Controls.Add(Me.txtshorinengetu)
+        Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.lblSysDate)
         Me.Controls.Add(Me.MainMenu1)
         Me.Controls.Add(Me.txtShoriNengetsu)
@@ -159,4 +182,6 @@ Partial Class frmWKDR050B
     Friend WithEvents Label1 As Label
     Public WithEvents btnOutput As Button
     Public WithEvents btnClose As Button
+    Friend WithEvents txtshorinengetu As TextBox
+    Friend WithEvents Label2 As Label
 End Class

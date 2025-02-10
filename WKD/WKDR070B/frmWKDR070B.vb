@@ -26,6 +26,8 @@ Public Class frmWKDR070B
             txtNyukinbi.Text = ngn.ToString.Substring(6, 2)
         End If
 
+        txtshorinengetu.Text = sysDate.ToString("yyyy/MM")
+        txtshorinengetu.Enabled = False
     End Sub
 
     Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click

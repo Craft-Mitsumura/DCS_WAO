@@ -32,6 +32,8 @@ Partial Class frmWKDR070B
         Me.btnOutput = New System.Windows.Forms.Button()
         Me.txtNyukinbi = New System.Windows.Forms.TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.txtshorinengetu = New System.Windows.Forms.TextBox()
         Me.MainMenu1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -111,7 +113,7 @@ Partial Class frmWKDR070B
         'txtNyukinbi
         '
         Me.txtNyukinbi.ImeMode = System.Windows.Forms.ImeMode.Disable
-        Me.txtNyukinbi.Location = New System.Drawing.Point(115, 65)
+        Me.txtNyukinbi.Location = New System.Drawing.Point(115, 130)
         Me.txtNyukinbi.MaxLength = 2
         Me.txtNyukinbi.Name = "txtNyukinbi"
         Me.txtNyukinbi.Size = New System.Drawing.Size(22, 19)
@@ -121,17 +123,38 @@ Partial Class frmWKDR070B
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(54, 68)
+        Me.Label1.Location = New System.Drawing.Point(54, 133)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(41, 12)
         Me.Label1.TabIndex = 7
         Me.Label1.Text = "入金日"
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(54, 98)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(53, 12)
+        Me.Label2.TabIndex = 9
+        Me.Label2.Text = "処理年月"
+        '
+        'txtshorinengetu
+        '
+        Me.txtshorinengetu.ImeMode = System.Windows.Forms.ImeMode.Disable
+        Me.txtshorinengetu.Location = New System.Drawing.Point(115, 95)
+        Me.txtshorinengetu.MaxLength = 8
+        Me.txtshorinengetu.Name = "txtshorinengetu"
+        Me.txtshorinengetu.Size = New System.Drawing.Size(53, 19)
+        Me.txtshorinengetu.TabIndex = 10
+        Me.txtshorinengetu.Text = "yyyy/MM"
         '
         'frmWKDR070B
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(466, 333)
+        Me.Controls.Add(Me.txtshorinengetu)
+        Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.txtNyukinbi)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnOutput)
@@ -156,4 +179,6 @@ Partial Class frmWKDR070B
     Public WithEvents btnOutput As Windows.Forms.Button
     Friend WithEvents txtNyukinbi As Windows.Forms.TextBox
     Friend WithEvents Label1 As Windows.Forms.Label
+    Friend WithEvents Label2 As Windows.Forms.Label
+    Friend WithEvents txtshorinengetu As Windows.Forms.TextBox
 End Class

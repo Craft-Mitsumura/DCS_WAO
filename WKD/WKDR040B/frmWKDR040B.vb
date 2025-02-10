@@ -3,6 +3,7 @@ Imports Com.Wao.KDS.CustomFunction
 Imports System.Text
 Imports System.Windows.Forms
 Imports System.IO
+Imports System.Security.Cryptography
 
 Public Class frmWKDR040B
 
@@ -10,10 +11,23 @@ Public Class frmWKDR040B
 
         ' システム日付
         Dim sysDate As Date = Now
+        Dim dt As DataTable = Nothing
+        Dim dba As New WKDR040BDBAccess
 
         lblSysDate.Text = sysDate.ToString("yyyy/MM/dd")
         lblSysDate.AutoSize = True
 
+        Dim ngn As String = sysDate.ToString("yyyyMMdd")
+
+        dt = dba.getdaybringforward(ngn)
+        If dt.Rows.Count > 0 Then
+            txtShoriNengetsu.Text = dt.Rows(0)(0).ToString.Substring(6, 2)
+        Else
+            txtShoriNengetsu.Text = ngn.ToString.Substring(6, 2)
+        End If
+
+        txtshorinengetu.Text = sysDate.ToString("yyyy/MM")
+        txtshorinengetu.Enabled = False
     End Sub
 
     Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click
