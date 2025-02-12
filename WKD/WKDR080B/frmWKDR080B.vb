@@ -16,7 +16,7 @@ Public Class frmWKDR080B
 
         ' 処理年月
         txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        txtShoriNengetsu.Enabled = False
+        'txtShoriNengetsu.Enabled = False
 
     End Sub
 
@@ -25,6 +25,13 @@ Public Class frmWKDR080B
         Dim filePath As String = String.Empty
         Dim inputDirectory As String = String.Empty
         Dim fileName As String = String.Empty
+
+        ' 日付論理チェック
+        Dim nengetuDate As Date
+        If Not Date.TryParseExact(txtShoriNengetsu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtShoriNengetsu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
 
         Using frmFileDialog As New OpenFileDialog
             frmFileDialog.FileName = "税額表データ.csv"

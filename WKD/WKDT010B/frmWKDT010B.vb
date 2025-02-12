@@ -13,13 +13,9 @@ Public Class frmWKDT010B
         lblSysDate.Text = sysDate.ToString("yyyy/MM/dd")
         lblSysDate.AutoSize = True
 
-        ' 処理年度
-        If sysDate.Month < 4 Then
-            txtShoriNendo.Text = sysDate.AddYears(-1).ToString("yyyy")
-        Else
-            txtShoriNendo.Text = sysDate.ToString("yyyy")
-        End If
-        txtShoriNendo.Enabled = False
+        rdoShoriKubun_0.Checked = True
+
+        'txtShoriNendo.Enabled = False
 
     End Sub
 
@@ -31,6 +27,13 @@ Public Class frmWKDT010B
 
         ' 処理区分=再出力
         If rdoShoriKubun_1.Checked Then
+            ' 日付論理チェック
+            Dim nengetuDate As Date
+            If Not Date.TryParseExact(txtShoriNendo.Text, "yyyy", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+                MessageBox.Show("処理年度が正しくありません。（" & txtShoriNendo.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
+            End If
+
             Using frmFileDialog As New OpenFileDialog
                 frmFileDialog.FileName = "出力対象指定.csv"
                 frmFileDialog.Filter = "CSV ファイル(*.csv)|*.csv"
@@ -259,6 +262,30 @@ Public Class frmWKDT010B
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
         Me.Close()
+    End Sub
+
+    Private Sub rdoShoriKubun_0_CheckedChanged(sender As Object, e As EventArgs) Handles rdoShoriKubun_0.CheckedChanged
+        ' システム日付
+        Dim sysDate As Date = Now
+
+        ' 処理年度
+        If sysDate.Month < 4 Then
+            txtShoriNendo.Text = sysDate.AddYears(-1).ToString("yyyy")
+        Else
+            txtShoriNendo.Text = sysDate.ToString("yyyy")
+        End If
+
+        ' 処理年月
+        'If sysDate.Month < 4 Then
+        '    txtShoriNengetsu.Text = sysDate.AddYears(-1).ToString("yyyy/MM")
+        'Else
+        '    txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
+        'End If
+        txtShoriNendo.Enabled = False
+    End Sub
+
+    Private Sub rdoShoriKubun_1_CheckedChanged(sender As Object, e As EventArgs) Handles rdoShoriKubun_1.CheckedChanged
+        txtShoriNendo.Enabled = True
     End Sub
 
 End Class

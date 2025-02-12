@@ -64,14 +64,12 @@ Partial Class frmWKDT010B
         Me.rdoShoriKubun_1.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.rdoShoriKubun_1.Size = New System.Drawing.Size(66, 16)
         Me.rdoShoriKubun_1.TabIndex = 1
-        Me.rdoShoriKubun_1.TabStop = True
         Me.rdoShoriKubun_1.Text = "再出力"
         Me.rdoShoriKubun_1.UseVisualStyleBackColor = False
         '
         'rdoShoriKubun_0
         '
         Me.rdoShoriKubun_0.BackColor = System.Drawing.SystemColors.Control
-        Me.rdoShoriKubun_0.Checked = True
         Me.rdoShoriKubun_0.Cursor = System.Windows.Forms.Cursors.Default
         Me.rdoShoriKubun_0.ForeColor = System.Drawing.SystemColors.ControlText
         Me.rdoShoriKubun_0.Location = New System.Drawing.Point(16, 15)
@@ -79,7 +77,6 @@ Partial Class frmWKDT010B
         Me.rdoShoriKubun_0.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.rdoShoriKubun_0.Size = New System.Drawing.Size(66, 16)
         Me.rdoShoriKubun_0.TabIndex = 0
-        Me.rdoShoriKubun_0.TabStop = True
         Me.rdoShoriKubun_0.Text = "新規"
         Me.rdoShoriKubun_0.UseVisualStyleBackColor = False
         '

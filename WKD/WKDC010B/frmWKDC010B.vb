@@ -17,7 +17,7 @@ Public Class frmWKDC010B
 
         ' 処理年月
         txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        txtShoriNengetsu.Enabled = False
+        'txtShoriNengetsu.Enabled = False
 
     End Sub
 
@@ -26,6 +26,13 @@ Public Class frmWKDC010B
         Dim filePath As String = String.Empty
         Dim inputDirectory As String = String.Empty
         Dim fileName As String = String.Empty
+
+        ' 日付論理チェック
+        Dim nengetuDate As Date
+        If Not Date.TryParseExact(txtShoriNengetsu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtShoriNengetsu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
 
         Using frmFileDialog As New OpenFileDialog
             frmFileDialog.FileName = "確定データ.txt"
@@ -139,8 +146,10 @@ Public Class frmWKDC010B
             errorRecords.Add(IsHalfWidthForHeader(dtnengetu))
         End If
 
+        Dim shoriNengetsu As String = txtShoriNengetsu.Text.Replace("/", "")
+
         '④ 該当項目について　で判断されたヘッダーレコードのデータ年月＝システム日付の年月でない場合はエラーとする。
-        If dtnengetu <> Now.ToString("yyyyMM") Then
+        If dtnengetu <> shoriNengetsu Then
             errorRecords.Add(1 & "," & "データ年月" & "," & "データ年月が一致しません。")
         End If
 

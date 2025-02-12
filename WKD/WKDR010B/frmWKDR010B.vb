@@ -20,8 +20,8 @@ Public Class frmWKDR010B
         lblSysDate.AutoSize = True
 
         ' 処理年月
-        txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        txtShoriNengetsu.Enabled = False
+        txtShoriNengetsu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
+        'txtShoriNengetsu.Enabled = False
 
     End Sub
 
@@ -30,6 +30,13 @@ Public Class frmWKDR010B
         Dim filePath As String = String.Empty
         Dim inputDirectory As String = String.Empty
         Dim fileName As String = String.Empty
+
+        ' 日付論理チェック
+        Dim nengetuDate As Date
+        If Not Date.TryParseExact(txtShoriNengetsu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtShoriNengetsu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
 
         Using frmFileDialog As New OpenFileDialog
             frmFileDialog.FileName = "コンビニ収納確報データ.txt"
@@ -185,8 +192,10 @@ Public Class frmWKDR010B
 
         Dim dba As New WKDR010BDBAccess
         'システム日付の前月を該当年月とする
-        Dim dtNow As DateTime = DateTime.Now
-        Dim monthAgo As String = dtNow.AddMonths(-1).ToString("yyyyMM")
+        'Dim dtNow As DateTime = DateTime.Now
+        'Dim monthAgo As String = dtNow.AddMonths(-1).ToString("yyyyMM")
+
+        Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
 
         'コンビニ振込確報データのデータ年月が該当年月と同一のデータを削除
         If Not dba.WDelete() Then

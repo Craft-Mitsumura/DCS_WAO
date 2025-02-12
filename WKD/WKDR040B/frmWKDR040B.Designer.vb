@@ -134,7 +134,7 @@ Partial Class frmWKDR040B
         '
         Me.txtshorinengetu.ImeMode = System.Windows.Forms.ImeMode.Disable
         Me.txtshorinengetu.Location = New System.Drawing.Point(115, 95)
-        Me.txtshorinengetu.MaxLength = 8
+        Me.txtshorinengetu.MaxLength = 7
         Me.txtshorinengetu.Name = "txtshorinengetu"
         Me.txtshorinengetu.Size = New System.Drawing.Size(53, 19)
         Me.txtshorinengetu.TabIndex = 22
