@@ -25,7 +25,7 @@ Public Class WKDR080BDBAccess
         sql.AppendLine("    , @gaku")
         sql.AppendLine("    , @ritu")
         sql.AppendLine("    , @crt_user_id")
-        sql.AppendLine("    , @crt_user_dtm")
+        sql.AppendLine("    , current_timestamp")
         sql.AppendLine("    , @crt_user_pg_id")
         sql.AppendLine(")")
 

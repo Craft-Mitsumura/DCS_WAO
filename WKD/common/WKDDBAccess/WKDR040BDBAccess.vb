@@ -151,7 +151,7 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("   kouzanm = rtrim(substr(t4.bakznm || repeat(' ',30),1,30)), ")
 
         sql.AppendLine("   upd_user_id = @upd_user_id, ")
-        sql.AppendLine("   upd_user_dtm = @upd_user_dtm, ")
+        sql.AppendLine("   upd_user_dtm = current_timestamp, ")
         sql.AppendLine("   upd_user_pg_id = @upd_user_pg_id ")
         sql.AppendLine("from ")
         sql.AppendLine(" (select a.dtnengetu,  ")
@@ -331,7 +331,7 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("    , @sinkicd")
         sql.AppendLine("    , @fkekkacd")
         sql.AppendLine("    , @crt_user_id")
-        sql.AppendLine("    , @crt_user_dtm")
+        sql.AppendLine("    , current_timestamp")
         sql.AppendLine("    , @crt_user_pg_id")
         sql.AppendLine(")")
 
@@ -372,7 +372,7 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("    , @ownerno")
         sql.AppendLine("    , @tyouseigaku")
         sql.AppendLine("    , @crt_user_id")
-        sql.AppendLine("    , @crt_user_dtm")
+        sql.AppendLine("    , current_timestamp")
         sql.AppendLine("    , @crt_user_pg_id")
         sql.AppendLine(")")
 

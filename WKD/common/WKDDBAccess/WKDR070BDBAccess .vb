@@ -128,7 +128,7 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , kouzano")
         sql.AppendLine("  , kouzanm")
         sql.AppendLine("  , @crt_user_id")
-        sql.AppendLine("  , @crt_user_dtm")
+        sql.AppendLine("  , current_timestamp")
         sql.AppendLine("  , @crt_user_pg_id")
         sql.AppendLine("from t_furikae_kekka_meisai")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
@@ -156,7 +156,7 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , '' kouzano")
         sql.AppendLine("  , '' kouzanm")
         sql.AppendLine("  , @crt_user_id")
-        sql.AppendLine("  , @crt_user_dtm")
+        sql.AppendLine("  , current_timestamp")
         sql.AppendLine("  , @crt_user_pg_id")
         sql.AppendLine("from t_kakutei")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
@@ -166,7 +166,6 @@ Public Class WKDR070BDBAccess
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengatu", shoriNengatu),
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_dtm", Now),
             New NpgsqlParameter("@crt_user_pg_id", pgid)
         }
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
@@ -214,7 +213,7 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , count(ownerno) mnokensu")
         sql.AppendLine("  , sum(skingaku) mnokingk")
         sql.AppendLine("  , @crt_user_id")
-        sql.AppendLine("  , @crt_user_dtm")
+        sql.AppendLine("  , current_timestamp")
         sql.AppendLine("  , @crt_user_pg_id")
         sql.AppendLine("from t_kakutei")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
@@ -225,7 +224,6 @@ Public Class WKDR070BDBAccess
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengatu", shoriNengatu),
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_dtm", Now),
             New NpgsqlParameter("@crt_user_pg_id", pgid)
         }
 
@@ -340,7 +338,7 @@ Public Class WKDR070BDBAccess
         'sql.AppendLine("  , coalesce(ok.mnokingk, 0) csmkin")
         sql.AppendLine("  , tk.fritesu")
         sql.AppendLine("  , @crt_user_id")
-        sql.AppendLine("  , @crt_user_dtm")
+        sql.AppendLine("  , current_timestamp")
         sql.AppendLine("  , @crt_user_pg_id")
         sql.AppendLine("from t_kahenkomoku tk")
         sql.AppendLine("left join t_owner_kekka_shukei ok on tk.dtnengetu = ok.dtnengetu and tk.ownerno = ok.ownerno")
@@ -350,7 +348,6 @@ Public Class WKDR070BDBAccess
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengatu", shoriNengatu),
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_dtm", Now),
             New NpgsqlParameter("@crt_user_pg_id", pgid)
         }
 
@@ -409,7 +406,7 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , '' kouzano")
         sql.AppendLine("  , '' kouzanm")
         sql.AppendLine("  , @crt_user_id")
-        sql.AppendLine("  , @crt_user_dtm")
+        sql.AppendLine("  , current_timestamp")
         sql.AppendLine("  , @crt_user_pg_id")
         sql.AppendLine("from t_instructor_furikomi")
         sql.AppendLine("where dtnengetu = @shoriNengatu")
@@ -418,7 +415,6 @@ Public Class WKDR070BDBAccess
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengatu", shoriNengatu),
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_dtm", Now),
             New NpgsqlParameter("@crt_user_pg_id", pgid)
         }
 
@@ -630,7 +626,7 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , tk.fritesu")
         sql.AppendLine("  , 1 datkbn")
         sql.AppendLine("  , @crt_user_id")
-        sql.AppendLine("  , @crt_user_dtm")
+        sql.AppendLine("  , current_timestamp")
         sql.AppendLine("  , @crt_user_pg_id")
         sql.AppendLine("from w_kahenkomoku tk")
         'sql.AppendLine("left join w_furikae_kekka_meisai ok on tk.ownerno = ok.ownerno")
@@ -647,7 +643,6 @@ Public Class WKDR070BDBAccess
             New NpgsqlParameter("@meisu", meisu),
             New NpgsqlParameter("@meisuK", meisuK),
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_dtm", Now),
             New NpgsqlParameter("@crt_user_pg_id", pgid)
         }
 
@@ -757,7 +752,7 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , ok.fritesu fritesu")
         sql.AppendLine("  , 2 datkbn")
         sql.AppendLine("  , @crt_user_id")
-        sql.AppendLine("  , @crt_user_dtm")
+        sql.AppendLine("  , current_timestamp")
         sql.AppendLine("  , @crt_user_pg_id")
         sql.AppendLine("from w_furikae_kekka_meisai tk")
         sql.AppendLine("inner join w_kahenkomoku ok on tk.ownerno = ok.ownerno")
@@ -771,7 +766,6 @@ Public Class WKDR070BDBAccess
             New NpgsqlParameter("@meisu", meisu), ' 明示的に渡すカウントアップ値
             New NpgsqlParameter("@meisuK", meisuK),
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_dtm", Now),
             New NpgsqlParameter("@crt_user_pg_id", pgid)
         }
 

@@ -101,7 +101,7 @@ Public Class WKDR010BDBAccess
         sql.AppendLine("    , @krsydate")
         sql.AppendLine("    , @cvscd")
         sql.AppendLine("    , @crt_user_id")
-        sql.AppendLine("    , @crt_user_dtm")
+        sql.AppendLine("    , current_timestamp")
         sql.AppendLine("    , @crt_user_pg_id")
         sql.AppendLine(")")
 
