@@ -23,6 +23,13 @@ Public Class frmWKDC030B
 
         Dim dba As New WKDC030BDBAccess
 
+        ' 日付論理チェック
+        Dim nengetuDate As Date
+        If Not Date.TryParseExact(txtShoriNengetsu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtShoriNengetsu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
         ' 手数料マスタ取得
         Dim dt As DataTable = dba.GetTesuryo()
         If dt.Rows.Count <= 0 Then

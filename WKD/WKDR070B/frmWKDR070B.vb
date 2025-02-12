@@ -26,8 +26,8 @@ Public Class frmWKDR070B
             txtNyukinbi.Text = ngn.ToString.Substring(6, 2)
         End If
 
-        txtshorinengetu.Text = sysDate.ToString("yyyy/MM")
-        txtshorinengetu.Enabled = False
+        txtshorinengetu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
+        'txtshorinengetu.Enabled = False
     End Sub
 
     Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click
@@ -49,16 +49,23 @@ Public Class frmWKDR070B
 
         ' 入力値の形式チェック 
         Dim nyukinDate As Date
-        If Not DateTime.TryParseExact(Now.ToString("yyyyMM") & txtNyukinbi.Text, "yyyyMMdd", Nothing, Globalization.DateTimeStyles.None, nyukinDate) Then
+        If Not DateTime.TryParseExact(txtshorinengetu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nyukinDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtshorinengetu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim nyukinDate2 As Date
+        If Not DateTime.TryParseExact(txtNyukinbi.Text, "dd", Nothing, Globalization.DateTimeStyles.None, nyukinDate2) Then
             MessageBox.Show("入金日が正しくありません。（" & txtNyukinbi.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
 
-        Dim ngn As String = Now.ToString("yyyyMM") & txtNyukinbi.Text
+        'Dim ngn As String = Now.ToString("yyyyMM") & txtNyukinbi.Text
+        Dim ngn As String = nyukinDate.AddMonths(+1).ToString("yyyyMM") & nyukinDate2.ToString("dd")
 
         '翌日取得
         dt = dba.GetDayPushBack(ngn)
-        Dim ngnpushback As Integer
+        Dim ngnpushback As String
         If dt.Rows.Count > 0 Then
             ngnpushback = dt.Rows(0)(0).ToString()
         Else
@@ -79,7 +86,9 @@ Public Class frmWKDR070B
             Return
         End If
 
-        dtI = dba.GetTZei(Now.AddMonths(-1).ToString("yyyyMM"))
+        Dim monthAgo As String = txtshorinengetu.Text.Replace("/", "")
+
+        dtI = dba.GetTZei(monthAgo)
         Dim insiShohiZei As Integer
         If dtI.Rows.Count > 0 Then
             ' レコードが存在する場合
@@ -92,42 +101,42 @@ Public Class frmWKDR070B
         End If
 
         '中間振替結果明細データ削除
-        If Not dba.DeleteWFurikaeKekkaMeisai(Now.AddMonths(-1).ToString("yyyyMM")) Then
+        If Not dba.DeleteWFurikaeKekkaMeisai(monthAgo) Then
             Return
         End If
 
         '中間振替結果明細登録
-        If Not dba.InsertWFurikaeKekkaMeisai(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName) Then
+        If Not dba.InsertWFurikaeKekkaMeisai(monthAgo, Me.ProductName) Then
             Return
         End If
 
         'オーナー別集計結果データ削除
-        If Not dba.DeleteTOwnerKekkaShukei(Now.AddMonths(-1).ToString("yyyyMM")) Then
+        If Not dba.DeleteTOwnerKekkaShukei(monthAgo) Then
             Return
         End If
 
         'オーナー別結果集計データ登録
-        If Not dba.InsertTOwnerKekkaShukei(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName) Then
+        If Not dba.InsertTOwnerKekkaShukei(monthAgo, Me.ProductName) Then
             Return
         End If
 
         '中間可変項目削除
-        If Not dba.DeleteWKahenkomoku(Now.AddMonths(-1).ToString("yyyyMM")) Then
+        If Not dba.DeleteWKahenkomoku(monthAgo) Then
             Return
         End If
 
         '中間可変項目登録
-        If Not dba.InsertWKahenkomoku(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName) Then
+        If Not dba.InsertWKahenkomoku(monthAgo, Me.ProductName) Then
             Return
         End If
 
         '中間振替結果明細登録2
-        If Not dba.InsertTWFurikaeKekkaMeisai2(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName) Then
+        If Not dba.InsertTWFurikaeKekkaMeisai2(monthAgo, Me.ProductName) Then
             Return
         End If
 
         '指導者振込.csv
-        dtS = dba.GetShidosyaCsv(Now.AddMonths(-1).ToString("yyyyMM"))
+        dtS = dba.GetShidosyaCsv(monthAgo)
         Dim msg As New StringBuilder()
         msg.AppendLine("以下のCSVファイルが出力されました。")
 
@@ -142,7 +151,7 @@ Public Class frmWKDR070B
         End If
 
         '中間通知書削除
-        If Not dba.DeleteWTsuchisho(Now.AddMonths(-1).ToString("yyyyMM")) Then
+        If Not dba.DeleteWTsuchisho(monthAgo) Then
             Return
         End If
 
@@ -158,19 +167,19 @@ Public Class frmWKDR070B
         'dtTa = dba.GetTWFurikaeKekkaMeisai(Now.ToString("yyyyMM"))
 
         '中間通知書データ登録
-        If Not dba.InsertWTsuchisho1(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName, meisai) Then
+        If Not dba.InsertWTsuchisho1(monthAgo, Me.ProductName, meisai) Then
             Return
         End If
 
         '中間通知書データ登録
-        If Not dba.InsertWTsuchisho2(Now.AddMonths(-1).ToString("yyyyMM"), Me.ProductName, meisai) Then
+        If Not dba.InsertWTsuchisho2(monthAgo, Me.ProductName, meisai) Then
             Return
         End If
 
         'Next
 
         '振替結果通知書.csv
-        dtTu = dba.GetWTsuchishokbn(Now.AddMonths(-1).ToString("yyyyMM"))
+        dtTu = dba.GetWTsuchishokbn(monthAgo)
         If dtTu.Rows.Count = 0 Then
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
@@ -182,7 +191,7 @@ Public Class frmWKDR070B
 
             If syokbn = 1 Then
                 ' syokbn = 1 の場合の処理
-                dtTu1 = dba.GetWTsuchisho1(Now.AddMonths(-1).ToString("yyyyMM"), kouhuri, syokbn)
+                dtTu1 = dba.GetWTsuchisho1(monthAgo, kouhuri, syokbn)
 
                 ' ＣＳＶファイル出力
                 Dim fileName2 As String = "振替結果通知書_1.csv"
@@ -191,8 +200,8 @@ Public Class frmWKDR070B
 
             ElseIf syokbn = 2 Then
                 ' syokbn = 2 の場合の処理
-                dtTu2 = dba.GetWTsuchisho2(Now.AddMonths(-1).ToString("yyyyMM"), insiShohiZei, konbini, inshi, syokbn)
-                dtTu4 = dba.GetWTsuchishoKaisyu(Now.AddMonths(-1).ToString("yyyyMM"), syokbn)
+                dtTu2 = dba.GetWTsuchisho2(monthAgo, insiShohiZei, konbini, inshi, syokbn)
+                dtTu4 = dba.GetWTsuchishoKaisyu(monthAgo, syokbn)
 
                 ' ＣＳＶファイル出力 (振替結果通知書)
                 Dim fileName3 As String = "振替結果通知書_2.csv"
@@ -206,8 +215,8 @@ Public Class frmWKDR070B
 
             ElseIf syokbn = 3 Then
                 ' syokbn = 3 の場合の処理
-                dtTu3 = dba.GetWTsuchisho3(Now.AddMonths(-1).ToString("yyyyMM"), syokbn)
-                dtTu5 = dba.GetWTsuchishoShidosya(Now.AddMonths(-1).ToString("yyyyMM"), syokbn)
+                dtTu3 = dba.GetWTsuchisho3(monthAgo, syokbn)
+                dtTu5 = dba.GetWTsuchishoShidosya(monthAgo, syokbn)
 
                 ' ＣＳＶファイル出力 (振替結果通知書)
                 Dim fileName4 As String = "振替結果通知書_3.csv"
@@ -224,7 +233,7 @@ Public Class frmWKDR070B
         'MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         '集計部csv
-        dtTs = dba.GetWTsuchishoSyukeibu(Now.AddMonths(-1).ToString("yyyyMM"), Now.AddMonths(-1).ToString("yyyyMM"), ngn, ngnpushback)
+        dtTs = dba.GetWTsuchishoSyukeibu(monthAgo, monthAgo, ngn, ngnpushback)
         If dtTs.Rows.Count > 0 Then
             ' ＣＳＶファイル出力
             Dim msg2 As New StringBuilder()

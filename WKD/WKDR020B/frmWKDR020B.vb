@@ -18,7 +18,7 @@ Public Class frmWKDR020B
 
         ' 処理年月
         txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        txtShoriNengetsu.Enabled = False
+        ''txtShoriNengetsu.Enabled = False
 
     End Sub
 
@@ -27,6 +27,13 @@ Public Class frmWKDR020B
         Dim filePath As String = String.Empty
         Dim inputDirectory As String = String.Empty
         Dim fileName As String = String.Empty
+
+        ' 日付論理チェック
+        Dim nengetuDate As Date
+        If Not Date.TryParseExact(txtShoriNengetsu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtShoriNengetsu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
 
         Using frmFileDialog As New OpenFileDialog
             frmFileDialog.FileName = ""
@@ -37,7 +44,7 @@ Public Class frmWKDR020B
                 filePath = frmFileDialog.FileName
                 inputDirectory = Path.GetDirectoryName(filePath)
                 fileName = Path.GetFileName(filePath)
-                processtTKozafurikaeSeikyu(filePath, inputDirectory, fileName)
+                processtTKozafurikaeSeikyu(filePath, inputDirectory, fileName, nengetuDate)
             Else
                 Return
             End If
@@ -54,7 +61,7 @@ Public Class frmWKDR020B
 
     End Sub
 
-    Private Sub processtTKozafurikaeSeikyu(filePath As String, inputDirectory As String, fileName As String)
+    Private Sub processtTKozafurikaeSeikyu(filePath As String, inputDirectory As String, fileName As String, nengetuDate As Date)
         Dim dba As New WKDR020BDBAccess
 
         ' システム日付
@@ -62,7 +69,8 @@ Public Class frmWKDR020B
 
         ' データ年月
         Dim dtnengetu As String = String.Empty
-        dtnengetu = sysDate.ToString("yyyyMM")
+        'dtnengetu = sysDate.ToString("yyyyMM")
+        dtnengetu = txtShoriNengetsu.Text.Replace("/", "")
 
         ' 引落日
         Dim dt As DataTable = Nothing
@@ -120,7 +128,8 @@ Public Class frmWKDR020B
                         ElseIf hhkdate.Substring(0, 2) = "12" AndAlso dtnengetu.Substring(4, 2) = "12" Then
                             gaitounen = dtnengetu.Substring(0, 4)
                         ElseIf hhkdate.Substring(0, 2) = "12" AndAlso dtnengetu.Substring(4, 2) <> "12" Then
-                            gaitounen = sysDate.AddYears(-1).ToString("yyyy")
+                            'gaitounen = sysDate.AddYears(-1).ToString("yyyy")
+                            gaitounen = nengetuDate.AddYears(-1).ToString("yyyy")
                         End If
                         gaitonengetu = gaitounen + gaitonengetu
                     End If

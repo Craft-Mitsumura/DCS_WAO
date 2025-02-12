@@ -30,14 +30,22 @@ Public Class frmWKDR050B
         'txtShoriNengetsu.Text = sysDate.ToString("dd")
         txtShoriNengetsu.Enabled = True
 
-        txtshorinengetu.Text = sysDate.ToString("yyyy/MM")
-        txtshorinengetu.Enabled = False
+        txtshorinengetu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
+        'txtshorinengetu.Enabled = False
     End Sub
 
     Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click
 
+        ' 日付論理チェック
+        Dim nengetuDate As Date
+        If Not Date.TryParseExact(txtshorinengetu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtshorinengetu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
         ' システム日付
         Dim sysDate As Date = Now
+        Dim monthAgo As String = txtshorinengetu.Text.Replace("/", "")
 
         Dim recordListKyuyoFile As New DataTable
         Dim recordListHikiwatasiFile As New DataTable
@@ -58,7 +66,8 @@ Public Class frmWKDR050B
         'システム日付+画面.振込日を振込年月日とし、その日が休業日であれば前営業日算出(共通関数「getdaybringforward」を使用)
         Dim hurikomibi As String = ""
         Dim tDaybringforward As New DataTable
-        tDaybringforward = dba.getdaybringforward(sysDate.ToString("yyyyMM") & day)
+        'tDaybringforward = dba.getdaybringforward(sysDate.ToString("yyyyMM") & day)
+        tDaybringforward = dba.getdaybringforward(nengetuDate.AddMonths(+1).ToString("yyyyMM"))
         If tDaybringforward.Rows.Count <> 0 Then
             Dim dtrow As DataRow = tDaybringforward.Rows(0)
             hurikomibi = dtrow("getdaybringforward")
@@ -80,9 +89,10 @@ Public Class frmWKDR050B
         End If
 
         'システム日付が前月のインストラクター向け振込データを取得し、明細に出力する
-        Dim tInstructorFurikomiList As DataTable = dba.geTInstructorFurikomiByDtnengetu(sysDate.AddMonths(-1).ToString("yyyyMM"))
+        'Dim tInstructorFurikomiList As DataTable = dba.geTInstructorFurikomiByDtnengetu(sysDate.AddMonths(-1).ToString("yyyyMM"))
+        Dim tInstructorFurikomiList As DataTable = dba.geTInstructorFurikomiByDtnengetu(monthAgo)
         If tInstructorFurikomiList.Rows.Count <= 0 Then
-            MessageBox.Show("該当データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         Else
             For Each meisairow As DataRow In tInstructorFurikomiList.Rows
@@ -93,7 +103,8 @@ Public Class frmWKDR050B
         'インストラクター向け振込データの件数合計と振込金額合計を取得し、合計部に出力する
         Dim kensu As String = ""
         Dim goukei As String = ""
-        Dim tInstructorFurikomiGoukeiList As DataTable = dba.geTInstructorFurikomiByGoukei(sysDate.AddMonths(-1).ToString("yyyyMM"))
+        'Dim tInstructorFurikomiGoukeiList As DataTable = dba.geTInstructorFurikomiByGoukei(sysDate.AddMonths(-1).ToString("yyyyMM"))
+        Dim tInstructorFurikomiGoukeiList As DataTable = dba.geTInstructorFurikomiByGoukei(monthAgo)
         Dim goukeirow As DataRow = tInstructorFurikomiGoukeiList.Rows(0)
         kensu = CnvDec(goukeirow("kensu")).ToString("#,##0")
         goukei = CnvDec(goukeirow("goukei")).ToString("#,##0")

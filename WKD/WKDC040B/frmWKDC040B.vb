@@ -26,6 +26,13 @@ Public Class frmWKDC040B
         Dim tConveniFurikomiList As New DataTable
         Dim recordListCsv As New DataTable
 
+        ' 日付論理チェック
+        Dim nengetuDate As Date
+        If Not Date.TryParseExact(txtShoriNengetsu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtShoriNengetsu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
         Dim dtnengetu As String = txtShoriNengetsu.Text.Replace("/", "")
 
         ' システム日付
@@ -36,11 +43,11 @@ Public Class frmWKDC040B
         tZeiList = dba.getTZeiByDtnengetu()
 
         If tZeiList.Rows.Count <= 0 Then
-            MessageBox.Show("印紙税消費税データが存在しません。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("印紙税消費税データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         Else
             If tZeiList.Rows.Count >= 100 Then
-                MessageBox.Show("印紙税消費税データが100件を超えています。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show("印紙税消費税データが100件を超えています。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Exit Sub
             End If
         End If
@@ -48,7 +55,7 @@ Public Class frmWKDC040B
         tConveniFurikomiList = dba.getTConveniFurikomiByDtnengetu(dtnengetu)
 
         If tConveniFurikomiList.Rows.Count <= 0 Then
-            MessageBox.Show("該当データが存在しません。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 

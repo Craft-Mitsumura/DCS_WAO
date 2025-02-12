@@ -18,8 +18,8 @@ Public Class frmWKDR030B
         lblSysDate.AutoSize = True
 
         ' 処理年月
-        txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        txtShoriNengetsu.Enabled = False
+        txtShoriNengetsu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
+        'txtShoriNengetsu.Enabled = False
 
     End Sub
 
@@ -28,6 +28,13 @@ Public Class frmWKDR030B
         Dim filePath As String = String.Empty
         Dim inputDirectory As String = String.Empty
         Dim fileName As String = String.Empty
+
+        ' 日付論理チェック
+        Dim nengetuDate As Date
+        If Not Date.TryParseExact(txtShoriNengetsu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtShoriNengetsu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
 
         Using frmFileDialog As New OpenFileDialog
             frmFileDialog.FileName = ""
@@ -64,7 +71,8 @@ Public Class frmWKDR030B
         Dim dtnengetu As String = String.Empty
 
         ' 処理日の前月の年月を保持する
-        Dim monthAgo As String = sysDate.AddMonths(-1).ToString("yyyyMM")
+        'Dim monthAgo As String = sysDate.AddMonths(-1).ToString("yyyyMM")
+        Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
 
         ' 合計項目
         Dim skingakuSum As Decimal = 0
@@ -232,7 +240,8 @@ Public Class frmWKDR030B
         Dim dtnengetu As String = String.Empty
 
         ' 処理日の前月の年月を保持する
-        Dim monthAgo As String = sysDate.AddMonths(-1).ToString("yyyyMM")
+        'Dim monthAgo As String = sysDate.AddMonths(-1).ToString("yyyyMM")
+        Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
 
         Dim entityList As New List(Of TInstructorFurikomiEntity)
         Dim lastCnt As Integer = 0

@@ -271,11 +271,8 @@ Public Class frmWKDT020B
         ' システム日付
         Dim sysDate As Date = Now
         ' 処理年月
-        If sysDate.Month < 4 Then
-            txtShoriNengetsu.Text = sysDate.AddYears(-1).ToString("yyyy/MM")
-        Else
-            txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        End If
+        txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
+
         txtShoriNengetsu.Enabled = False
     End Sub
 
