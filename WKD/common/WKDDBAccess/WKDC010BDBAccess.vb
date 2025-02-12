@@ -80,7 +80,7 @@ Public Class WKDC010BDBAccess
         sql.AppendLine("    , @s_jusyo2")
         sql.AppendLine("    , @s_sasinm")
         sql.AppendLine("    , @crt_user_id")
-        sql.AppendLine("    , @crt_user_dtm")
+        sql.AppendLine("    , current_timestamp")
         sql.AppendLine("    , @crt_user_pg_id")
         sql.AppendLine(")")
 

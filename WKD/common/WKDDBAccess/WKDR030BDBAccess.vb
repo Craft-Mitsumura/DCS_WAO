@@ -91,7 +91,7 @@ Public Class WKDR030BDBAccess
         sql.AppendLine("    , @csmkin")
         sql.AppendLine("    , @fritesu")
         sql.AppendLine("    , @crt_user_id")
-        sql.AppendLine("    , @crt_user_dtm")
+        sql.AppendLine("    , current_timestamp")
         sql.AppendLine("    , @crt_user_pg_id")
         sql.AppendLine(")")
 
@@ -202,7 +202,7 @@ Public Class WKDR030BDBAccess
         sql.AppendLine("    , @jusyo1")
         sql.AppendLine("    , @jusyo2")
         sql.AppendLine("    , @crt_user_id")
-        sql.AppendLine("    , @crt_user_dtm")
+        sql.AppendLine("    , current_timestamp")
         sql.AppendLine("    , @crt_user_pg_id")
         sql.AppendLine(")")
 

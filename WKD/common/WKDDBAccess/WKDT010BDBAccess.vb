@@ -25,7 +25,7 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("  , coalesce(own2.bahjno,own.bahjno) bahjno") ' 法人番号
         sql.AppendLine("  , null rerunno") ' リランＮｏ
         sql.AppendLine("  , @crt_user_id")
-        sql.AppendLine("  , @crt_user_dtm")
+        sql.AppendLine("  , current_timestamp")
         sql.AppendLine("  , @crt_user_pg_id")
         sql.AppendLine("  , null")
         sql.AppendLine("  , null")
@@ -107,7 +107,6 @@ Public Class WKDT010BDBAccess
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNendo", shoriNendo),
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_dtm", Now),
             New NpgsqlParameter("@crt_user_pg_id", pgid)
         }
 

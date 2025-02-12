@@ -25,7 +25,7 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("  , coalesce(own2.bahjno,own.bahjno) bahjno") ' 法人番号
         sql.AppendLine("  , null rerunno") ' リランＮｏ
         sql.AppendLine("  , @crt_user_id")
-        sql.AppendLine("  , @crt_user_dtm")
+        sql.AppendLine("  , current_timestamp")
         sql.AppendLine("  , @crt_user_pg_id")
         sql.AppendLine("  , null")
         sql.AppendLine("  , null")
@@ -75,7 +75,6 @@ Public Class WKDT030BDBAccess
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_dtm", Now),
             New NpgsqlParameter("@crt_user_pg_id", pgid)
         }
 
@@ -168,13 +167,12 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("  , taihi = extract(day from (date_trunc('month', to_date(substr(dtnengetu, 1, 6), 'YYYYMM')) + interval '1 month - 1 day'))")
         sql.AppendLine("  , nencho_flg = '1'")
         sql.AppendLine("  , upd_user_id = @upd_user_id")
-        sql.AppendLine("  , upd_user_dtm = @upd_user_dtm")
+        sql.AppendLine("  , upd_user_dtm = current_timestamp")
         sql.AppendLine("  , upd_user_pg_id = @upd_user_pg_id")
         sql.AppendLine("    where   coalesce(nencho_flg,'0') <> '1'")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@upd_user_dtm", Now),
             New NpgsqlParameter("@upd_user_pg_id", pgid)
         }
 
