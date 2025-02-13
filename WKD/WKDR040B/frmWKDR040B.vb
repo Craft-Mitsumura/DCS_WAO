@@ -67,7 +67,7 @@ Public Class frmWKDR040B
         Dim tbKeiyakushamaster As New DataTable
         tbKeiyakushamaster = dba.GetTbKeiyakushamaster(monthAgo)
         If tbKeiyakushamaster.Rows.Count > 0 Then
-            MessageBox.Show("オーナーマスタが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("オーナーマスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -75,7 +75,7 @@ Public Class frmWKDR040B
         Dim tbInstructorfurikomi As New DataTable
         tbInstructorfurikomi = dba.GetTbInstructorfurikomi(monthAgo)
         If tbInstructorfurikomi.Rows.Count = 0 Then
-            MessageBox.Show("該当データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
@@ -83,7 +83,7 @@ Public Class frmWKDR040B
         Dim tbFurikaekekkameisai As New DataTable
         tbFurikaekekkameisai = dba.GetTbFurikaekekkameisai(monthAgo)
         If tbFurikaekekkameisai.Rows.Count = 0 Then
-            MessageBox.Show("該当データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
@@ -94,7 +94,7 @@ Public Class frmWKDR040B
             day = day.PadLeft(2, "0")
         End If
         If String.IsNullOrWhiteSpace(day) Or day.Length > 2 Or DateTime.TryParseExact(day & "/" & DateTime.Now.Month.ToString("D2") & "/" & DateTime.Now.Year, "dd/MM/yyyy", Nothing, Globalization.DateTimeStyles.None, Nothing) = False Then
-            MessageBox.Show("振込日が正しくありません。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("振込日が正しくありません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
@@ -102,7 +102,7 @@ Public Class frmWKDR040B
         Dim mItakushaiList As New DataTable
         mItakushaiList = dba.geMItakushaByItakuno(3000044989)
         If mItakushaiList.Rows.Count = 0 Then
-            MessageBox.Show("委託者マスタが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("委託者マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -115,14 +115,13 @@ Public Class frmWKDR040B
         ' 可変項目データ再取得
         tKahenkomoku = dba.GetTKahenkomoku(monthAgo)
         If tKahenkomoku.Rows.Count = 0 Then
-            MessageBox.Show("該当データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
         ' システム日付+画面.振込日を振込年月日とし、その日が休業日であれば前営業日算出(共通関数「getdaybringforward」を使用)
         Dim hurikomibi As String = ""
         Dim tDaybringforward As New DataTable
-        'tDaybringforward = dba.getdaybringforward(sysDate.ToString("yyyyMM") & day)
         tDaybringforward = dba.getdaybringforward(nengetuDate.AddMonths(+1).ToString("yyyyMM") & day)
         If tDaybringforward.Rows.Count <> 0 Then
             Dim dtrow As DataRow = tDaybringforward.Rows(0)
@@ -204,10 +203,10 @@ Public Class frmWKDR040B
             ' データ年月がシステム日付と同一のデータを削除
             'If Not dba.deleteTChoseigaku(sysDate.ToString("yyyyMM")) Then
             If Not dba.deleteTChoseigaku(nengetuDate.AddMonths(+1).ToString("yyyyMM")) Then
-                    Return
-                End If
-                ' 作成
-                If Not dba.InsertTChoseigakuEntity(entityList2) Then
+                Return
+            End If
+            ' 作成
+            If Not dba.InsertTChoseigakuEntity(entityList2) Then
                 Return
             End If
         End If

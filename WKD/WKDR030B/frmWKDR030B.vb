@@ -19,8 +19,6 @@ Public Class frmWKDR030B
 
         ' 処理年月
         txtShoriNengetsu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
-        'txtShoriNengetsu.Enabled = False
-
     End Sub
 
     Private Sub btnInput_Click(sender As Object, e As EventArgs) Handles btnInput.Click
@@ -57,7 +55,7 @@ Public Class frmWKDR030B
         ElseIf (fileName = "KSSB0040.txt") Then
             processtTinstructorfurikomi(filePath, inputDirectory, fileName)
         Else
-            MessageBox.Show("ファイル名に誤りがあります。" & vbCrLf & "「" & filePath & "」", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("ファイル名に誤りがあります。" & vbCrLf & "「" & filePath & "」", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End If
 
     End Sub
@@ -146,7 +144,7 @@ Public Class frmWKDR030B
 
         '明細が0件の場合処理終了
         If entityList.Count = 0 Then
-            MessageBox.Show("取込対象データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("取込対象データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -191,7 +189,7 @@ Public Class frmWKDR030B
                     writer.WriteLine(record)
                 Next
             End Using
-            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -225,7 +223,7 @@ Public Class frmWKDR030B
         If errFlg Then
             Dim strName As String = "可変項目データ_オーナーマスタ存在チェックリスト.csv"
             Dim csvFilePath As String = WriteCsvData(dtErrDetail, inputDirectory, strName,, True, True)
-            MessageBox.Show("オーナーマスタ存在チェックエラー" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("オーナーマスタ存在チェックエラー" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -240,7 +238,6 @@ Public Class frmWKDR030B
         Dim dtnengetu As String = String.Empty
 
         ' 処理日の前月の年月を保持する
-        'Dim monthAgo As String = sysDate.AddMonths(-1).ToString("yyyyMM")
         Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
 
         Dim entityList As New List(Of TInstructorFurikomiEntity)
@@ -317,7 +314,7 @@ Public Class frmWKDR030B
 
         '明細が0件の場合処理終了
         If entityList.Count = 0 Then
-            MessageBox.Show("取込対象データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("取込対象データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -362,7 +359,7 @@ Public Class frmWKDR030B
                     writer.WriteLine(record)
                 Next
             End Using
-            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -399,7 +396,7 @@ Public Class frmWKDR030B
                 ' 振込金額（税引後）の計算
                 fkinzeg = CnvDec(dtrow("fkinzem")) - zeigak
             Else
-                MessageBox.Show("税額表テーブルからデータを取得できませんでした", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show("税額表テーブルからデータを取得できませんでした", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Exit Sub
             End If
 
@@ -410,7 +407,7 @@ Public Class frmWKDR030B
                 Dim dtrow3 As DataRow = tbTesuryo.Rows(0)
                 kyufuri = dtrow3("kyufuri")
             Else
-                MessageBox.Show("手数料テーブルからデータを取得できませんでした", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show("手数料テーブルからデータを取得できませんでした", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Exit Sub
             End If
 
@@ -477,7 +474,7 @@ Public Class frmWKDR030B
         If errFlg Then
             strName = "インストラクター向け振込データ_整合性チェックリスト.csv"
             Dim csvFilePath As String = WriteCsvData(dtErrDetail, inputDirectory, strName,, True, True)
-            MessageBox.Show("整合性チェックエラー" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("整合性チェックエラー" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -498,7 +495,7 @@ Public Class frmWKDR030B
         If errFlg Then
             strName = "インストラクター向け振込データ_オーナーマスタ存在チェックリスト.csv"
             Dim csvFilePath As String = WriteCsvData(dtErrDetail2, inputDirectory, strName,, True, True)
-            MessageBox.Show("オーナーマスタ存在チェックエラー" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("オーナーマスタ存在チェックエラー" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 

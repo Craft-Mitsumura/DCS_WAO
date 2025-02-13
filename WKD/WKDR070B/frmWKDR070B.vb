@@ -82,7 +82,7 @@ Public Class frmWKDR070B
             konbini = dtT.Rows(0)("konbini")
             inshi = dtT.Rows(0)("insi31500")
         Else
-            MessageBox.Show("手数料マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("手数料マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 

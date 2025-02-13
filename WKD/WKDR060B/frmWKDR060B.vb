@@ -58,7 +58,7 @@ Public Class frmWKDR060B
 
         If dtkahen Is Nothing OrElse dtkahen.Rows.Count = 0 Then
             ' 取得出来ない場合でもエラーとせず処理を行う
-            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
 
