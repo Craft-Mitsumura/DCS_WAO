@@ -15,7 +15,6 @@ Public Class frmWKDC030B
 
         ' 処理年度
         txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        'txtShoriNendo.Enabled = False
 
     End Sub
 
@@ -33,18 +32,18 @@ Public Class frmWKDC030B
         ' 手数料マスタ取得
         Dim dt As DataTable = dba.GetTesuryo()
         If dt.Rows.Count <= 0 Then
-            MessageBox.Show("手数料マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("手数料マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 
         dt = dba.GetTesuryo()
         If dt.Rows.Count <= 0 Then
-            MessageBox.Show("印紙税消費税データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("印紙税消費税データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 
         If dt.Rows.Count > 100 Then
-            MessageBox.Show("印紙税消費税データが100件を超えています。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("印紙税消費税データが100件を超えています。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 
@@ -53,7 +52,7 @@ Public Class frmWKDC030B
         ' オーナーマスタ取得
         Dim dt2 As DataTable = dba.GetOwner(shoriNengetsu)
         If 0 < dt2.Rows.Count Then
-            MessageBox.Show("オーナーマスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("オーナーマスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 

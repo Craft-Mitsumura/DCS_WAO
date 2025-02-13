@@ -21,7 +21,6 @@ Public Class frmWKDR010B
 
         ' 処理年月
         txtShoriNengetsu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
-        'txtShoriNengetsu.Enabled = False
 
     End Sub
 
@@ -147,7 +146,7 @@ Public Class frmWKDR010B
 
         '明細が0件の場合処理終了
         If entityList.Count = 0 Then
-            MessageBox.Show("取込対象データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("取込対象データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
@@ -186,15 +185,12 @@ Public Class frmWKDR010B
             End Using
             tableHeaderList.Clear()
             entityList.Clear()
-            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
         Dim dba As New WKDR010BDBAccess
         'システム日付の前月を該当年月とする
-        'Dim dtNow As DateTime = DateTime.Now
-        'Dim monthAgo As String = dtNow.AddMonths(-1).ToString("yyyyMM")
-
         Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
 
         'コンビニ振込確報データのデータ年月が該当年月と同一のデータを削除
@@ -248,12 +244,11 @@ Public Class frmWKDR010B
         Next
         dtErrDetail.Rows.Add("合計", errCnt.ToString(), "件")
         strName = "コンビニ受信データチェックリスト（明細）.csv"
-        'csvFilePath = WriteCsvData(dtErrDetail, SettingManager.GetInstance.OutputDirectory, strName,,, True)
         WriteCsvData(dtErrDetail, inputDirectory, strName,, True, True)
 
         ' 完了メッセ―ジ
         If tableHeaderList.Count <> "6" OrElse errCnt > 0 Then
-            MessageBox.Show("確報データエラー有り", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("確報データエラー有り", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Else
             'コンビニ振込確報データのデータ年月が該当年月と同一のデータを削除
             If Not dba.Delete(monthAgo) Then

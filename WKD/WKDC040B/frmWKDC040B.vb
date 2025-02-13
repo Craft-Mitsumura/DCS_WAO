@@ -154,16 +154,6 @@ Public Class frmWKDC040B
             recordListCsv.Rows.Add(newRow)
         Next
 
-        '' ＣＳＶファイル出力
-        'Dim saveFileDialog As New SaveFileDialog()
-        'saveFileDialog.Filter = "CSV files (*.csv)|*.csv"
-        'saveFileDialog.FileName = "コンビニ振込用紙.csv"
-        'If saveFileDialog.ShowDialog() = DialogResult.OK Then
-        '    Dim directoryPath As String = Path.GetDirectoryName(saveFileDialog.FileName)
-        '    Dim fileName As String = Path.GetFileName(saveFileDialog.FileName)
-        '    MessageBox.Show("「" & WriteCsvData(recordListCsv, directoryPath, fileName,,, True, True) & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        'End If
-
         ' ＣＳＶファイル出力
         Dim fileName As String = "コンビニ振込用紙.csv"
         Dim filePath As String = WriteCsvData(recordListCsv, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)

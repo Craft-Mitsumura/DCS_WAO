@@ -18,7 +18,6 @@ Public Class frmWKDR020B
 
         ' 処理年月
         txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        ''txtShoriNengetsu.Enabled = False
 
     End Sub
 
@@ -50,15 +49,6 @@ Public Class frmWKDR020B
             End If
         End Using
 
-        ''Check FileName
-        'fileName = Path.GetFileName(filePath)
-
-        'If (fileName = "WIDNET.DAT") Then
-        '    processtTKozafurikaeSeikyu(filePath, inputDirectory, fileName)
-        'Else
-        '    MessageBox.Show("「" & filePath & "」wrong name !", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        'End If
-
     End Sub
 
     Private Sub processtTKozafurikaeSeikyu(filePath As String, inputDirectory As String, fileName As String, nengetuDate As Date)
@@ -69,7 +59,6 @@ Public Class frmWKDR020B
 
         ' データ年月
         Dim dtnengetu As String = String.Empty
-        'dtnengetu = sysDate.ToString("yyyyMM")
         dtnengetu = txtShoriNengetsu.Text.Replace("/", "")
 
         ' 引落日
@@ -164,7 +153,7 @@ Public Class frmWKDR020B
 
         '明細が0件の場合処理終了
         If entityList.Count = 0 Then
-            MessageBox.Show("取込対象データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("取込対象データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
@@ -179,7 +168,7 @@ Public Class frmWKDR020B
             tbConvenifurikomikakuho = dba.getConvenifurikomikakuho(gaitonengetu)
             ' コンビニ振込確報データが存在しない場合はエラーメッセージを表示し、処理中断、存在する場合は後ほど取得データをentitiyに格納
             If tbConvenifurikomikakuho.Rows.Count = 0 Then
-                MessageBox.Show("コンビニ振込確報データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show("コンビニ振込確報データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 Exit Sub
             End If
         End If
@@ -206,7 +195,7 @@ Public Class frmWKDR020B
                     writer.WriteLine(record)
                 Next
             End Using
-            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -236,7 +225,7 @@ Public Class frmWKDR020B
             konbini = dtrow2("konbini")
             insi31500 = dtrow2("insi31500")
         Else
-            MessageBox.Show("手数料テーブルからデータを取得できませんでした", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("手数料テーブルからデータを取得できませんでした", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -354,7 +343,6 @@ Public Class frmWKDR020B
         Dim sjisEnc = Encoding.GetEncoding("Shift_JIS")
         Dim num As Integer = sjisEnc.GetByteCount(input)
         Return num = input.Length
-        'Return input.All(Function(c) AscW(c) < 256)
     End Function
 
 

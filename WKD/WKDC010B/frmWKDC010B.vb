@@ -17,7 +17,6 @@ Public Class frmWKDC010B
 
         ' 処理年月
         txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        'txtShoriNengetsu.Enabled = False
 
     End Sub
 
@@ -133,7 +132,7 @@ Public Class frmWKDC010B
 
         '明細が0件の場合処理終了
         If entityList.Count = 0 Then
-            MessageBox.Show("取込対象データが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("取込対象データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
@@ -196,7 +195,7 @@ Public Class frmWKDC010B
                 Next
             End Using
 
-            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("エラーが発生したため取込処理は中止されました。" & vbCrLf & "「 " & csvFilePath & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
@@ -229,8 +228,6 @@ Public Class frmWKDC010B
         For Each propertiesInput As propertiesInput In propertiesList
 
             '① 項目データの半角チェック
-            'If {"データ年月", "顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号（生徒Ｎｏ）", "顧客番号内ＳＥＱ番号", "処理区分",
-            '"金額", "入会金", "授業料", "施設関連諸費", "テキスト費", "テスト費", "郵便番号", "差出人郵便番号"}.Contains(propertiesInput.name) Then
             If {"顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号（生徒Ｎｏ）", "顧客番号内ＳＥＱ番号", "処理区分",
                  "郵便番号", "差出人郵便番号"}.Contains(propertiesInput.name) Then
                 If (IsHalfWidth(propertiesInput, row) <> "") Then
@@ -238,19 +235,9 @@ Public Class frmWKDC010B
                 End If
             End If
 
-            ''② 項目データの全角チェック
-            'If {"住所２－１（漢字）", "住所２－２（漢字）", "保護者名（漢字）", "生徒名（漢字）", "差出人住所１（漢字）", "差出人住所２（漢字）", "差出人名（漢字）"}.Contains(propertiesInput.name) Then
-            '    If (IsFullWidth(propertiesInput, row) <> "") Then
-            '        errors.Add(IsFullWidth(propertiesInput, row))
-            '    End If
-            'End If
-
             '③ 項目データの数字チェック
             If {"顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号（生徒Ｎｏ）", "顧客番号内ＳＥＱ番号",
                 "処理区分", "金額", "入会金", "授業料", "施設関連諸費", "テキスト費", "テスト費"}.Contains(propertiesInput.name) Then
-                'If (IsNumericData(propertiesInput, row) <> "") Then
-                '    errors.Add(IsNumericData(propertiesInput, row))
-                'End If
                 If Not IsNumeric(propertiesInput.value) OrElse propertiesInput.value = -1 Then
                     errors.Add(row.ToString() & "," & propertiesInput.name & "," & "文字列が含まれています。")
                 End If
@@ -262,20 +249,10 @@ Public Class frmWKDC010B
                 End If
             End If
 
-            '④ 該当項目について　で判断されたヘッダーレコードのデータ年月＝システム日付の年月でない場合はエラーとする。
-            'If {"データ年月"}.Contains(propertiesInput.name) Then
-            '    If (ValidateDateMatch(propertiesInput, row) <> "") Then
-            '        errors.Add(ValidateDateMatch(propertiesInput, row))
-            '    End If
-            'End If
         Next
 
         Return errors
     End Function
-
-    'Private Function ValidateDateMatch(input As propertiesInput, row As Integer) As String
-    '    Return If(DateTime.TryParseExact(input.value, "yyyyMM", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, Nothing), Nothing, row.ToString() & "," & input.name & "," & "データ年月が一致しません。")
-    'End Function
 
     Private Function ValidateDateMatchForHeader(input As String) As String
         Return If(DateTime.TryParseExact(input, "yyyyMM", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, Nothing), Nothing, 1 & "," & "データ年月" & "," & "データ年月が一致しません。")
@@ -296,7 +273,6 @@ Public Class frmWKDC010B
         End If
         Return result
     End Function
-
 
     Private Function IsFullWidth(input As propertiesInput, row As Integer) As String
         Dim result As String = ""

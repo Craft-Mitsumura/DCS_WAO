@@ -19,7 +19,6 @@ Public Class frmWKDC020B
 
         ' 処理年月
         txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
-        'txtShoriNengetsu.Enabled = False
 
     End Sub
 
@@ -51,7 +50,7 @@ Public Class frmWKDC020B
         ' 委託者マスタ取得
         dtI = dba.GetMItakusha(shoriNengetsu)
         If dtI.Rows.Count <= 0 Then
-            MessageBox.Show("委託者マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("委託者マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 
@@ -60,7 +59,7 @@ Public Class frmWKDC020B
         ' 手数料マスタ取得
         dtT = dba.GetMTesuryo()
         If dtT.Rows.Count <= 0 Then
-            MessageBox.Show("手数料マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("手数料マスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 
