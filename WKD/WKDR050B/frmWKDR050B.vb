@@ -54,7 +54,7 @@ Public Class frmWKDR050B
         Dim day As String = txtShoriNengetsu.Text
 
         If String.IsNullOrWhiteSpace(day) Or day.Length > 2 Or DateTime.TryParseExact(day & "/" & DateTime.Now.Month.ToString("D2") & "/" & DateTime.Now.Year, "dd/MM/yyyy", Nothing, Globalization.DateTimeStyles.None, Nothing) = False Then
-            MessageBox.Show("振込日が正しくありません。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("振込日が正しくありません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
         If day.Length < 2 Then
@@ -66,7 +66,6 @@ Public Class frmWKDR050B
         'システム日付+画面.振込日を振込年月日とし、その日が休業日であれば前営業日算出(共通関数「getdaybringforward」を使用)
         Dim hurikomibi As String = ""
         Dim tDaybringforward As New DataTable
-        'tDaybringforward = dba.getdaybringforward(sysDate.ToString("yyyyMM") & day)
         tDaybringforward = dba.getdaybringforward(nengetuDate.AddMonths(+1).ToString("yyyyMM"))
         If tDaybringforward.Rows.Count <> 0 Then
             Dim dtrow As DataRow = tDaybringforward.Rows(0)
@@ -78,7 +77,7 @@ Public Class frmWKDR050B
         Dim itaknm As String = ""
         Dim mItakushaiList As DataTable = dba.geMItakushaByItakuno(3000045057)
         If mItakushaiList.Rows.Count <= 0 Then
-            MessageBox.Show("委託者マスタにデータが存在しません。", "異常終了", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("委託者マスタにデータが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         Else
             Dim headerrow As DataRow = mItakushaiList.Rows(0)
@@ -89,7 +88,6 @@ Public Class frmWKDR050B
         End If
 
         'システム日付が前月のインストラクター向け振込データを取得し、明細に出力する
-        'Dim tInstructorFurikomiList As DataTable = dba.geTInstructorFurikomiByDtnengetu(sysDate.AddMonths(-1).ToString("yyyyMM"))
         Dim tInstructorFurikomiList As DataTable = dba.geTInstructorFurikomiByDtnengetu(monthAgo)
         If tInstructorFurikomiList.Rows.Count <= 0 Then
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -103,7 +101,6 @@ Public Class frmWKDR050B
         'インストラクター向け振込データの件数合計と振込金額合計を取得し、合計部に出力する
         Dim kensu As String = ""
         Dim goukei As String = ""
-        'Dim tInstructorFurikomiGoukeiList As DataTable = dba.geTInstructorFurikomiByGoukei(sysDate.AddMonths(-1).ToString("yyyyMM"))
         Dim tInstructorFurikomiGoukeiList As DataTable = dba.geTInstructorFurikomiByGoukei(monthAgo)
         Dim goukeirow As DataRow = tInstructorFurikomiGoukeiList.Rows(0)
         kensu = CnvDec(goukeirow("kensu")).ToString("#,##0")
