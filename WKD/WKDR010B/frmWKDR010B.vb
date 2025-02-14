@@ -90,7 +90,7 @@ Public Class frmWKDR010B
                 End If
 
                 ' 固定長のフィールドの幅を指定
-                If reckbn = "1" Then
+                If reckbn = "1" OrElse j = 0 Then
                     ' 1行目（ヘッダーレコード）
                     Dim fields As String() = GetFieldString(rec, 1, 8, 5, 5, 40, 61)
                     Dim th As New tableHeader
@@ -158,13 +158,16 @@ Public Class frmWKDR010B
             errorRecords.Add("1,レコード区分" & "," & "ファイルの先頭がヘッダーレコードになっていません。 ")
         End If
 
-        Dim predtnengetu As String = ""
+        Dim preitakuno As String = ""
         For Each entity As TConveniFurikomiKakuhoEntity In entityList
-            If predtnengetu = "" OrElse entity.dtnengetu <> predtnengetu Then
-                If (IsHalfWidthForHeader(entity.dtnengetu, row + CnvDec(entity.upd_user_id)) <> "") Then
-                    errorRecords.Add(IsHalfWidthForHeader(entity.dtnengetu, row + CnvDec(entity.upd_user_id)))
+            If preitakuno = "" OrElse entity.itakuno <> preitakuno Then
+                If (entity.itakuno <> "00404") Then
+                    errorRecords.Add((row + CnvDec(entity.upd_user_id)).ToString() & ", " & "収納企業コード" & ", " & "収納企業コードが正しくありません。")
                 End If
-                predtnengetu = entity.dtnengetu
+                If (IsHalfWidthForHeader(entity.itakuno, row + CnvDec(entity.upd_user_id)) <> "") Then
+                    errorRecords.Add(IsHalfWidthForHeader(entity.itakuno, row + CnvDec(entity.upd_user_id)))
+                End If
+                preitakuno = entity.itakuno
             End If
             Dim errors = ValidateEntity(entity, row + CnvDec(entity.upd_user_id) + 1)
             If errors.Count > 0 Then
@@ -279,7 +282,7 @@ Public Class frmWKDR010B
 
         For Each propertiesInput As propertiesInput In propertiesList
 
-            If {"顧客番号（委託者Ｎｏ）", "顧客番号（オーナーＮｏ）", "顧客番号（生徒Ｎｏ）",
+            If {"データ年月", "顧客番号（オーナーＮｏ）", "顧客番号（生徒Ｎｏ）",
                 "識別子", "ＭＵＦ企業コード", "収納企業コード", "支払期限",
                 "CVS受付店舗コード", "CVSコード"}.Contains(propertiesInput.name) Then
                 If (IsHalfWidth(propertiesInput, row) <> "") Then
@@ -312,8 +315,9 @@ Public Class frmWKDR010B
 
     Private Function IsHalfWidthForHeader(input As String, row As Integer) As String
         Dim result As String = ""
+        Dim inputname As String = ""
         If Not input.All(Function(c) AscW(c) < 256) Then
-            result = row.ToString() & "," & "データ年月" & "," & "全角データが含まれています。 "
+            result = row.ToString() & "," & "収納企業コード" & "," & "全角データが含まれています。 "
         End If
         Return result
     End Function
