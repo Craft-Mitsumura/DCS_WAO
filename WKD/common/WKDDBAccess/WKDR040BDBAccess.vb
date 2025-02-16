@@ -10,7 +10,7 @@ Public Class WKDR040BDBAccess
 
         Dim sql As New StringBuilder()
         sql.AppendLine("insert ")
-        sql.AppendLine("into t_kakutei( ")
+        sql.AppendLine("into t_kahenkomoku( ")
         sql.AppendLine("    dtnengetu	")  'データ年月
         sql.AppendLine("	,itakuno	")  '顧客番号(委託者Ｎｏ）
         sql.AppendLine("	,ownerno	")  '顧客番号(オーナーＮｏ）
@@ -48,6 +48,12 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("	,csmken	")      'ｺﾝﾋﾞﾆ未納件数
         sql.AppendLine("	,csmkin	")      'ｺﾝﾋﾞﾆ未納金額
         sql.AppendLine("	,fritesu	")  '給与振込手数料
+        sql.AppendLine("  , crt_user_id")
+        sql.AppendLine("  , crt_user_dtm ")
+        sql.AppendLine("  , crt_user_pg_id")
+        sql.AppendLine("  , upd_user_id")
+        sql.AppendLine("  , upd_user_dtm")
+        sql.AppendLine("  , upd_user_pg_id")
         sql.AppendLine(") ")
         sql.AppendLine("values ( ")
         sql.AppendLine("    @dtnengetu	")  'データ年月
@@ -87,20 +93,39 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("	,'0'	")      'ｺﾝﾋﾞﾆ未納件数
         sql.AppendLine("	,'0'	")      'ｺﾝﾋﾞﾆ未納金額
         sql.AppendLine("	,@fritesu	")  '給与振込手数料
+        sql.AppendLine("	,'0'	")      '
+        sql.AppendLine("	,current_timestamp	")      '
+        sql.AppendLine("	,'0'	")      '
+        sql.AppendLine("	,'0'	")      '
+        sql.AppendLine("	,current_timestamp	")      '
+        sql.AppendLine("	,'0'	")      '
         sql.AppendLine(")")
 
-        Dim paramsList As New List(Of List(Of NpgsqlParameter))
+        Dim params As New List(Of NpgsqlParameter)
         For Each row As DataRow In entityList.Rows
-            Dim params As New List(Of NpgsqlParameter)
-            For Each prop As System.Reflection.PropertyInfo In row.GetType().GetProperties()
-                If 0 <= sql.ToString().IndexOf("@" & prop.Name) Then
-                    params.Add(New NpgsqlParameter("@" & prop.Name, prop.GetValue(row)))
-                End If
-            Next
-            paramsList.Add(params)
+            params = New List(Of NpgsqlParameter) From {
+                New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
+                New NpgsqlParameter("@upd_user_dtm", Now),
+                New NpgsqlParameter("@upd_user_pg_id", SettingManager.GetInstance.LoginUserName),
+                New NpgsqlParameter("@tesur1nm", row(2)),
+                New NpgsqlParameter("@tesur1", row(3)),
+                New NpgsqlParameter("@tesur2nm", row(4)),
+                New NpgsqlParameter("@tesur2", row(5)),
+                New NpgsqlParameter("@tesur3nm", row(6)),
+                New NpgsqlParameter("@tesur3", row(7)),
+                New NpgsqlParameter("@tesur4nm", row(8)),
+                New NpgsqlParameter("@tesur4", row(9)),
+                New NpgsqlParameter("@tesur5nm", row(10)),
+                New NpgsqlParameter("@tesur5", row(11)),
+                New NpgsqlParameter("@tesur6nm", row(12)),
+                New NpgsqlParameter("@tesur6", row(13)),
+                New NpgsqlParameter("@dtnengetu", row(0)),
+                New NpgsqlParameter("@ownerno", row(1)),
+                New NpgsqlParameter("@fritesu", row(14))
+            }
         Next
 
-        ret = dbc.ExecuteNonQuery(sql.ToString(), paramsList)
+        ret = dbc.ExecuteNonQuery(sql.ToString(), params)
 
         Return ret
 
@@ -108,9 +133,9 @@ Public Class WKDR040BDBAccess
     End Function
 
     Public Function UpdateTKahenkomoku(dtnengetu As String, itakuno As String, ownerno As String, filler As String,
-                                       tesur3 As String, fuzken As String, fuzkin As String,
-                                       fufken As String, fufkin As String, cszken As String,
-                                       cszkin As String, csmken As String, csmkin As String,
+                                       tesur3 As Decimal, fuzken As Decimal, fuzkin As Decimal,
+                                       fufken As Decimal, fufkin As Decimal, cszken As Decimal,
+                                       cszkin As Decimal, csmken As Decimal, csmkin As Decimal,
                                        syokbn As String, funocd As String, syuunou As String) As Boolean
 
         Dim ret As Boolean = False
@@ -146,6 +171,7 @@ Public Class WKDR040BDBAccess
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
             New NpgsqlParameter("@upd_user_dtm", Now),
+            New NpgsqlParameter("@upd_user_pg_id", SettingManager.GetInstance.LoginUserName),
             New NpgsqlParameter("@tesur3", tesur3),
             New NpgsqlParameter("@fuzken", fuzken),
             New NpgsqlParameter("@fuzkin", fuzkin),
@@ -167,7 +193,7 @@ Public Class WKDR040BDBAccess
 
     End Function
 
-    Public Function UpdateTKahenkomoku_2(dtnengetu As String, itakuno As String, ownerno As String, filler As String, tyosei As String) As Boolean
+    Public Function UpdateTKahenkomoku_2(dtnengetu As String, itakuno As String, ownerno As String, filler As String, tyosei As Decimal) As Boolean
 
         Dim ret As Boolean = False
         Dim dbc As New DBClient
@@ -186,6 +212,7 @@ Public Class WKDR040BDBAccess
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
             New NpgsqlParameter("@upd_user_dtm", Now),
+            New NpgsqlParameter("@upd_user_pg_id", SettingManager.GetInstance.LoginUserName),
             New NpgsqlParameter("@tyosei", tyosei),
             New NpgsqlParameter("@dtnengetu", dtnengetu),
             New NpgsqlParameter("@ownerno", ownerno),
@@ -210,16 +237,16 @@ Public Class WKDR040BDBAccess
         Dim sql As New StringBuilder()
         sql.AppendLine("update t_kahenkomoku set")
         sql.AppendLine("    name = @name")
-        sql.AppendLine("    koumei = @koumei")
-        sql.AppendLine("    postno1 = @postno1")
-        sql.AppendLine("    postno2 = @postno2")
-        sql.AppendLine("    addr1 = @addr1")
-        sql.AppendLine("    addr2 = @addr2")
-        sql.AppendLine("    bankcd = @bankcd")
-        sql.AppendLine("    sitencd = @sitencd")
-        sql.AppendLine("    syumoku = @syumoku")
-        sql.AppendLine("    kouzano = @kouzano")
-        sql.AppendLine("    kouzanm = @kouzanm")
+        sql.AppendLine("  , koumei = @koumei")
+        sql.AppendLine("  , postno1 = @postno1")
+        sql.AppendLine("  , postno2 = @postno2")
+        sql.AppendLine("  , addr1 = @addr1")
+        sql.AppendLine("  , addr2 = @addr2")
+        sql.AppendLine("  , bankcd = @bankcd")
+        sql.AppendLine("  , sitencd = @sitencd")
+        sql.AppendLine("  , syumoku = @syumoku")
+        sql.AppendLine("  , kouzano = @kouzano")
+        sql.AppendLine("  , kouzanm = @kouzanm")
         sql.AppendLine("  , upd_user_id = @upd_user_id")
         sql.AppendLine("  , upd_user_dtm = @upd_user_dtm")
         sql.AppendLine("  , upd_user_pg_id = @upd_user_pg_id")
@@ -231,7 +258,8 @@ Public Class WKDR040BDBAccess
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
             New NpgsqlParameter("@upd_user_dtm", Now),
-            New NpgsqlParameter("@tyosei", name),
+            New NpgsqlParameter("@upd_user_pg_id", SettingManager.GetInstance.LoginUserName),
+            New NpgsqlParameter("@name", name),
             New NpgsqlParameter("@koumei", koumei),
             New NpgsqlParameter("@postno1", postno1),
             New NpgsqlParameter("@postno2", postno2),
@@ -268,24 +296,24 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("    t1.tesur2nm,")
         sql.AppendLine("    t1.tesur2,")
         sql.AppendLine("    t1.tesur3nm,")
-        sql.AppendLine("    t1.tesur3 = (select sum(t1.tesur3)")
+        sql.AppendLine("    (select sum(t1.tesur3) as tesur3")
         sql.AppendLine("                 from wao.t_kahenkomoku t1 ")
         sql.AppendLine("                 left join wao.t_instructor_furikomi t2")
         sql.AppendLine("                 on t1.ownerno = t2.ownerno")
         sql.AppendLine("                 where t1.dtnengetu = @dtnengetu")
-        sql.AppendLine("                 group by t1.dtnengetu,t1.itakuno,t1.ownerno,t1.filler),")
+        sql.AppendLine("                 group by t1.dtnengetu),")
         sql.AppendLine("    t1.tesur4nm,")
         sql.AppendLine("    t1.tesur4,")
         sql.AppendLine("    t1.tesur5nm,")
         sql.AppendLine("    t1.tesur5,")
         sql.AppendLine("    t1.tesur6nm,")
         sql.AppendLine("    t1.tesur6,")
-        sql.AppendLine("    t1.fritesu = (select sum(t1.tesur3)")
+        sql.AppendLine("    (select sum(t1.tesur3) as fritesu")
         sql.AppendLine("                 from wao.t_kahenkomoku t1")
         sql.AppendLine("                 left join wao.t_instructor_furikomi t2")
         sql.AppendLine("                 on t1.ownerno = t2.ownerno")
         sql.AppendLine("                 where t1.dtnengetu = @dtnengetu")
-        sql.AppendLine("                 group by t1.dtnengetu,t1.itakuno,t1.ownerno,t1.filler)")
+        sql.AppendLine("                 group by t1.dtnengetu)")
         sql.AppendLine("    from wao.t_kahenkomoku t1")
         sql.AppendLine("    left join wao.t_instructor_furikomi t2")
         sql.AppendLine("    on t1.ownerno = t2.ownerno")
@@ -320,24 +348,24 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("    t1.tesur2nm,")
         sql.AppendLine("    t1.tesur2,")
         sql.AppendLine("    t1.tesur3nm,")
-        sql.AppendLine("    t1.tesur3 = (select sum(t1.tesur3)")
+        sql.AppendLine("    (select sum(t1.tesur3) as tesur3")
         sql.AppendLine("                 from wao.t_kahenkomoku t1 ")
         sql.AppendLine("                 left join wao.t_instructor_furikomi t2")
         sql.AppendLine("                 on t1.ownerno = t2.ownerno")
         sql.AppendLine("                 where t1.dtnengetu = @dtnengetu")
-        sql.AppendLine("                 group by t1.dtnengetu,t1.itakuno,t1.ownerno,t1.filler),")
+        sql.AppendLine("                 group by t1.dtnengetu),")
         sql.AppendLine("    t1.tesur4nm,")
         sql.AppendLine("    t1.tesur4,")
         sql.AppendLine("    t1.tesur5nm,")
         sql.AppendLine("    t1.tesur5,")
         sql.AppendLine("    t1.tesur6nm,")
         sql.AppendLine("    t1.tesur6,")
-        sql.AppendLine("    t1.fritesu = (select sum(t1.tesur3)")
+        sql.AppendLine("    (select sum(t1.tesur3) as fritesu")
         sql.AppendLine("                 from wao.t_kahenkomoku t1")
         sql.AppendLine("                 left join wao.t_instructor_furikomi t2")
         sql.AppendLine("                 on t1.ownerno = t2.ownerno")
         sql.AppendLine("                 where t1.dtnengetu = @dtnengetu")
-        sql.AppendLine("                 group by t1.dtnengetu,t1.itakuno,t1.ownerno,t1.filler),")
+        sql.AppendLine("                 group by t1.dtnengetu),")
         sql.AppendLine("    t3.syokbn,")
         sql.AppendLine("    t3.funocd,")
         sql.AppendLine("    t3.syuunou")
@@ -347,6 +375,7 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("    left join wao.t_furikae_kekka_meisai t3")
         sql.AppendLine("    on t1.ownerno = t3.ownerno")
         sql.AppendLine("    where t1.dtnengetu = @dtnengetu")
+        sql.AppendLine("    and t1.itakuno != '33948'")
         sql.AppendLine("    order by t1.itakuno, t2.ownerno")
 
         Dim params As New List(Of NpgsqlParameter) From {
@@ -375,31 +404,31 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("    t1.tesur2nm,")
         sql.AppendLine("    t1.tesur2,")
         sql.AppendLine("    t1.tesur3nm,")
-        sql.AppendLine("    t1.tesur3 = (select sum(t1.tesur3)")
+        sql.AppendLine("    (select sum(t1.tesur3) as tesur3")
         sql.AppendLine("                 from wao.t_kahenkomoku t1 ")
         sql.AppendLine("                 left join wao.t_instructor_furikomi t2")
         sql.AppendLine("                 on t1.ownerno = t2.ownerno")
         sql.AppendLine("                 where t1.dtnengetu = @dtnengetu")
-        sql.AppendLine("                 group by t1.dtnengetu,t1.itakuno,t1.ownerno,t1.filler),")
+        sql.AppendLine("                 group by t1.dtnengetu),")
         sql.AppendLine("    t1.tesur4nm,")
         sql.AppendLine("    t1.tesur4,")
         sql.AppendLine("    t1.tesur5nm,")
         sql.AppendLine("    t1.tesur5,")
         sql.AppendLine("    t1.tesur6nm,")
         sql.AppendLine("    t1.tesur6,")
-        sql.AppendLine("    t1.fritesu = (select sum(t1.tesur3)")
+        sql.AppendLine("    (select sum(t1.tesur3) as fritesu")
         sql.AppendLine("                 from wao.t_kahenkomoku t1")
         sql.AppendLine("                 left join wao.t_instructor_furikomi t2")
         sql.AppendLine("                 on t1.ownerno = t2.ownerno")
         sql.AppendLine("                 where t1.dtnengetu = @dtnengetu")
-        sql.AppendLine("                 group by t1.dtnengetu,t1.itakuno,t1.ownerno,t1.filler),")
-        sql.AppendLine("    t3.tyosei")
+        sql.AppendLine("                 group by t1.dtnengetu)")
         sql.AppendLine("    from wao.t_kahenkomoku t1")
         sql.AppendLine("    left join wao.t_instructor_furikomi t2")
         sql.AppendLine("    on t1.ownerno = t2.ownerno")
         sql.AppendLine("    left join wao.t_choseigaku t3")
         sql.AppendLine("    on t1.ownerno = t3.ownerno")
         sql.AppendLine("    where t1.dtnengetu = @dtnengetu")
+        sql.AppendLine("    and t1.itakuno != '33948'")
         sql.AppendLine("    order by t1.itakuno, t2.ownerno")
 
         Dim params As New List(Of NpgsqlParameter) From {
@@ -433,11 +462,12 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("    t1.sitencd,")
         sql.AppendLine("    t1.syumoku,")
         sql.AppendLine("    t1.kouzano,")
-        sql.AppendLine("    t1.kouzanm,")
+        sql.AppendLine("    t1.kouzanm")
         sql.AppendLine("    from wao.t_kahenkomoku t1")
         sql.AppendLine("    left join wao.t_instructor_furikomi t2")
         sql.AppendLine("    on t1.ownerno = t2.ownerno")
         sql.AppendLine("    where t1.dtnengetu = @dtnengetu")
+        sql.AppendLine("    and t1.itakuno != '33948'")
         sql.AppendLine("    order by t1.itakuno, t2.ownerno")
 
         Dim params As New List(Of NpgsqlParameter) From {
