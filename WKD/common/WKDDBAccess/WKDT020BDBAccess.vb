@@ -71,9 +71,11 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("                          where c.itakuno = a.itakuno")
         sql.AppendLine("                          and   c.ownerno = a.ownerno")
         sql.AppendLine("                          and   c.instno = a.instno")
-        sql.AppendLine("                          and   c.dtnengetu >= @shoriNengetsu")
+        sql.AppendLine("                          and   substr(c.dtnengetu,1,4) = substr(@shoriNengetsu,1,4)")
         sql.AppendLine("                          and   c.dtnengetu <= (b.tainen || b.taituki))")
-        sql.AppendLine("    where a.dtnengetu >= @shoriNengetsu and a.dtnengetu <= (b.tainen || b.taituki)")
+        'sql.AppendLine("    where a.dtnengetu >= @shoriNengetsu and a.dtnengetu <= (b.tainen || b.taituki)")
+        sql.AppendLine("    where substr(a.dtnengetu,1,4) = substr(@shoriNengetsu,1,4)")
+        sql.AppendLine("    and   a.dtnengetu <= (b.tainen || b.taituki)")
         sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
 
         Dim params As New List(Of NpgsqlParameter) From {
