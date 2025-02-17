@@ -36,13 +36,13 @@ Public Class frmWKDC030B
             Return
         End If
 
-        dt = dba.GetTesuryo()
-        If dt.Rows.Count <= 0 Then
+        Dim dt4 As DataTable = dba.GetTzei()
+        If dt4.Rows.Count <= 0 Then
             MessageBox.Show("印紙税消費税データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 
-        If dt.Rows.Count > 100 Then
+        If dt4.Rows.Count > 100 Then
             MessageBox.Show("印紙税消費税データが100件を超えています。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If

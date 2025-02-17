@@ -129,9 +129,9 @@ Public Class frmWKDC020B
             Else
                 rec.Append(StrDup(15, " ")) ' 引落銀行名
             End If
-            rec.Append(StrDup(4, " ")) ' ダミー
             rec.Append(row(20).ToString) ' 引落支店コード
             rec.Append(StrDup(15, " ")) ' 引落支店名
+            rec.Append(StrDup(4, " ")) ' ダミー
             rec.Append(row(21).ToString) ' 預金種目
             rec.Append(row(22).ToString) ' 口座番号
             rec.Append(GetMidByte(row(24).ToString & StrDup(30, " "), 1, 30)) ' 預金者名義人名

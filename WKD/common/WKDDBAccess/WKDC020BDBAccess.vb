@@ -93,12 +93,14 @@ Public Class WKDC020BDBAccess
         sql.AppendLine("    end cafkst") ' 振替開始年月
         sql.AppendLine("  , substr(cast(hog.cafked as character varying),1,6) cafked") ' 振替終了年月
         sql.AppendLine("  , rtrim(substr(hog.cakznm || repeat(' ',30),1,30)) cakznm") ' 口座名義人名（カナ）※40桁→30桁に切り詰め
+        sql.AppendLine("  , hog.cakyfg") ' 解約フラグ
         sql.AppendLine("from")
         sql.AppendLine("    tchogoshamaster hog")
         sql.AppendLine(") hog2")
         ' 振替開始日の年月 ≦ 処理年月 ≦ 振替終了日
         sql.AppendLine("where hog2.cafkst <= @dtnengetu")
         sql.AppendLine("and   hog2.cafked >= @dtnengetu")
+        sql.AppendLine("and   hog2.cakyfg = '0'")
         sql.AppendLine(")")
 
         Dim params As New List(Of NpgsqlParameter) From {
