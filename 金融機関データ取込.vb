@@ -215,6 +215,7 @@ Friend Class frmBankDataImport
                 Dim cnt As Integer = 0
                 Dim dt As DataTable
                 Dim cnt2 As Integer = 1
+                Dim preBankcd As String = ""
 
                 For Each arrContent As String(,) In arrContentList
                     lblFilecntBunsi.Text = cnt2.ToString
@@ -222,6 +223,12 @@ Friend Class frmBankDataImport
                     For x = 0 To arrContent.GetLength(0) - 1
                         If (arrContent(x, 0) = Nothing) Then
                             Continue For
+                        End If
+
+                        If preBankcd = "" OrElse preBankcd <> arrContent(x, 0) Then
+                            If False = tdBankMasterInsert2(arrContent, x, cmd) Then
+                                Throw New Exception
+                            End If
                         End If
 
                         sql = "SELECT b.* "
@@ -238,6 +245,7 @@ Friend Class frmBankDataImport
                                 Throw New Exception
                             End If
                         End If
+                        preBankcd = arrContent(x, 0)
                         cnt += 1
                         pgrProgressBar.Value = IIf(cnt <= pgrProgressBar.Maximum, cnt, pgrProgressBar.Maximum)
                     Next
@@ -307,18 +315,42 @@ Friend Class frmBankDataImport
         sql = sql & "DAHTIF," & vbCrLf '//廃店情報					
         sql = sql & "DAUPDT" & vbCrLf  '//更新日					
         sql = sql & ") VALUES ( " & vbCrLf
-        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 10), vEnd:=True) & "," & vbCrLf '//金融機関区分			
+        sql = sql & "'1'," & vbCrLf  '//金融機関区分
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & "," & vbCrLf '//銀行コード					
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & "," & vbCrLf '//支店コード
-        sql = sql & "'' ," & vbCrLf                                                 '//SEQ-CODE					
-        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & "," & vbCrLf '//銀行名_カナ					
-        sql = sql & gdDBS.ColumnDataSet(GetMidByte(arrContent(row, 3) & StrDup(30, " "), 1, 30), vEnd:=True) & "," & vbCrLf '//銀行名_漢字
-        sql = sql & "  NULL," & vbCrLf                                                 '//廃店情報					
-        sql = sql & "current_timestamp)" & vbCrLf                                      '//更新日						
-
+        sql = sql & "'ｱ' ," & vbCrLf '//SEQ-CODE
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf '//銀行名_カナ
+        sql = sql & gdDBS.ColumnDataSet(GetMidByte(arrContent(row, 5) & StrDup(30, " "), 1, 30), vEnd:=True) & "," & vbCrLf '//銀行名_漢字
+        sql = sql & "'1000'," & vbCrLf                                                 '//廃店情報					
+        sql = sql & "current_timestamp)" & vbCrLf                                      '//更新日
         cmd.CommandText = sql
         cmd.ExecuteNonQuery()
         tdBankMasterInsert = True
+    End Function
+
+    Private Function tdBankMasterInsert2(ByRef arrContent As String(,), row As Integer, ByRef cmd As Npgsql.NpgsqlCommand) As Boolean
+        Dim sql As String
+        sql = "INSERT INTO tdBankMaster ( " & vbCrLf
+        sql = sql & "DARKBN," & vbCrLf '//金融機関区分				
+        sql = sql & "DABANK," & vbCrLf '//銀行コード					
+        sql = sql & "DASITN," & vbCrLf '//支店コード					
+        sql = sql & "DASQNO," & vbCrLf '//SEQ-CODE					
+        sql = sql & "DAKNNM," & vbCrLf '//銀行名_カナ					
+        sql = sql & "DAKJNM," & vbCrLf '//銀行名_漢字					
+        sql = sql & "DAHTIF," & vbCrLf '//廃店情報					
+        sql = sql & "DAUPDT" & vbCrLf  '//更新日					
+        sql = sql & ") VALUES ( " & vbCrLf
+        sql = sql & "'0'," & vbCrLf  '//金融機関区分
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & "," & vbCrLf '//銀行コード					
+        sql = sql & "'000'," & vbCrLf '//支店コード
+        sql = sql & "':' ," & vbCrLf '//SEQ-CODE
+        sql = sql & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & "," & vbCrLf '//銀行名_カナ
+        sql = sql & gdDBS.ColumnDataSet(GetMidByte(arrContent(row, 3) & StrDup(30, " "), 1, 30), vEnd:=True) & "," & vbCrLf '//銀行名_漢字
+        sql = sql & "'1000'," & vbCrLf                                                 '//廃店情報					
+        sql = sql & "current_timestamp)" & vbCrLf                                      '//更新日
+        cmd.CommandText = sql
+        cmd.ExecuteNonQuery()
+        tdBankMasterInsert2 = True
     End Function
 
     Private Function tdBankMasterUpdate(ByRef arrContent As String(,), row As Integer, ByRef cmd As Npgsql.NpgsqlCommand) As Boolean
@@ -326,8 +358,8 @@ Friend Class frmBankDataImport
         Dim result As Integer
 
         sql = "UPDATE tdBankMaster SET " & vbCrLf
-        sql = sql & " DAKNNM = " & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & "," & vbCrLf
-        sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 3), vEnd:=True) & "," & vbCrLf
+        sql = sql & " DAKNNM = " & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf
+        sql = sql & " DAKJNM = " & gdDBS.ColumnDataSet(arrContent(row, 5), vEnd:=True) & "," & vbCrLf
         sql = sql & " DAUPDT = current_timestamp" & vbCrLf
         sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & vbCrLf
         sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & vbCrLf

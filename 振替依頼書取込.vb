@@ -1107,13 +1107,21 @@ SetErrorStatusError:
                         End If
                         '//////////////////////////////////////////
                         '//保護者名(漢字)チェック
-                        If Replace(Replace(dt.Rows(index)("CIKJNM"), "　", ""), " ", "") <> Replace(Replace(dt1.Rows(0)("CAKJNM"), "　", ""), " ", "") Then
-                            Call pSetErrorStatus("CIKJNME", (mRimp.errWarning), "既存の保護者名(漢字)との相違があります.")
+                        If Not IsDBNull(dt.Rows(index)("CIKJNM")) Then
+                            If IsDBNull(dt1.Rows(0)("CAKJNM")) Then
+                                dt1.Rows(0)("CAKJNM") = ""
+                            End If
+                            If Replace(Replace(dt.Rows(index)("CIKJNM"), "　", ""), " ", "") <> Replace(Replace(dt1.Rows(0)("CAKJNM"), "　", ""), " ", "") Then
+                                Call pSetErrorStatus("CIKJNME", (mRimp.errWarning), "既存の保護者名(漢字)との相違があります.")
+                            End If
                         End If
                         '//////////////////////////////////////////
                         '//保護者名(カナ)チェック
                         '//2007/04/20 パンチに保護者カナ NULL 有りの為エラー
                         If Not IsDBNull(dt.Rows(index)("CIKNNM")) Then
+                            If IsDBNull(dt1.Rows(0)("CAKNNM")) Then
+                                dt1.Rows(0)("CAKNNM") = ""
+                            End If
                             If Replace(Replace(dt.Rows(index)("CIKNNM"), "　", ""), " ", "") <> Replace(Replace(dt1.Rows(0)("CAKNNM"), "　", ""), " ", "") Then
                                 Call pSetErrorStatus("CIKNNME", (mRimp.errWarning), "既存の保護者名(カナ)との相違があります.")
                             End If
@@ -1269,9 +1277,9 @@ SetErrorStatusError:
                                 End If
                             End If
                         ElseIf dt.Rows(index)("CIKKBN") = MainModule.eBankKubun.YuubinKyoku Then
-                                '//////////////////////////////////////////
-                                '//通帳記号チェック
-                                If IsDBNull(dt.Rows(index)("CIYBTK")) Or Len(dt.Rows(index)("CIYBTK")) < CDbl(mRimp.YubinKigouLength) Then
+                            '//////////////////////////////////////////
+                            '//通帳記号チェック
+                            If IsDBNull(dt.Rows(index)("CIYBTK")) Or Len(dt.Rows(index)("CIYBTK")) < CDbl(mRimp.YubinKigouLength) Then
                                 Call pSetErrorStatus("CIYBTKE", (mRimp.errWarning), "通帳記号に誤りがあります.")
                             End If
                             '//////////////////////////////////////////
