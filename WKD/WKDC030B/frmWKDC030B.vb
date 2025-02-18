@@ -56,7 +56,7 @@ Public Class frmWKDC030B
             Return
         End If
 
-        Dim dt3 As DataTable = dba.GetCsvData(shoriNengetsu & 27, shoriNengetsu & 25, shoriNengetsu)
+        Dim dt3 As DataTable = dba.GetCsvData(shoriNengetsu & 27, shoriNengetsu & 24, shoriNengetsu)
         If dt3.Rows.Count <= 0 Then
             MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
