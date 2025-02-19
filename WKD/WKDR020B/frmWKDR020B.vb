@@ -163,7 +163,7 @@ Public Class frmWKDR020B
 
 
         ' コンビニ振込情報データ取得
-        Dim tbConvenifurikomikakuho As DataTable
+        Dim tbConvenifurikomikakuho As DataTable = Nothing
         If gaitonengetu <> "" Then
             tbConvenifurikomikakuho = dba.getConvenifurikomikakuho(gaitonengetu)
             ' コンビニ振込確報データが存在しない場合はエラーメッセージを表示し、処理中断、存在する場合は後ほど取得データをentitiyに格納
@@ -265,38 +265,40 @@ Public Class frmWKDR020B
 
         ' コンビニ振込情報データ取得(取得したものをentityに格納)
         Dim entityList3 As New List(Of TFurikaeKekkaMeisaiEntity)
-        For Each dtrow As DataRow In tbConvenifurikomikakuho.Rows
-            Dim entity As New TFurikaeKekkaMeisaiEntity
-            entity.dtnengetu = dtrow("dtnengetu") ' データ年月
-            entity.itakuno = dtrow("itakuno") ' 顧客番号（委託者Ｎｏ）
-            entity.ownerno = dtrow("ownerno") ' 顧客番号（オーナーＮｏ）
-            entity.seitono = dtrow("seitono") ' 顧客番号（生徒Ｎｏ）
-            entity.kseqno = dtrow("kseqno") ' 顧客番号内ＳＥＱ番
-            entity.syokbn = "2" ' 処理区分
-            entity.funocd = "" ' 不能コード
-            entity.syuunou = "0" ' 収納状況
-            entity.h_hkdate = "" ' 入金日
-            entity.fkkin = dtrow("kingk") ' 金額
-            Dim tesuryo As String = ""
-            Dim intkonbini As Integer = CnvDec(konbini)
-            If dtrow("insiflg") = "1" Then
-                If IsDBNull(dtrow("code")) Then
-                    intkonbini += insi31500
+        If Not tbConvenifurikomikakuho Is Nothing Then
+            For Each dtrow As DataRow In tbConvenifurikomikakuho.Rows
+                Dim entity As New TFurikaeKekkaMeisaiEntity
+                entity.dtnengetu = dtrow("dtnengetu") ' データ年月
+                entity.itakuno = dtrow("itakuno") ' 顧客番号（委託者Ｎｏ）
+                entity.ownerno = dtrow("ownerno") ' 顧客番号（オーナーＮｏ）
+                entity.seitono = dtrow("seitono") ' 顧客番号（生徒Ｎｏ）
+                entity.kseqno = dtrow("kseqno") ' 顧客番号内ＳＥＱ番
+                entity.syokbn = "2" ' 処理区分
+                entity.funocd = "" ' 不能コード
+                entity.syuunou = "0" ' 収納状況
+                entity.h_hkdate = "" ' 入金日
+                entity.fkkin = dtrow("kingk") ' 金額
+                Dim tesuryo As String = ""
+                Dim intkonbini As Integer = CnvDec(konbini)
+                If dtrow("insiflg") = "1" Then
+                    If IsDBNull(dtrow("code")) Then
+                        intkonbini += insi31500
+                    End If
                 End If
-            End If
-            entity.tesur = intkonbini.ToString ' 手数料金額
-            entity.bankcd = "" ' 振込先銀行番号
-            entity.banmnm = "" ' 振込先銀行名
-            entity.sitencd = "" ' 振込先支店番号
-            entity.sitennm = "" ' 振込先支店名
-            entity.syumoku = "" ' 預金種目
-            entity.kouzano = "" ' 口座番号
-            entity.kouzanm = "" ' 預金者名義人名
-            entity.crt_user_id = dtrow("crt_user_id") ' 登録ユーザーID
-            entity.crt_user_dtm = dtrow("crt_user_dtm") ' 登録日時
-            entity.crt_user_pg_id = dtrow("crt_user_pg_id") ' 登録プログラムID
-            entityList3.Add(entity)
-        Next
+                entity.tesur = intkonbini.ToString ' 手数料金額
+                entity.bankcd = "" ' 振込先銀行番号
+                entity.banmnm = "" ' 振込先銀行名
+                entity.sitencd = "" ' 振込先支店番号
+                entity.sitennm = "" ' 振込先支店名
+                entity.syumoku = "" ' 預金種目
+                entity.kouzano = "" ' 口座番号
+                entity.kouzanm = "" ' 預金者名義人名
+                entity.crt_user_id = dtrow("crt_user_id") ' 登録ユーザーID
+                entity.crt_user_dtm = dtrow("crt_user_dtm") ' 登録日時
+                entity.crt_user_pg_id = dtrow("crt_user_pg_id") ' 登録プログラムID
+                entityList3.Add(entity)
+            Next
+        End If
 
         ' 振替結果明細データ作成
         If Not dba.InsertTFurikaeKekkaMeisai(entityList3) Then
