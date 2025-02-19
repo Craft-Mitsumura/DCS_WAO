@@ -204,6 +204,7 @@ Public Class WKDR040BDBAccess
         sql.AppendLine("on t2.ownerno = t4.bakycd ")
         sql.AppendLine("and t4.bakome is not null ")
         sql.AppendLine("and t4.bakyfg = '0' ")
+        sql.AppendLine("and cast(t2.dtnengetu || '01' as integer) between t4.bafkst and t4.bafked ")
 
         sql.AppendLine("where t_kahenkomoku.dtnengetu = t2.dtnengetu ")
         sql.AppendLine("and t_kahenkomoku.ownerno = t2.ownerno ")

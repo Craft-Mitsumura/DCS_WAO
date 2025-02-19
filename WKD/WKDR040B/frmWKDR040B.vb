@@ -173,7 +173,7 @@ Public Class frmWKDR040B
             ElseIf -9999 <= frikingaku AndAlso frikingaku <= -1 Then
                 ' 調整額データentityへセット
                 Dim entity2 As New TChoseigakuEntity
-                entity2.dtnengetu = sysDate.ToString("yyyyMM") ' データ年月
+                entity2.dtnengetu = nengetuDate.AddMonths(+1).ToString("yyyyMM") ' データ年月
                 entity2.ownerno = meisairow("ownerno") ' オーナーＮｏ
                 entity2.tyouseigaku = frikingaku ' 調整額
                 entity2.crt_user_id = SettingManager.GetInstance.LoginUserName ' 登録ユーザーID
