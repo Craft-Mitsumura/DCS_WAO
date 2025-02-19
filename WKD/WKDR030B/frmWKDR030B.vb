@@ -381,7 +381,7 @@ Public Class frmWKDR030B
         End If
 
         ' インストラクター向け振込データ取得
-        Dim tbInstructorfurikomi As DataTable = dba.getInstructorfurikomi("")
+        Dim tbInstructorfurikomi As DataTable = dba.getInstructorfurikomi(monthAgo)
         Dim entityList2 As New List(Of TInstructorFurikomiEntity)
         For Each dtrow As DataRow In tbInstructorfurikomi.Rows
 

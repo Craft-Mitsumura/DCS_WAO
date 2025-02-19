@@ -247,7 +247,7 @@ Public Class WKDR030BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("select * from w_instructor_furikomi order by dtnengetu, itakuno, ownerno, instno")
+        sql.AppendLine("select * from w_instructor_furikomi where dtnengetu = @dtnengetu order by itakuno, ownerno, instno")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@dtnengetu", dtnengetu)
