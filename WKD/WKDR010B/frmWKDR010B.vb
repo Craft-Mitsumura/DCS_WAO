@@ -160,14 +160,14 @@ Public Class frmWKDR010B
 
         Dim preitakuno As String = ""
         For Each entity As TConveniFurikomiKakuhoEntity In entityList
-            If preitakuno = "" OrElse entity.itakuno <> preitakuno Then
-                If (entity.itakuno <> "00404") Then
+            If preitakuno = "" OrElse entity.kgycd <> preitakuno Then
+                If (entity.kgycd <> "00404") Then
                     errorRecords.Add((row + CnvDec(entity.upd_user_id)).ToString() & ", " & "収納企業コード" & ", " & "収納企業コードが正しくありません。")
                 End If
-                If (IsHalfWidthForHeader(entity.itakuno, row + CnvDec(entity.upd_user_id)) <> "") Then
-                    errorRecords.Add(IsHalfWidthForHeader(entity.itakuno, row + CnvDec(entity.upd_user_id)))
+                If (IsHalfWidthForHeader(entity.kgycd, row + CnvDec(entity.upd_user_id)) <> "") Then
+                    errorRecords.Add(IsHalfWidthForHeader(entity.kgycd, row + CnvDec(entity.upd_user_id)))
                 End If
-                preitakuno = entity.itakuno
+                preitakuno = entity.kgycd
             End If
             Dim errors = ValidateEntity(entity, row + CnvDec(entity.upd_user_id) + 1)
             If errors.Count > 0 Then

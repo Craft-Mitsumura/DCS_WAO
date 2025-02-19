@@ -66,7 +66,7 @@ Public Class frmWKDR050B
         'システム日付+画面.振込日を振込年月日とし、その日が休業日であれば前営業日算出(共通関数「getdaybringforward」を使用)
         Dim hurikomibi As String = ""
         Dim tDaybringforward As New DataTable
-        tDaybringforward = dba.getdaybringforward(nengetuDate.AddMonths(+1).ToString("yyyyMM"))
+        tDaybringforward = dba.getdaybringforward(nengetuDate.AddMonths(+1).ToString("yyyyMM") & day)
         If tDaybringforward.Rows.Count <> 0 Then
             Dim dtrow As DataRow = tDaybringforward.Rows(0)
             hurikomibi = dtrow("getdaybringforward")
