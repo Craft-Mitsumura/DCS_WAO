@@ -174,65 +174,6 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function DeleteTOwnerKekkaShukei(shoriNengatu As String) As Boolean
-
-        Dim ret As Boolean = False
-        Dim dbc As New DBClient
-
-        Dim sql As New StringBuilder()
-        sql.AppendLine("delete from t_owner_kekka_shukei where dtnengetu = @shoriNengatu")
-
-        Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@shoriNengatu", shoriNengatu)
-        }
-
-        ret = dbc.ExecuteNonQuery(sql.ToString(), params)
-
-        Return ret
-
-    End Function
-
-    Public Function InsertTOwnerKekkaShukei(shoriNengatu As String, pgid As String) As Boolean
-
-        Dim ret As Boolean = False
-        Dim dbc As New DBClient
-
-        Dim sql As New StringBuilder()
-        sql.AppendLine("insert into t_owner_kekka_shukei (")
-        sql.AppendLine("    dtnengetu")
-        sql.AppendLine("  , ownerno")
-        sql.AppendLine("  , mnokensu")
-        sql.AppendLine("  , mnokingk")
-        sql.AppendLine("  , crt_user_id")
-        sql.AppendLine("  , crt_user_dtm")
-        sql.AppendLine("  , crt_user_pg_id")
-        sql.AppendLine(")")
-        sql.AppendLine("select") '確定データ
-        sql.AppendLine("    dtnengetu")
-        sql.AppendLine("  , ownerno")
-        sql.AppendLine("  , count(ownerno) mnokensu")
-        sql.AppendLine("  , sum(skingaku) mnokingk")
-        sql.AppendLine("  , @crt_user_id")
-        sql.AppendLine("  , current_timestamp")
-        sql.AppendLine("  , @crt_user_pg_id")
-        sql.AppendLine("from t_kakutei")
-        sql.AppendLine("where dtnengetu = @shoriNengatu")
-        sql.AppendLine("and syokbn = '2'")
-        sql.AppendLine("group by dtnengetu, ownerno")
-        sql.AppendLine("order by dtnengetu, ownerno")
-
-        Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@shoriNengatu", shoriNengatu),
-            New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_pg_id", pgid)
-        }
-
-        ret = dbc.ExecuteNonQuery(sql.ToString(), params)
-
-        Return ret
-
-    End Function
-
     Public Function DeleteWKahenkomoku(shoriNengatu As String) As Boolean
 
         Dim ret As Boolean = False
@@ -332,16 +273,16 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , tk.fufkin")
         sql.AppendLine("  , tk.cszken")
         sql.AppendLine("  , tk.cszkin")
-        sql.AppendLine("  , tk.csmken + coalesce(ok.mnokensu, 0) csmken")
+        sql.AppendLine("  , tk.csmken")
         'sql.AppendLine("  , coalesce(ok.mnokensu, 0) csmken")
-        sql.AppendLine("  , tk.csmkin + coalesce(ok.mnokingk, 0) csmkin")
+        sql.AppendLine("  , tk.csmkin")
         'sql.AppendLine("  , coalesce(ok.mnokingk, 0) csmkin")
         sql.AppendLine("  , tk.fritesu")
         sql.AppendLine("  , @crt_user_id")
         sql.AppendLine("  , current_timestamp")
         sql.AppendLine("  , @crt_user_pg_id")
         sql.AppendLine("from t_kahenkomoku tk")
-        sql.AppendLine("left join t_owner_kekka_shukei ok on tk.dtnengetu = ok.dtnengetu and tk.ownerno = ok.ownerno")
+        'sql.AppendLine("left join t_owner_kekka_shukei ok on tk.dtnengetu = ok.dtnengetu and tk.ownerno = ok.ownerno")
         sql.AppendLine("where tk.dtnengetu = @shoriNengatu")
         sql.AppendLine("order by tk.dtnengetu, tk.itakuno, tk.ownerno, tk.filler")
 
@@ -1020,43 +961,43 @@ Public Class WKDR070BDBAccess
         'sql.AppendLine("  , tesur6nm 手数料６名称")
         'sql.AppendLine("  , tesur6 手数料６金額")
         sql.AppendLine("  , replace(rtrim(replace(tesur1nm, '　', '')), ' ', '　') 手数料１名称")
-        'sql.AppendLine("  , tesur1 手数料１金額")
-        sql.AppendLine("  , nullif(tesur1, 0) 手数料１金額")
+        sql.AppendLine("  , tesur1 手数料１金額")
+        'sql.AppendLine("  , nullif(tesur1, 0) 手数料１金額")
         sql.AppendLine("  , replace(rtrim(replace(tesur2nm, '　', '')), ' ', '　') 手数料２名称")
-        'sql.AppendLine("  , tesur2 手数料２金額")
-        sql.AppendLine("  , nullif(tesur2, 0) 手数料２金額")
+        sql.AppendLine("  , tesur2 手数料２金額")
+        'sql.AppendLine("  , nullif(tesur2, 0) 手数料２金額")
         sql.AppendLine("  , replace(rtrim(replace(tesur3nm, '　', '')), ' ', '　') 手数料３名称")
-        'sql.AppendLine("  , tesur3 手数料３金額")
-        sql.AppendLine("  , nullif(tesur3, 0) 手数料３金額")
+        sql.AppendLine("  , tesur3 手数料３金額")
+        'sql.AppendLine("  , nullif(tesur3, 0) 手数料３金額")
         sql.AppendLine("  , replace(rtrim(replace(tesur4nm, '　', '')), ' ', '　') 手数料４名称")
-        'sql.AppendLine("  , tesur4 手数料４金額")
-        sql.AppendLine("  , nullif(tesur4, 0) 手数料４金額")
+        sql.AppendLine("  , tesur4 手数料４金額")
+        'sql.AppendLine("  , nullif(tesur4, 0) 手数料４金額")
         sql.AppendLine("  , replace(rtrim(replace(tesur5nm, '　', '')), ' ', '　') 手数料５名称")
-        'sql.AppendLine("  , tesur5 手数料５金額")
-        sql.AppendLine("  , nullif(tesur5, 0) 手数料５金額")
+        sql.AppendLine("  , tesur5 手数料５金額")
+        'sql.AppendLine("  , nullif(tesur5, 0) 手数料５金額")
         sql.AppendLine("  , replace(rtrim(replace(tesur6nm, '　', '')), ' ', '　') 手数料６名称")
-        'sql.AppendLine("  , tesur6 手数料６金額")
-        sql.AppendLine("  , nullif(tesur6, 0) 手数料６金額")
-        'sql.AppendLine("  , tyosei 調整額")
-        'sql.AppendLine("  , fuzken 振込済件数")
-        'sql.AppendLine("  , fuzkin 振込済金額")
-        'sql.AppendLine("  , fufken 振込不能件数")
-        'sql.AppendLine("  , fufkin 振込不能金額")
-        'sql.AppendLine("  , cszken コンビニ収納件数")
-        'sql.AppendLine("  , cszkin コンビニ収納金額")
-        'sql.AppendLine("  , csmken コンビニ未納件数")
-        'sql.AppendLine("  , csmkin コンビニ未納金額")
-        'sql.AppendLine("  , fritesu 給与振込手数料")
-        sql.AppendLine("  , nullif(tyosei, 0) 調整額")
-        sql.AppendLine("  , nullif(fuzken, 0) 振込済件数")
-        sql.AppendLine("  , nullif(fuzkin, 0) 振込済金額")
-        sql.AppendLine("  , nullif(fufken, 0) 振込不能件数")
-        sql.AppendLine("  , nullif(fufkin, 0) 振込不能金額")
-        sql.AppendLine("  , nullif(cszken, 0) コンビニ収納件数")
-        sql.AppendLine("  , nullif(cszkin, 0) コンビニ収納金額")
-        sql.AppendLine("  , nullif(csmken, 0) コンビニ未納件数")
-        sql.AppendLine("  , nullif(csmkin, 0) コンビニ未納金額")
-        sql.AppendLine("  , nullif(fritesu, 0) 給与振込手数料")
+        sql.AppendLine("  , tesur6 手数料６金額")
+        'sql.AppendLine("  , nullif(tesur6, 0) 手数料６金額")
+        sql.AppendLine("  , tyosei 調整額")
+        sql.AppendLine("  , fuzken 振込済件数")
+        sql.AppendLine("  , fuzkin 振込済金額")
+        sql.AppendLine("  , fufken 振込不能件数")
+        sql.AppendLine("  , fufkin 振込不能金額")
+        sql.AppendLine("  , cszken コンビニ収納件数")
+        sql.AppendLine("  , cszkin コンビニ収納金額")
+        sql.AppendLine("  , csmken コンビニ未納件数")
+        sql.AppendLine("  , csmkin コンビニ未納金額")
+        sql.AppendLine("  , fritesu 給与振込手数料")
+        'sql.AppendLine("  , nullif(tyosei, 0) 調整額")
+        'sql.AppendLine("  , nullif(fuzken, 0) 振込済件数")
+        'sql.AppendLine("  , nullif(fuzkin, 0) 振込済金額")
+        'sql.AppendLine("  , nullif(fufken, 0) 振込不能件数")
+        'sql.AppendLine("  , nullif(fufkin, 0) 振込不能金額")
+        'sql.AppendLine("  , nullif(cszken, 0) コンビニ収納件数")
+        'sql.AppendLine("  , nullif(cszkin, 0) コンビニ収納金額")
+        'sql.AppendLine("  , nullif(csmken, 0) コンビニ未納件数")
+        'sql.AppendLine("  , nullif(csmkin, 0) コンビニ未納金額")
+        'sql.AppendLine("  , nullif(fritesu, 0) 給与振込手数料")
         sql.AppendLine("  , 0 オンライン決済")
         sql.AppendLine("  , 0 オンライン決済")
         sql.AppendLine("  , 0 オンライン未決済")

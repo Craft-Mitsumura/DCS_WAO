@@ -110,16 +110,6 @@ Public Class frmWKDR070B
             Return
         End If
 
-        'オーナー別集計結果データ削除
-        If Not dba.DeleteTOwnerKekkaShukei(monthAgo) Then
-            Return
-        End If
-
-        'オーナー別結果集計データ登録
-        If Not dba.InsertTOwnerKekkaShukei(monthAgo, Me.ProductName) Then
-            Return
-        End If
-
         '中間可変項目削除
         If Not dba.DeleteWKahenkomoku(monthAgo) Then
             Return
