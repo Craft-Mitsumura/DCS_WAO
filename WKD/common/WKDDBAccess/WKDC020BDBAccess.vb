@@ -539,7 +539,7 @@ Public Class WKDC020BDBAccess
         sql.AppendLine("    kfk.dtnengetu") ' データ年月
         sql.AppendLine("  , kfk.ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("  , count(*) kensu") ' 件数
-        sql.AppendLine("  , sum(tsu.sinki) kingaku") ' 金額
+        sql.AppendLine("  , sum((select sinki from m_tesuryo)) kingaku") ' 金額
         sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
         sql.AppendLine("  , current_timestamp") ' 登録日時
         sql.AppendLine("  , @crt_user_pg_id") ' 登録プログラムID
@@ -548,7 +548,12 @@ Public Class WKDC020BDBAccess
         sql.AppendLine("  , null") ' 更新プログラムID
         sql.AppendLine("from")
         sql.AppendLine("    t_kozafurikae kfk")
-        sql.AppendLine("  , m_tesuryo tsu")
+        sql.AppendLine("inner join tchogoshamaster hog")
+        sql.AppendLine("on kfk.ownerno = hog.cakycd")
+        sql.AppendLine("and kfk.seitono = hog.cahgcd")
+        sql.AppendLine("and hog.cakyfg = '0'")
+        sql.AppendLine("and cast(kfk.dtnengetu || '01' as integer) between hog.cafkst and hog.cafked")
+        sql.AppendLine("and kfk.dtnengetu = substr(cast(hog.cafkst as character varying),1,6)")
         sql.AppendLine("where kfk.dtnengetu = @dtnengetu")
         sql.AppendLine("group by")
         sql.AppendLine("    kfk.dtnengetu") ' データ年月
