@@ -237,7 +237,7 @@ Public Class frmWKDR040B
         If folderDialog.ShowDialog() = DialogResult.OK Then
             Dim directoryPath As String = folderDialog.SelectedPath
 
-            Dim fileNames As String() = {"引渡票.csv", "総合振込ファイル.csv"}
+            Dim fileNames As String() = {"引渡票.csv", "NWAo070S.S01"}
             Dim hikiwatasiFilePath As String = ""
             Dim sougouFilePath As String = ""
             Dim sougouFilePath2 As String = ""
@@ -248,7 +248,7 @@ Public Class frmWKDR040B
                     hikiwatasiFilePath = WriteCsvData(recordListHikiwatasiFile, directoryPath, fileName,,, True)
                 Else
                     sougouFilePath = WriteCsvData(recordListSougouFile, directoryPath, fileName)
-                    sougouFilePath2 = WriteCsvData(recordListSougouFile, directoryPath, "総合振込ファイル2.csv")
+                    sougouFilePath2 = WriteCsvData(recordListSougouFile, directoryPath, "NWAo070S.F01")
                 End If
             Next
 
