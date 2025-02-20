@@ -268,10 +268,11 @@ Public Class WKDR020BDBAccess
         sql.AppendLine("    , a.upd_user_dtm ")
         sql.AppendLine("    , a.upd_user_pg_id ")
         sql.AppendLine("    , b.code ")
-        sql.AppendLine("FROM t_conveni_furikomi_kakuho a ")
-        sql.AppendLine("left join m_kubun b ")
-        sql.AppendLine("on a.cvscd = b.code ")
-        sql.AppendLine("where dtnengetu = @dtnengetu ")
+        sql.AppendLine("FROM t_conveni_furikomi_kakuho a")
+        sql.AppendLine("left join m_kubun b")
+        sql.AppendLine("on b.kubun = '01'")
+        sql.AppendLine("and a.cvscd = b.code")
+        sql.AppendLine("where dtnengetu = @dtnengetu")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@dtnengetu", dtnengetu)
