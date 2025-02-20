@@ -894,7 +894,27 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("where dtnengetu = @shoriNengatu")
         sql.AppendLine("and ((syokbn = '1')")
         sql.AppendLine("or (syokbn = '2' and syuunou = '0'))")
-        sql.AppendLine("order by dtnengetu, itakuno, ownerno, filler")
+
+        sql.AppendLine("union")
+
+        sql.AppendLine("select")
+        sql.AppendLine("    cfr.ownerno オーナー№")
+        sql.AppendLine("  , cfr.seitono 生徒№")
+        sql.AppendLine("  , cfr.dtnengetu 締年月")
+        sql.AppendLine("  , '2' ""区分(1:振替,2:ｺﾝﾋﾞﾆ)""")
+        sql.AppendLine("  , null ""振替不能コード(0:振替済)""")
+        sql.AppendLine("  , '1' ""コンビニ収納状況(0:収納済)""")
+        sql.AppendLine("  , cfr.skingaku 振替金額")
+        sql.AppendLine("  , case when coalesce((select insi_zei + shohi_zei from wao.t_zei where dtnengetu >= @shoriNengatu order by dtnengetu desc limit 1), 0) = 0 then (select konbini from m_tesuryo)")
+        sql.AppendLine("         when coalesce((select insi_zei + shohi_zei from wao.t_zei where dtnengetu >= @shoriNengatu order by dtnengetu desc limit 1), 0) > cfr.skingaku then (select konbini from m_tesuryo)")
+        sql.AppendLine("    else (select konbini + insi31500 from m_tesuryo)")
+        sql.AppendLine("    end 手数料")
+        sql.AppendLine("from t_conveni_furikomi cfr")
+        sql.AppendLine("where cfr.dtnengetu = @shoriNengatu")
+        sql.AppendLine("and not exists (select * from t_conveni_furikomi_kakuho cfk")
+        sql.AppendLine("where cfr.dtnengetu = cfk.dtnengetu and cfr.ownerno = cfk.ownerno and cfr.seitono = cfk.seitono and cfr.kseqno = cfk.kseqno)")
+
+        sql.AppendLine("order by 締年月, オーナー№, ""区分(1:振替,2:ｺﾝﾋﾞﾆ)"", 生徒№")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@shoriNengatu", shoriNengatu),
