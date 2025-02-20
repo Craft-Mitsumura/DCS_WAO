@@ -268,8 +268,8 @@ Public Class WKDR020BDBAccess
         sql.AppendLine("    , a.upd_user_dtm ")
         sql.AppendLine("    , a.upd_user_pg_id ")
         sql.AppendLine("    , b.code ")
-        sql.AppendLine("FROM wao.t_conveni_furikomi_kakuho a ")
-        sql.AppendLine("left join wao.m_kubun b ")
+        sql.AppendLine("FROM t_conveni_furikomi_kakuho a ")
+        sql.AppendLine("left join m_kubun b ")
         sql.AppendLine("on a.cvscd = b.code ")
         sql.AppendLine("where dtnengetu = @dtnengetu ")
 

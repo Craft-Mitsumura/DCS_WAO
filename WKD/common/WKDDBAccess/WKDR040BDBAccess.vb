@@ -11,7 +11,7 @@ Public Class WKDR040BDBAccess
         Dim sql As New StringBuilder()
 
         sql.AppendLine("select * ")
-        sql.AppendLine("from wao.t_kahenkomoku ")
+        sql.AppendLine("from t_kahenkomoku ")
         sql.AppendLine("where dtnengetu = @dtnengetu ")
         sql.AppendLine("order by itakuno, ownerno ")
 
@@ -33,7 +33,7 @@ Public Class WKDR040BDBAccess
         Dim sql As New StringBuilder()
 
         sql.AppendLine("select * ")
-        sql.AppendLine("from wao.t_kahenkomoku t1 ")
+        sql.AppendLine("from t_kahenkomoku t1 ")
         sql.AppendLine("    left join tbkeiyakushamaster t2 ")
         sql.AppendLine("    on t1.ownerno = t2.bakycd ")
         sql.AppendLine("    and t2.bakome is not null ")
@@ -59,7 +59,7 @@ Public Class WKDR040BDBAccess
         Dim sql As New StringBuilder()
 
         sql.AppendLine("select * ")
-        sql.AppendLine("from wao.t_instructor_furikomi ")
+        sql.AppendLine("from t_instructor_furikomi ")
         sql.AppendLine("where dtnengetu = @dtnengetu ")
 
         Dim params As New List(Of NpgsqlParameter) From {
@@ -80,7 +80,7 @@ Public Class WKDR040BDBAccess
         Dim sql As New StringBuilder()
 
         sql.AppendLine("select * ")
-        sql.AppendLine("from wao.t_furikae_kekka_meisai ")
+        sql.AppendLine("from t_furikae_kekka_meisai ")
         sql.AppendLine("where dtnengetu = @dtnengetu ")
 
         Dim params As New List(Of NpgsqlParameter) From {
@@ -121,7 +121,7 @@ Public Class WKDR040BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("update wao.t_kahenkomoku  ")
+        sql.AppendLine("update t_kahenkomoku  ")
         sql.AppendLine("set  ")
         '結果・手数料設定
         sql.AppendLine("   tesur1 = t2.tesur1, ")
@@ -158,7 +158,7 @@ Public Class WKDR040BDBAccess
         sql.AppendLine(" 	  		a.itakuno, ")
         sql.AppendLine(" 	  		a.ownerno, ")
         sql.AppendLine(" 		  	b.tesur1, ")
-        sql.AppendLine(" 		  	b.tesur3, ")
+        sql.AppendLine(" 		  	(select sum(fkinzeg) from t_instructor_furikomi where dtnengetu = a.dtnengetu and ownerno = a.ownerno) tesur3, ")
         sql.AppendLine(" 		  	b.fuzken, ")
         sql.AppendLine(" 		  	b.fuzkin, ")
         sql.AppendLine(" 		  	b.fufken, ")
@@ -168,33 +168,27 @@ Public Class WKDR040BDBAccess
         sql.AppendLine(" 		  	((select count(*) from t_conveni_furikomi where dtnengetu = a.dtnengetu and ownerno = a.ownerno) - b.cszken) csmken, ")
         sql.AppendLine(" 		  	((select sum(skingaku) from t_conveni_furikomi where dtnengetu = a.dtnengetu and ownerno = a.ownerno) - b.cszkin) csmkin, ")
         sql.AppendLine(" 		  	e.fritesu ")
-        sql.AppendLine(" 	from wao.t_kahenkomoku a ")
+        sql.AppendLine(" 	from t_kahenkomoku a ")
         sql.AppendLine(" 	left join (select d.dtnengetu, d.ownerno, ")
         sql.AppendLine(" 					SUM(case when d.syokbn <> '3' then d.tesur else '0' end) as tesur1, ")
-        sql.AppendLine(" 					MAX(case when d.syokbn <> '3' then c.fkinzeg else '0' end) as tesur3, ")
         sql.AppendLine(" 				  	SUM(case when d.syokbn = '1' and d.funocd = '0' then 1 else 0 end ) as fuzken, ")
         sql.AppendLine(" 				  	SUM(case when d.syokbn = '1' and d.funocd = '0' then d.fkkin else 0 end ) as fuzkin, ")
         sql.AppendLine(" 				  	SUM(case when d.syokbn = '1' and d.funocd <> '0' then 1 else 0 end ) as fufken, ")
         sql.AppendLine(" 				  	SUM(case when d.syokbn = '1' and d.funocd <> '0' then d.fkkin else 0 end ) as fufkin, ")
         sql.AppendLine(" 				  	SUM(case when d.syokbn = '2' and d.syuunou = '0' then 1 else 0 end ) as cszken, ")
         sql.AppendLine(" 				  	SUM(case when d.syokbn = '2' and d.syuunou = '0' then d.fkkin else 0 end ) as cszkin ")
-        sql.AppendLine(" 				from wao.t_furikae_kekka_meisai d ")
-        sql.AppendLine(" 				left join (select dtnengetu, ownerno, SUM(fkinzeg) fkinzeg ")
-        sql.AppendLine(" 							from wao.t_instructor_furikomi ")
-        sql.AppendLine(" 							group by dtnengetu, ownerno) c ")
-        sql.AppendLine(" 				on d.ownerno = c.ownerno ")
-        sql.AppendLine(" 				and d.dtnengetu = c.dtnengetu ")
+        sql.AppendLine(" 				from t_furikae_kekka_meisai d ")
         sql.AppendLine(" 				group by d.dtnengetu, d.ownerno) b ")
         sql.AppendLine(" 	on a.ownerno = b.ownerno ")
         sql.AppendLine(" 	and a.dtnengetu = b.dtnengetu ")
         sql.AppendLine(" 	left join (select dtnengetu, ownerno, SUM(fritesu) fritesu ")
-        sql.AppendLine(" 				from wao.t_instructor_furikomi ")
+        sql.AppendLine(" 				from t_instructor_furikomi ")
         sql.AppendLine(" 				group by dtnengetu, ownerno) e ")
         sql.AppendLine(" 	on a.ownerno = e.ownerno ")
         sql.AppendLine(" 	and a.dtnengetu = e.dtnengetu ")
         sql.AppendLine(" 	where a.dtnengetu = @dtnengetu ) t2 ")
 
-        sql.AppendLine("left join wao.t_choseigaku t3 ")
+        sql.AppendLine("left join t_choseigaku t3 ")
         sql.AppendLine("on t2.dtnengetu = t3.dtnengetu ")
         sql.AppendLine("and t2.ownerno = t3.ownerno ")
 

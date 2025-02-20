@@ -13,7 +13,7 @@ Public Class WKDR060BDBAccess
         Dim formattedDate As String = DateTime.ParseExact(Shorinengetsu27, "yyyy/MM/dd", Nothing).ToString("yyyyMMdd")
 
         ' SQLクエリ
-        sql.AppendLine("select wao.getdaypushback(@Shorinengetu) as result")
+        sql.AppendLine("select getdaypushback(@Shorinengetu) as result")
 
         ' パラメータを設定
         Dim params As New List(Of NpgsqlParameter) From {
