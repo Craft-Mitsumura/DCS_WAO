@@ -83,9 +83,8 @@ Public Class WKDC020BDBAccess
         ' 振替開始次月繰越データに存在する場合、振替開始年月を処理年月とする
         sql.AppendLine("  , case exists (select * from t_furikae_jigetsu_kurikoshi kur where kur.dtnengetu = @dtnengetu and kur.ownerno = hog.cakycd and kur.seitono = hog.cahgcd)")
         sql.AppendLine("        when true then")
-        sql.AppendLine("        case ((substr(cast(hog.cafkst as character varying),1,6) <= @dtnengetu")
-        sql.AppendLine("            and substr(cast(hog.cafked as character varying),1,6) >= @dtnengetu)")
-        sql.AppendLine("            or (substr(cast(hog.cafked as character varying),1,6) < @dtnengetu))")
+        sql.AppendLine("        case (substr(cast(hog.cafkst as character varying),1,6) > @dtnengetu")
+        sql.AppendLine("            or substr(cast(hog.cafked as character varying),1,6) < @dtnengetu)")
         sql.AppendLine("            when true then '999999'")
         sql.AppendLine("            else @dtnengetu")
         sql.AppendLine("        end")
