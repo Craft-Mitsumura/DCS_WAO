@@ -144,7 +144,7 @@ Public Class frmWKDR040B
             Dim frikingaku As Decimal = 0
             frikingaku = CnvDec(meisairow("fuzkin")) + CnvDec(meisairow("cszkin")) + CnvDec(meisairow("tyosei")) - (CnvDec(meisairow("tesur1")) + CnvDec(meisairow("tesur2")) + CnvDec(meisairow("tesur3")) + CnvDec(meisairow("tesur4")) + CnvDec(meisairow("tesur5")) + CnvDec(meisairow("tesur6"))) - CnvDec(meisairow("fritesu"))
             If 1 <= frikingaku Then
-                recordListSougouFile.Rows.Add("2" & CnvDec(meisairow("bankcd")).ToString("0000") & StrDup(15, " ") & CnvDec(meisairow("sitencd")).ToString("000") & StrDup(15, " ") & StrDup(4, " ") & meisairow("syumoku") & meisairow("kouzano") & GetMidByte(meisairow("kouzanm") & StrDup(30, " "), 1, 30) & CnvDec(frikingaku).ToString("0000000000") & "1" & meisairow("itakuno") & meisairow("ownerno") & meisairow("filler") & "0" & StrDup(8, " "))
+                recordListSougouFile.Rows.Add("2" & CnvDec(meisairow("bankcd")).ToString("0000") & StrDup(15, " ") & CnvDec(meisairow("sitencd")).ToString("000") & StrDup(15, " ") & StrDup(4, " ") & meisairow("syumoku") & meisairow("kouzano") & GetMidByte(StrConv(StrConv(meisairow("kouzanm"), VbStrConv.Uppercase), VbStrConv.Narrow) & StrDup(30, " "), 1, 30) & CnvDec(frikingaku).ToString("0000000000") & "1" & meisairow("itakuno") & meisairow("ownerno") & meisairow("filler") & "0" & StrDup(8, " "))
 
                 ' 口座振込依頼データentityへセット
                 Dim entity As New TKozafurikaeIraiEntity
