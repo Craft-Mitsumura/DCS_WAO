@@ -92,7 +92,7 @@ Partial Class frmWKDR050B
         Me.txtShoriNengetsu.MaxLength = 2
         Me.txtShoriNengetsu.Name = "txtShoriNengetsu"
         Me.txtShoriNengetsu.Size = New System.Drawing.Size(20, 19)
-        Me.txtShoriNengetsu.TabIndex = 19
+        Me.txtShoriNengetsu.TabIndex = 3
         Me.txtShoriNengetsu.Text = "31"
         '
         'Label1
@@ -113,7 +113,7 @@ Partial Class frmWKDR050B
         Me.btnOutput.Name = "btnOutput"
         Me.btnOutput.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.btnOutput.Size = New System.Drawing.Size(89, 33)
-        Me.btnOutput.TabIndex = 17
+        Me.btnOutput.TabIndex = 0
         Me.btnOutput.Text = "出力(&O)"
         Me.btnOutput.UseVisualStyleBackColor = False
         '
@@ -126,7 +126,7 @@ Partial Class frmWKDR050B
         Me.btnClose.Name = "btnClose"
         Me.btnClose.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.btnClose.Size = New System.Drawing.Size(89, 33)
-        Me.btnClose.TabIndex = 18
+        Me.btnClose.TabIndex = 1
         Me.btnClose.Text = "終了(&X)"
         Me.btnClose.UseVisualStyleBackColor = False
         '
@@ -137,7 +137,7 @@ Partial Class frmWKDR050B
         Me.txtshorinengetu.MaxLength = 7
         Me.txtshorinengetu.Name = "txtshorinengetu"
         Me.txtshorinengetu.Size = New System.Drawing.Size(53, 19)
-        Me.txtshorinengetu.TabIndex = 21
+        Me.txtshorinengetu.TabIndex = 2
         Me.txtshorinengetu.Text = "yyyy/MM"
         '
         'Label2

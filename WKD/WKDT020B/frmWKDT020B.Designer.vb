@@ -137,7 +137,7 @@ Partial Class frmWKDT020B
         Me.btnClose.Name = "btnClose"
         Me.btnClose.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.btnClose.Size = New System.Drawing.Size(89, 33)
-        Me.btnClose.TabIndex = 6
+        Me.btnClose.TabIndex = 1
         Me.btnClose.Text = "終了(&X)"
         Me.btnClose.UseVisualStyleBackColor = False
         '
@@ -150,7 +150,7 @@ Partial Class frmWKDT020B
         Me.btnOutput.Name = "btnOutput"
         Me.btnOutput.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.btnOutput.Size = New System.Drawing.Size(89, 33)
-        Me.btnOutput.TabIndex = 5
+        Me.btnOutput.TabIndex = 0
         Me.btnOutput.Text = "出力(&O)"
         Me.btnOutput.UseVisualStyleBackColor = False
         '
@@ -170,7 +170,7 @@ Partial Class frmWKDT020B
         Me.txtShoriNengetsu.MaxLength = 7
         Me.txtShoriNengetsu.Name = "txtShoriNengetsu"
         Me.txtShoriNengetsu.Size = New System.Drawing.Size(59, 19)
-        Me.txtShoriNengetsu.TabIndex = 4
+        Me.txtShoriNengetsu.TabIndex = 3
         Me.txtShoriNengetsu.Text = "9999"
         '
         'frmWKDT020B
