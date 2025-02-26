@@ -55,6 +55,8 @@ Public Class frmWKDR010B
 
         ' データ年月
         Dim dtnengetu As String = String.Empty
+        'システム日付の前月を該当年月とする
+        Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
 
         ' 合計項目
         Dim skingakuSum As Decimal = 0
@@ -77,6 +79,7 @@ Public Class frmWKDR010B
 
         Dim savereckbn As String = ""
         Dim saveflg As Boolean = False
+        Dim dtnengetuerrflg As Boolean = False
 
         ' TextFieldParserを使って固定長のファイルを読み込む（Shift-JIS指定）
         Using parser As New TextFieldParser(filePath, Encoding.GetEncoding("Shift_JIS"))
@@ -107,6 +110,9 @@ Public Class frmWKDR010B
                     Dim fields As String() = GetFieldString(rec, 1, 2, 8, 4, 2, 1, 5, 5, 16, 1, 6, 1, 6, 1, 3, 7, 8, 8, 8, 8, 4, 15)
                     Dim entity As New TConveniFurikomiKakuhoEntity
                     entity.dtnengetu = GetMidByte((fields(2)), 1, 6)
+                    If entity.dtnengetu <> monthAgo Then
+                        dtnengetuerrflg = True
+                    End If
                     entity.itakuno = If(tableHeaderList(i).kgycd = "00404", "33948", tableHeaderList(i).kgycd)
                     entity.ownerno = GetMidByte((fields(8)), 2, 7)
                     entity.seitono = GetMidByte((fields(8)), 9, 8)
@@ -147,6 +153,12 @@ Public Class frmWKDR010B
         '明細が0件の場合処理終了
         If entityList.Count = 0 Then
             MessageBox.Show("取込対象データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Exit Sub
+        End If
+
+        'データ年月＝システム日付の前月でない場合はエラーとする
+        If dtnengetuerrflg Then
+            MessageBox.Show("処理年月と取込対象データのデータ年月が一致していません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
@@ -193,8 +205,6 @@ Public Class frmWKDR010B
         End If
 
         Dim dba As New WKDR010BDBAccess
-        'システム日付の前月を該当年月とする
-        Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
 
         'コンビニ振込確報データのデータ年月が該当年月と同一のデータを削除
         If Not dba.WDelete() Then
