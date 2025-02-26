@@ -424,7 +424,7 @@ Public Class frmWKDR030B
             entity.meigkn = dtrow("meigkn") ' 預金者名義（カナ）
             entity.fkinzeg = fkinzeg ' 振込金額（税引後）
             entity.zeigak = zeigak ' 源泉徴収税額
-            entity.frinengetu = sysDate.ToString("yyyyMM") ' 振込年月
+            entity.frinengetu = dtrow("dtnengetu") ' 振込年月
             entity.yubin = dtrow("yubin") ' 郵便番号
             entity.namekj = dtrow("namekj") ' 氏名（漢字）
             entity.namekn = dtrow("namekn") ' 氏名（カナ）
