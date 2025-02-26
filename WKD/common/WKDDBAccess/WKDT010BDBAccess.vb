@@ -33,7 +33,7 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("from")
         sql.AppendLine("(")
         sql.AppendLine("    select")
-        sql.AppendLine("        substr(a.dtnengetu,1,4) || '12'") ' データ年月
+        sql.AppendLine("        substr(a.dtnengetu,1,4) || '12' dtnengetu") ' データ年月
         sql.AppendLine("      , a.itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("      , a.ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("      , a.instno") ' 顧客番号（インストラクターＮｏ）
@@ -100,8 +100,10 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("      , b.fritesu") ' 振込手数料
         sql.AppendLine("      , b.nencho_flg") ' 年調資料出力フラグ
         sql.AppendLine(") fin")
-        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd and own.bakome is not null and own.bakyfg = '0')")
-        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null and own2.bakyfg = '0')")
+        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd and own.bakome is not null and own.bakyfg = '0'")
+        sql.AppendLine(" and cast(fin.dtnengetu || '01' as integer) between own.bafkst and own.bafked)")
+        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null and own2.bakyfg = '0'")
+        sql.AppendLine(" and cast(fin.dtnengetu || '01' as integer) between own2.bafkst and own2.bafked)")
         sql.AppendLine(")")
 
         Dim params As New List(Of NpgsqlParameter) From {
