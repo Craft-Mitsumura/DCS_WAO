@@ -128,9 +128,9 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("    dtnengetu") ' データ年月 支払年度元号
         sql.AppendLine("  , '' dtnen") ' データ年 支払年度（和暦）
         sql.AppendLine("  , instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("  , jusyo1 || jusyo2 jusyo") ' インストラクター様住所
-        sql.AppendLine("  , namekn") ' インストラクター様氏名（カナ）
-        sql.AppendLine("  , namekj") ' インストラクター様氏名（漢字）
+        sql.AppendLine("  , replace(rtrim(replace(replace(jusyo1, '  ', '　'), '　', ' ')), ' ', '　') || replace(rtrim(replace(replace(jusyo2, '  ', '　'), '　', ' ')), ' ', '　') jusyo")
+        sql.AppendLine("  , rtrim(namekn)") ' インストラクター様氏名（カナ）
+        sql.AppendLine("  , replace(rtrim(replace(replace(namekj, '  ', '　'), '　', ' ')), ' ', '　')") ' インストラクター様氏名（漢字）
         sql.AppendLine("  , '給与・賞与'") ' 種別
         sql.AppendLine("  , fkinzem") ' 支払金額
         sql.AppendLine("  , zeigak") ' 源泉徴収税額
@@ -156,7 +156,7 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("  , seiyyyy || seimm || seidd seiyyyymmdd") ' 生年月日（和暦）
         sql.AppendLine("  , houjinno") ' 法人番号
         sql.AppendLine("  , postno") ' オーナー郵便番号
-        sql.AppendLine("  , addr1 || addr2 addr") ' オーナー住所
+        sql.AppendLine("  , rtrim(addr1) || rtrim(addr2) addr") ' オーナー住所
         sql.AppendLine("  , name") ' オーナー氏名
         sql.AppendLine("  , nm.chohyoshurui") ' 帳票種類
         sql.AppendLine("  , 'ＷＡＯ'") ' 業者コード
