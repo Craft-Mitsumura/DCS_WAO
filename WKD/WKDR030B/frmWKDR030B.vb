@@ -239,6 +239,8 @@ Public Class frmWKDR030B
 
         ' 処理日の前月の年月を保持する
         Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
+        ' 画面の処理日+1か月を保持する
+        Dim syorinengetu As String = CnvDat(txtShoriNengetsu.Text & "/01").AddMonths(1).ToString("yyyyMM")
 
         Dim entityList As New List(Of TInstructorFurikomiEntity)
         Dim lastCnt As Integer = 0
@@ -424,7 +426,7 @@ Public Class frmWKDR030B
             entity.meigkn = dtrow("meigkn") ' 預金者名義（カナ）
             entity.fkinzeg = fkinzeg ' 振込金額（税引後）
             entity.zeigak = zeigak ' 源泉徴収税額
-            entity.frinengetu = dtrow("dtnengetu") ' 振込年月
+            entity.frinengetu = syorinengetu ' 振込年月
             entity.yubin = dtrow("yubin") ' 郵便番号
             entity.namekj = dtrow("namekj") ' 氏名（漢字）
             entity.namekn = dtrow("namekn") ' 氏名（カナ）
