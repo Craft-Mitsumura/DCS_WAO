@@ -489,6 +489,7 @@ Public Class WKDC020BDBAccess
         sql.AppendLine("from")
         sql.AppendLine("    w_hogosha hog")
         sql.AppendLine("where hog.dtnengetu = @dtnengetu")
+        sql.AppendLine("and   hog.kaisiym = @dtnengetu")
         ' 確定データに存在しない
         sql.AppendLine("and   not exists (")
         sql.AppendLine("    select * from t_kakutei kak where kak.dtnengetu = hog.dtnengetu and kak.itakuno = hog.itakuno and kak.ownerno = hog.ownerno and kak.seitono = hog.seitono")
