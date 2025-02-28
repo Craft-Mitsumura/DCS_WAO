@@ -66,7 +66,7 @@ Public Class WKDC030BDBAccess
         sql.AppendLine("           else (select konbini + insi31500 from m_tesuryo)")
         sql.AppendLine("           end")
         sql.AppendLine("  end 手数料")
-        sql.AppendLine(", case syokbn when '2' then castnm else null end 生徒氏名")
+        sql.AppendLine(", case syokbn when '2' then regexp_replace(castnm,'\r|\n|\r\n','') else null end 生徒氏名")
         sql.AppendLine(", case syokbn when '2' then cakkbn else null end 金融機関区分")
         sql.AppendLine(", case syokbn when '2' then case cakkbn when '1' then '9900' else cabank end else null end 銀行コード")
         sql.AppendLine(", case syokbn when '2' then case cakkbn when '1' then caybtk else casitn end else null end 支店コード")
