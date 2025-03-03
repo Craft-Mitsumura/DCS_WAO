@@ -33,7 +33,7 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("from")
         sql.AppendLine("(")
         sql.AppendLine("    select")
-        sql.AppendLine("        max(a.dtnengetu) dtnengetu") ' データ年月
+        sql.AppendLine("        max(a.frinengetu) dtnengetu") ' データ年月
         sql.AppendLine("      , a.itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("      , a.ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("      , a.instno") ' 顧客番号（インストラクターＮｏ）
@@ -67,11 +67,11 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("    left join t_instructor_furikomi b on a.itakuno = b.itakuno")
         sql.AppendLine("    and   a.ownerno = b.ownerno")
         sql.AppendLine("    and   a.instno = b.instno")
-        sql.AppendLine("    and   b.dtnengetu = (select max(dtnengetu) from t_instructor_furikomi c")
+        sql.AppendLine("    and   b.frinengetu = (select max(frinengetu) from t_instructor_furikomi c")
         sql.AppendLine("    where c.itakuno = a.itakuno")
         sql.AppendLine("    and   c.ownerno = a.ownerno")
         sql.AppendLine("    and   c.instno = a.instno")
-        'sql.AppendLine("    and   c.dtnengetu <= @sime2)")
+        'sql.AppendLine("    and   c.frinengetu <= @sime2)")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
@@ -86,7 +86,7 @@ Public Class WKDT030BDBAccess
                 i += 1
                 params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
                 params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
-                sqlIn.Append("(@ownerno" & i.ToString & ", case when c.dtnengetu <= @sime" & i.ToString & " then 1 else 0 end),")
+                sqlIn.Append("(@ownerno" & i.ToString & ", case when c.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
             Next
 
             If 0 < sqlIn.Length Then
@@ -96,7 +96,7 @@ Public Class WKDT030BDBAccess
             End If
         End If
 
-        sql.AppendLine("    where substr(a.dtnengetu,1,4) = substr(@sime1,1,4)")
+        sql.AppendLine("    where substr(a.frinengetu,1,4) = substr(@sime1,1,4)")
         sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
 
         If Not targetList Is Nothing Then
@@ -107,7 +107,7 @@ Public Class WKDT030BDBAccess
                 i += 1
                 params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
                 params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
-                sqlIn.Append("(@ownerno" & i.ToString & ", case when a.dtnengetu <= @sime" & i.ToString & " then 1 else 0 end),")
+                sqlIn.Append("(@ownerno" & i.ToString & ", case when a.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
             Next
 
             If 0 < sqlIn.Length Then
@@ -116,8 +116,6 @@ Public Class WKDT030BDBAccess
                 sql.AppendLine("and (a.ownerno, 1) in (" & sqlIn.ToString & ")")
             End If
         End If
-
-
 
         sql.AppendLine("    group by")
         sql.AppendLine("        a.itakuno") ' 顧客番号（委託者Ｎｏ）
@@ -145,10 +143,10 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("      , b.fritesu") ' 振込手数料
         sql.AppendLine("      , b.nencho_flg") ' 年調資料出力フラグ
         sql.AppendLine(") fin")
-        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd and own.bakome is not null and own.bakyfg = '0'")
-        sql.AppendLine(" and cast(fin.dtnengetu || '01' as integer) between own.bafkst and own.bafked)")
-        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null and own2.bakyfg = '0'")
-        sql.AppendLine(" and cast(fin.dtnengetu || '01' as integer) between own2.bafkst and own2.bafked)")
+        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd and own.bakome is not null")
+        sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own.bafkst and own.bafked)")
+        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null")
+        sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own2.bafkst and own2.bafked)")
         sql.AppendLine(")")
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
@@ -164,9 +162,9 @@ Public Class WKDT030BDBAccess
 
         Dim sql As New StringBuilder()
         sql.AppendLine("update t_instructor_furikomi set")
-        sql.AppendLine("    tainen = substr(dtnengetu,1,4)")
-        sql.AppendLine("  , taituki = substr(dtnengetu,5,2)")
-        sql.AppendLine("  , taihi = extract(day from (date_trunc('month', to_date(substr(dtnengetu, 1, 6), 'YYYYMM')) + interval '1 month - 1 day'))")
+        sql.AppendLine("    tainen = substr(frinengetu,1,4)")
+        sql.AppendLine("  , taituki = substr(frinengetu,5,2)")
+        sql.AppendLine("  , taihi = extract(day from (date_trunc('month', to_date(substr(frinengetu, 1, 6), 'YYYYMM')) + interval '1 month - 1 day'))")
         sql.AppendLine("  , nencho_flg = '1'")
         sql.AppendLine("  , upd_user_id = @upd_user_id")
         sql.AppendLine("  , upd_user_dtm = current_timestamp")
@@ -220,18 +218,18 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("  , '年末調整未済'") ' 摘要欄
         sql.AppendLine("  , nm.otsuran") ' 乙欄
         sql.AppendLine("  , case") ' 就職欄
-        sql.AppendLine("        when substring(dtnengetu,1,4) = nyunen then '＊'")
+        sql.AppendLine("        when substring(frinengetu,1,4) = nyunen then '＊'")
         sql.AppendLine("        else ''")
         sql.AppendLine("    end shushokuran")
         sql.AppendLine("  , case") ' 退職欄
-        sql.AppendLine("        when substring(dtnengetu,1,4) = tainen then '＊'")
+        sql.AppendLine("        when substring(frinengetu,1,4) = tainen then '＊'")
         sql.AppendLine("        else ''")
         sql.AppendLine("    end taishokuran")
         sql.AppendLine("  , case") ' 入社/退職年月日（和暦）
-        sql.AppendLine("        when substring(dtnengetu,1,4) = tainen then tainen || taituki || taihi")
+        sql.AppendLine("        when substring(frinengetu,1,4) = tainen then tainen || taituki || taihi")
         sql.AppendLine("        else ")
         sql.AppendLine("            case")
-        sql.AppendLine("                when substring(dtnengetu,1,4) = nyunen then nyunen || nyutuki || nyuhi")
+        sql.AppendLine("                when substring(frinengetu,1,4) = nyunen then nyunen || nyutuki || nyuhi")
         sql.AppendLine("                else ''")
         sql.AppendLine("            end")
         sql.AppendLine("    end nyutaishabi")
@@ -291,8 +289,9 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("and (nm.gs <> 3 or coalesce(fkinzem,0) >= 500000 and nm.gs = 3)")
 
         sql.AppendLine("order by")
-        sql.AppendLine("    ownerno") ' 顧客番号（オーナーＮｏ）
+        sql.AppendLine("    nys_ownerno") ' 名寄オーナーNo
         sql.AppendLine("  , instno") ' 顧客番号（インストラクターＮｏ）
+        sql.AppendLine("  , ownerno") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("  , nm.gs") ' 帳票種類番号
 
         dt = dbc.GetData(sql.ToString(), params)
