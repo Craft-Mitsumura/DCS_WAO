@@ -20,7 +20,7 @@ Public Class frmWKDR010B
         lblSysDate.AutoSize = True
 
         ' 処理年月
-        txtShoriNengetsu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
+        txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
 
     End Sub
 
@@ -56,7 +56,7 @@ Public Class frmWKDR010B
         ' データ年月
         Dim dtnengetu As String = String.Empty
         'システム日付の前月を該当年月とする
-        Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
+        Dim monthAgo As String = CnvDat(txtShoriNengetsu.Text & "/01").AddMonths(-1).ToString("yyyyMM")
 
         ' 合計項目
         Dim skingakuSum As Decimal = 0

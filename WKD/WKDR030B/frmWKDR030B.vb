@@ -18,7 +18,7 @@ Public Class frmWKDR030B
         lblSysDate.AutoSize = True
 
         ' 処理年月
-        txtShoriNengetsu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
+        txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
     End Sub
 
     Private Sub btnInput_Click(sender As Object, e As EventArgs) Handles btnInput.Click
@@ -69,8 +69,7 @@ Public Class frmWKDR030B
         Dim dtnengetu As String = String.Empty
 
         ' 処理日の前月の年月を保持する
-        'Dim monthAgo As String = sysDate.AddMonths(-1).ToString("yyyyMM")
-        Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
+        Dim monthAgo As String = CnvDat(txtShoriNengetsu.Text & "/01").AddMonths(-1).ToString("yyyyMM")
 
         ' 合計項目
         Dim skingakuSum As Decimal = 0
@@ -169,7 +168,7 @@ Public Class frmWKDR030B
 
         '④ ヘッダーレコードのデータ年月＝システム日付の前月でない場合はエラーとする。
         If dtnengetu <> monthAgo Then
-            errorRecords.Add(1 & "," & "データ年月" & "," & "データ年月が処理日の前月になっていません。")
+            errorRecords.Add(1 & "," & "データ年月" & "," & "データ年月が処理年月の前月になっていません。")
         End If
 
         For Each entity As TKahenkomokuEntity In entityList
@@ -238,9 +237,9 @@ Public Class frmWKDR030B
         Dim dtnengetu As String = String.Empty
 
         ' 処理日の前月の年月を保持する
-        Dim monthAgo As String = txtShoriNengetsu.Text.Replace("/", "")
-        ' 画面の処理日+1か月を保持する
-        Dim syorinengetu As String = CnvDat(txtShoriNengetsu.Text & "/01").AddMonths(1).ToString("yyyyMM")
+        Dim monthAgo As String = CnvDat(txtShoriNengetsu.Text & "/01").AddMonths(-1).ToString("yyyyMM")
+        ' 画面の処理日を保持する
+        Dim syorinengetu As String = txtShoriNengetsu.Text.Replace("/", "")
 
         Dim entityList As New List(Of TInstructorFurikomiEntity)
         Dim lastCnt As Integer = 0
@@ -341,7 +340,7 @@ Public Class frmWKDR030B
 
         '④ ヘッダーレコードのデータ年月＝システム日付の前月でない場合はエラーとする。
         If dtnengetu <> monthAgo Then
-            errorRecords.Add(1 & "," & "データ年月" & "," & "データ年月が処理日の前月になっていません。")
+            errorRecords.Add(1 & "," & "データ年月" & "," & "データ年月が処理年月の前月になっていません。")
         End If
 
         For Each entity As TInstructorFurikomiEntity In entityList

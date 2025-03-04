@@ -60,6 +60,8 @@ Public Class frmWKDR020B
         ' データ年月
         Dim dtnengetu As String = String.Empty
         dtnengetu = txtShoriNengetsu.Text.Replace("/", "")
+        ' 処理日の前月の年月を保持する
+        Dim monthAgo As String = CnvDat(txtShoriNengetsu.Text & "/01").AddMonths(-1).ToString("yyyyMM")
 
         ' 引落日
         Dim dt As DataTable = Nothing
@@ -176,6 +178,11 @@ Public Class frmWKDR020B
         ' ①先頭レコードは、データ区分=1以外であればエラーとする
         If savereckbn <> "1" Then
             errorRecords.Add("1,レコード区分" & "," & "ファイルの先頭がヘッダーレコードになっていません。 ")
+        End If
+
+        '引落日＝システム日付の前月でない場合はエラーとする
+        If gaitonengetu <> monthAgo Then
+            errorRecords.Add(1 & "," & "引落日" & "," & "引落日が処理年月の前月になっていません。")
         End If
 
         For Each entity As TKozafurikaeSeikyuEntity In entityList
