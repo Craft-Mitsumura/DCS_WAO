@@ -3,13 +3,13 @@ Imports System.Text
 
 Public Class WKDR070BDBAccess
 
-    Public Function GetDayPushBack(shoriNengatu As String) As DataTable
+    Public Function GetDayBringForward(shoriNengatu As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("select * from getdaypushback(@shoriNengatu)")
+        sql.AppendLine("select * from getdaybringforward(@shoriNengatu)")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@shoriNengatu", shoriNengatu)
@@ -953,7 +953,7 @@ Public Class WKDR070BDBAccess
 
     End Function
 
-    Public Function GetWTsuchishoSyukeibu(shoriNengatu As String, ngZengetu As Integer, ngn As String, ngnPushback As String) As DataTable
+    Public Function GetWTsuchishoSyukeibu(shoriNengatu As String, ngZengetu As Integer, ngn As String, ngnNyukinbi As String) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -964,7 +964,7 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , replace(rtrim(replace(koumei, '　', ' ')), ' ', '　') 校名")
         sql.AppendLine("  , @ngZengetu 締年月")
         sql.AppendLine("  , @ngn 結果発行日")
-        sql.AppendLine("  , @ngnPushback オーナー入金日")
+        sql.AppendLine("  , @ngnNyukinbi オーナー入金日")
         'sql.AppendLine("  , tesur1nm 手数料１名称")
         'sql.AppendLine("  , tesur1 手数料１金額")
         'sql.AppendLine("  , tesur2nm 手数料２名称")
@@ -1029,7 +1029,7 @@ Public Class WKDR070BDBAccess
         New NpgsqlParameter("@shoriNengatu", shoriNengatu),
         New NpgsqlParameter("@ngZengetu", ngZengetu),
         New NpgsqlParameter("@ngn", ngn),
-        New NpgsqlParameter("@ngnPushback", ngnPushback)
+        New NpgsqlParameter("@ngnNyukinbi", ngnNyukinbi)
         }
 
         dt = dbc.GetData(sql.ToString(), params)

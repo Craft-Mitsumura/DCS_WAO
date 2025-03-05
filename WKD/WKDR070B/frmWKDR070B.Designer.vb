@@ -136,7 +136,7 @@ Partial Class frmWKDR070B
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(53, 12)
         Me.Label2.TabIndex = 9
-        Me.Label2.Text = "処理年月"
+        Me.Label2.Text = "対象年月"
         '
         'txtshorinengetu
         '
@@ -146,7 +146,6 @@ Partial Class frmWKDR070B
         Me.txtshorinengetu.Name = "txtshorinengetu"
         Me.txtshorinengetu.Size = New System.Drawing.Size(53, 19)
         Me.txtshorinengetu.TabIndex = 2
-        Me.txtshorinengetu.Text = "yyyy/MM"
         '
         'frmWKDR070B
         '

@@ -2,11 +2,10 @@
 Imports Com.Wao.KDS.CustomFunction
 Imports System.Text
 Imports System.Windows.Forms
-Imports System.Windows
 Imports System.IO
-Imports System.Text.RegularExpressions
 
 Public Class frmWKDR050B
+
     Private Sub frmWKDR050B_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         ' システム日付
@@ -17,41 +16,29 @@ Public Class frmWKDR050B
         lblSysDate.Text = sysDate.ToString("yyyy/MM/dd")
         lblSysDate.AutoSize = True
 
-        Dim ngn As String = sysDate.ToString("yyyyMMdd")
+        txtShoriNengetu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
+        txtFurikomibi.Text = "15"
 
-        dt = dba.getdaybringforward(ngn)
-        If dt.Rows.Count > 0 Then
-            txtShoriNengetsu.Text = dt.Rows(0)(0).ToString.Substring(6, 2)
-        Else
-            txtShoriNengetsu.Text = ngn.ToString.Substring(6, 2)
-        End If
-
-        ' 処理年月
-        'txtShoriNengetsu.Text = sysDate.ToString("dd")
-        txtShoriNengetsu.Enabled = True
-
-        txtshorinengetu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
-        'txtshorinengetu.Enabled = False
     End Sub
 
     Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click
 
         ' 日付論理チェック
         Dim nengetuDate As Date
-        If Not Date.TryParseExact(txtshorinengetu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
-            MessageBox.Show("処理年月が正しくありません。（" & txtshorinengetu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        If Not Date.TryParseExact(txtShoriNengetu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtShoriNengetu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
 
         ' システム日付
         Dim sysDate As Date = Now
-        Dim monthAgo As String = txtshorinengetu.Text.Replace("/", "")
+        Dim monthAgo As String = txtShoriNengetu.Text.Replace("/", "")
 
         Dim recordListKyuyoFile As New DataTable
         Dim recordListHikiwatasiFile As New DataTable
 
         '振込日の日付論理チェック
-        Dim day As String = txtShoriNengetsu.Text
+        Dim day As String = txtFurikomibi.Text
 
         If String.IsNullOrWhiteSpace(day) Or day.Length > 2 Or DateTime.TryParseExact(day & "/" & DateTime.Now.Month.ToString("D2") & "/" & DateTime.Now.Year, "dd/MM/yyyy", Nothing, Globalization.DateTimeStyles.None, Nothing) = False Then
             MessageBox.Show("振込日が正しくありません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
