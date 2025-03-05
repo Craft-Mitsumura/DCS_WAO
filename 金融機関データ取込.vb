@@ -248,6 +248,7 @@ Friend Class frmBankDataImport
                         preBankcd = arrContent(x, 0)
                         cnt += 1
                         pgrProgressBar.Value = IIf(cnt <= pgrProgressBar.Maximum, cnt, pgrProgressBar.Maximum)
+                        Application.DoEvents()
                     Next
 
                     cnt2 += 1
