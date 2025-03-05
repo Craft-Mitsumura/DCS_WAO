@@ -113,9 +113,9 @@ Partial Class frmWKDR060B
         Me.Label1.AutoSize = True
         Me.Label1.Location = New System.Drawing.Point(46, 98)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(65, 12)
+        Me.Label1.Size = New System.Drawing.Size(41, 12)
         Me.Label1.TabIndex = 3
-        Me.Label1.Text = "処理年月日"
+        Me.Label1.Text = "作成日"
         '
         'txtShoriNengetsu
         '
@@ -125,7 +125,6 @@ Partial Class frmWKDR060B
         Me.txtShoriNengetsu.Name = "txtShoriNengetsu"
         Me.txtShoriNengetsu.Size = New System.Drawing.Size(69, 19)
         Me.txtShoriNengetsu.TabIndex = 2
-        Me.txtShoriNengetsu.Text = "9999"
         '
         'frmWKDR060B
         '

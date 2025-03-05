@@ -31,8 +31,8 @@ Partial Class frmWKDR040B
         Me.btnOutput = New System.Windows.Forms.Button()
         Me.btnClose = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.txtShoriNengetsu = New System.Windows.Forms.TextBox()
-        Me.txtshorinengetu = New System.Windows.Forms.TextBox()
+        Me.txtFurikomibi = New System.Windows.Forms.TextBox()
+        Me.txtShoriNengetu = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.MainMenu1.SuspendLayout()
         Me.SuspendLayout()
@@ -119,26 +119,25 @@ Partial Class frmWKDR040B
         Me.Label1.TabIndex = 17
         Me.Label1.Text = "振込日"
         '
-        'txtShoriNengetsu
+        'txtFurikomibi
         '
-        Me.txtShoriNengetsu.AcceptsReturn = True
-        Me.txtShoriNengetsu.ImeMode = System.Windows.Forms.ImeMode.Disable
-        Me.txtShoriNengetsu.Location = New System.Drawing.Point(115, 130)
-        Me.txtShoriNengetsu.MaxLength = 2
-        Me.txtShoriNengetsu.Name = "txtShoriNengetsu"
-        Me.txtShoriNengetsu.Size = New System.Drawing.Size(20, 19)
-        Me.txtShoriNengetsu.TabIndex = 4
-        Me.txtShoriNengetsu.Text = "31"
+        Me.txtFurikomibi.AcceptsReturn = True
+        Me.txtFurikomibi.ImeMode = System.Windows.Forms.ImeMode.Disable
+        Me.txtFurikomibi.Location = New System.Drawing.Point(115, 130)
+        Me.txtFurikomibi.MaxLength = 2
+        Me.txtFurikomibi.Name = "txtFurikomibi"
+        Me.txtFurikomibi.Size = New System.Drawing.Size(20, 19)
+        Me.txtFurikomibi.TabIndex = 4
+        Me.txtFurikomibi.Text = "15"
         '
-        'txtshorinengetu
+        'txtShoriNengetu
         '
-        Me.txtshorinengetu.ImeMode = System.Windows.Forms.ImeMode.Disable
-        Me.txtshorinengetu.Location = New System.Drawing.Point(115, 95)
-        Me.txtshorinengetu.MaxLength = 7
-        Me.txtshorinengetu.Name = "txtshorinengetu"
-        Me.txtshorinengetu.Size = New System.Drawing.Size(53, 19)
-        Me.txtshorinengetu.TabIndex = 3
-        Me.txtshorinengetu.Text = "yyyy/MM"
+        Me.txtShoriNengetu.ImeMode = System.Windows.Forms.ImeMode.Disable
+        Me.txtShoriNengetu.Location = New System.Drawing.Point(115, 95)
+        Me.txtShoriNengetu.MaxLength = 7
+        Me.txtShoriNengetu.Name = "txtShoriNengetu"
+        Me.txtShoriNengetu.Size = New System.Drawing.Size(53, 19)
+        Me.txtShoriNengetu.TabIndex = 3
         '
         'Label2
         '
@@ -147,16 +146,16 @@ Partial Class frmWKDR040B
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(53, 12)
         Me.Label2.TabIndex = 21
-        Me.Label2.Text = "処理年月"
+        Me.Label2.Text = "対象年月"
         '
         'frmWKDR040B
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(466, 333)
-        Me.Controls.Add(Me.txtshorinengetu)
+        Me.Controls.Add(Me.txtShoriNengetu)
         Me.Controls.Add(Me.Label2)
-        Me.Controls.Add(Me.txtShoriNengetsu)
+        Me.Controls.Add(Me.txtFurikomibi)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.lblSysDate)
         Me.Controls.Add(Me.MainMenu1)
@@ -179,7 +178,7 @@ Partial Class frmWKDR040B
     Public WithEvents btnOutput As Windows.Forms.Button
     Public WithEvents btnClose As Windows.Forms.Button
     Friend WithEvents Label1 As Windows.Forms.Label
-    Friend WithEvents txtShoriNengetsu As Windows.Forms.TextBox
-    Friend WithEvents txtshorinengetu As Windows.Forms.TextBox
+    Friend WithEvents txtFurikomibi As Windows.Forms.TextBox
+    Friend WithEvents txtShoriNengetu As Windows.Forms.TextBox
     Friend WithEvents Label2 As Windows.Forms.Label
 End Class

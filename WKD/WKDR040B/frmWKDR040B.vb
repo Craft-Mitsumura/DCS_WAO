@@ -3,7 +3,6 @@ Imports Com.Wao.KDS.CustomFunction
 Imports System.Text
 Imports System.Windows.Forms
 Imports System.IO
-Imports System.Security.Cryptography
 
 Public Class frmWKDR040B
 
@@ -17,17 +16,9 @@ Public Class frmWKDR040B
         lblSysDate.Text = sysDate.ToString("yyyy/MM/dd")
         lblSysDate.AutoSize = True
 
-        Dim ngn As String = sysDate.ToString("yyyyMMdd")
+        txtShoriNengetu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
+        txtFurikomibi.Text = "15"
 
-        dt = dba.getdaybringforward(ngn)
-        If dt.Rows.Count > 0 Then
-            txtShoriNengetsu.Text = dt.Rows(0)(0).ToString.Substring(6, 2)
-        Else
-            txtShoriNengetsu.Text = ngn.ToString.Substring(6, 2)
-        End If
-
-        txtshorinengetu.Text = sysDate.AddMonths(-1).ToString("yyyy/MM")
-        ''txtshorinengetu.Enabled = False
     End Sub
 
     Private Sub btnOutput_Click(sender As Object, e As EventArgs) Handles btnOutput.Click
@@ -37,8 +28,8 @@ Public Class frmWKDR040B
 
         ' 日付論理チェック
         Dim nengetuDate As Date
-        If Not Date.TryParseExact(txtshorinengetu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
-            MessageBox.Show("処理年月が正しくありません。（" & txtshorinengetu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        If Not Date.TryParseExact(txtShoriNengetu.Text, "yyyy/MM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+            MessageBox.Show("処理年月が正しくありません。（" & txtShoriNengetu.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
 
@@ -46,7 +37,7 @@ Public Class frmWKDR040B
         Dim sysDate As Date = Now
         ' 処理日の前月の年月を保持する
         'Dim monthAgo As String = sysDate.AddMonths(-1).ToString("yyyyMM")
-        Dim monthAgo As String = txtshorinengetu.Text.Replace("/", "")
+        Dim monthAgo As String = txtShoriNengetu.Text.Replace("/", "")
 
         Dim recordListSougouFile As New DataTable
         Dim recordListHikiwatasiFile As New DataTable
@@ -88,7 +79,7 @@ Public Class frmWKDR040B
         End If
 
         ' 振込日：日付論理チェック
-        Dim day As String = txtShoriNengetsu.Text
+        Dim day As String = txtFurikomibi.Text
         ' 0パディング
         If day.Length < 2 Then
             day = day.PadLeft(2, "0")

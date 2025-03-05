@@ -47,23 +47,22 @@ Public Class frmWKDR070B
             Return
         End If
 
+        Dim ngn As String = nyukinDate.AddMonths(+1).ToString("yyyyMM") & txtNyukinbi.Text
         Dim nyukinDate2 As Date
-        If Not DateTime.TryParseExact(txtNyukinbi.Text, "dd", Nothing, Globalization.DateTimeStyles.None, nyukinDate2) Then
+        If Not DateTime.TryParseExact(ngn, "yyyyMMdd", Nothing, Globalization.DateTimeStyles.None, nyukinDate2) Then
             MessageBox.Show("入金日が正しくありません。（" & txtNyukinbi.Text & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
 
-        'Dim ngn As String = Now.ToString("yyyyMM") & txtNyukinbi.Text
-        Dim ngn As String = nyukinDate.AddMonths(+1).ToString("yyyyMM") & nyukinDate2.ToString("dd")
         Dim ngn2 As String = Now.ToString("yyyyMMdd")
 
-        '翌日取得
-        dt = dba.GetDayPushBack(ngn)
-        Dim ngnpushback As String
+        '前日取得
+        dt = dba.GetDayBringForward(ngn)
+        Dim ngnbringforward As String
         If dt.Rows.Count > 0 Then
-            ngnpushback = dt.Rows(0)(0).ToString()
+            ngnbringforward = dt.Rows(0)(0).ToString()
         Else
-            ngnpushback = 0
+            ngnbringforward = 0
         End If
 
         '手数料マスタ取得
@@ -217,7 +216,7 @@ Public Class frmWKDR070B
         'MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         '集計部csv
-        dtTs = dba.GetWTsuchishoSyukeibu(monthAgo, monthAgo, ngn2, ngnpushback)
+        dtTs = dba.GetWTsuchishoSyukeibu(monthAgo, monthAgo, ngn2, ngnbringforward)
         If dtTs.Rows.Count > 0 Then
             ' ＣＳＶファイル出力
             Dim msg2 As New StringBuilder()
