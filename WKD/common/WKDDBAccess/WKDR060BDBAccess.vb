@@ -124,8 +124,8 @@ Public Class WKDR060BDBAccess
         sql.AppendLine("  end yokuchou") ' 翌月調整分
         'sql.AppendLine("  , lpad( cast(coalesce(kensu, 0) as character varying) , 7 ,'0') kensu") ' 新規登録件数
         sql.AppendLine("  , lpad( cast(coalesce(kensu, 0) as character varying) , 5 ,'0') kensu") ' 新規登録件数
+        sql.AppendLine("  , lpad( cast(coalesce(kingaku, 0) as character varying) , 5 ,'0') kingaku") ' 新規登録料
         sql.AppendLine("  , lpad( cast(0 as character varying) , 7 ,'0') inshi") ' 印紙代合計
-        sql.AppendLine("  , lpad( cast(coalesce(kingaku, 0) as character varying) , 5 ,'0') kingaku") ' 新録料
         sql.AppendLine("  , @kozahurikae kozahurikae") ' 振替日
         sql.AppendLine("  , @konbinishuno konbinishuno") ' 収納日
         sql.AppendLine("  , '' hikiraku") ' 引落日
