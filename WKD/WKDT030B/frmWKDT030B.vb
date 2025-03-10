@@ -181,7 +181,7 @@ Public Class frmWKDT030B
         ' ＣＳＶファイル出力
         Dim fileName As String = "解約先分源泉徴収票.csv"
         Dim filePath As String = WriteCsvData(dt1, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
-        MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        msg.AppendLine("「" & filePath & "」が出力されました。")
 
         ' 解約先分給与支払報告書に出力する行を抽出
         Dim query2 = From row In dt.AsEnumerable()

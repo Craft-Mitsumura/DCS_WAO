@@ -6,6 +6,7 @@ Imports System.Windows
 Imports System.IO
 Imports System.Text.RegularExpressions
 Imports System.Security.Cryptography
+Imports Excel = Microsoft.Office.Interop.Excel
 
 Public Class frmWKDC020B
 
@@ -197,12 +198,162 @@ Public Class frmWKDC020B
         dtOut2.Rows.Add("", "総合計", dtF.Rows.Count.ToString("#,##0"), kingakuSum.ToString("#,##0")) ' 総合計
 
         ' ファイル出力
-        Dim fileName2 As String = "委託者別請求金額・件数一覧データ.csv"
-        Dim filePath2 As String = WriteCsvData(dtOut2, SettingManager.GetInstance.OutputDirectory, fileName2, True, True, True)
+        Dim fileName2 As String = "委託者別請求金額・件数一覧データ.xlsx"
+        Dim filePath2 As String = WriteExcelData(dtOut2, SettingManager.GetInstance.OutputDirectory, fileName2, True, True)
         msg.AppendLine("・" & filePath2)
 
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
+    End Sub
+
+    Public Shared Function WriteExcelData(ByVal dt As DataTable, ByVal fileDirectory As String, ByVal fileName As String, Optional ByVal topRowIsFieldName As Boolean = False, Optional ByVal tableNameOutput As Boolean = False) As String
+        ' フォルダ名を確認・作成
+        If Not fileDirectory.EndsWith("\") Then fileDirectory += "\"
+        If Not Directory.Exists(fileDirectory) Then Directory.CreateDirectory(fileDirectory)
+
+        ' フルパス取得
+        Dim filePath As String = fileDirectory & fileName
+
+        ' Excelアプリケーションの起動
+        Dim excelApp As Excel.Application = New Excel.Application()
+        Dim excelBook As Excel.Workbook = excelApp.Workbooks.Add()
+        Dim excelSheet As Excel.Worksheet = CType(excelBook.Sheets(1), Excel.Worksheet)
+
+        Try
+            Dim rowIndex As Integer = 1
+            Dim colIndex As Integer = 1
+
+            'titleを出力
+            If tableNameOutput Then
+                ' タイトル行を改行で分割
+                Dim titleLines As String() = dt.ToString().Split(New String() {vbCrLf}, StringSplitOptions.None)
+
+                ' A1 に "三菱ＵＦＪファクター株式会社　御中"
+                excelSheet.Cells(1, 1).Value = titleLines(0).Trim()
+
+                ' C2 にカンマで分割したタイトルを出力
+                Dim titleParts As String() = titleLines(1).Split(","c) ' カンマで分割
+                If titleParts.Length > 1 Then
+                    ' G2 に "＊＊＊委託者別請求金額・件数一覧＊＊＊"
+                    excelSheet.Cells(2, 7).Value = titleParts(0).Trim()
+                    excelSheet.Cells(2, 7).HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter ' セルを中央揃え
+
+                    ' K2 に "作成日yyyy.MM.dd"
+                    excelSheet.Cells(2, 11).Value = titleParts(1).Trim()
+                End If
+
+                ' G3 に "振替日：yyyy/MM/dd"
+                excelSheet.Cells(3, 7).Value = titleLines(2).Trim()
+                excelSheet.Cells(3, 7).HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter ' セルを中央揃え
+            End If
+
+            ' フィールド名の出力
+            If topRowIsFieldName Then
+                rowIndex = 4 ' フィールド名出力をA4から開始
+                colIndex = 3 ' 列の初期位置
+
+                ' C4 に "委託者コード"
+                excelSheet.Cells(rowIndex, colIndex).Value = dt.Columns(0).ColumnName.Trim()
+                excelSheet.Cells(rowIndex, colIndex).HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft ' セルを左揃え
+
+                colIndex += 2 ' 次の列へ
+
+                ' G4 に "委託者名"
+                excelSheet.Cells(rowIndex, colIndex).Value = dt.Columns(1).ColumnName.Trim()
+                excelSheet.Cells(rowIndex, colIndex).HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft ' セルを左揃え
+
+                colIndex += 4 ' 次の列へ
+
+                ' I4 に "請求件数"
+                excelSheet.Cells(rowIndex, colIndex).Value = dt.Columns(2).ColumnName.Trim()
+                excelSheet.Cells(rowIndex, colIndex).HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft ' セルを左揃え
+
+                colIndex += 2 ' 次の列へ
+
+                ' L4 に "請求金額"
+                excelSheet.Cells(rowIndex, colIndex).Value = dt.Columns(3).ColumnName.Trim()
+                excelSheet.Cells(rowIndex, colIndex).HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft ' セルを左揃え
+
+                rowIndex += 1 ' フィールド名行が終わったら次の行へ進む
+            End If
+
+            ' データの書き込み
+            For Each dr As DataRow In dt.Rows
+                If dr(0).ToString().Trim() = New String("-"c, 132) Then
+                    colIndex = 1 ' 各行の初期列位置
+                    '各行の値を順に出力する
+                    excelSheet.Cells(rowIndex, colIndex).Value = dr(0).ToString().Trim() ' 1列目
+                Else
+                    colIndex = 3 ' 各行の初期列位置
+                    excelSheet.Cells(rowIndex, colIndex).Value = dr(0).ToString().Trim() ' 1列目
+                    excelSheet.Cells(rowIndex, colIndex).HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft ' セルを左揃え
+                End If
+
+                If dr(1).ToString().Trim() = "総合計" Then
+                    colIndex += 5
+                    excelSheet.Cells(rowIndex, colIndex).Value = dr(1).ToString().Trim() ' 2列目
+                    excelSheet.Cells(rowIndex, colIndex).HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft ' セルを左揃え
+                    colIndex += 1
+                Else
+                    colIndex += 2
+                    excelSheet.Cells(rowIndex, colIndex).Value = dr(1).ToString().Trim() ' 2列目
+                    excelSheet.Cells(rowIndex, colIndex).HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft ' セルを左揃え
+                    colIndex += 4
+                End If
+
+                excelSheet.Cells(rowIndex, colIndex).Value = dr(2).ToString().Trim() ' 3列目
+                excelSheet.Cells(rowIndex, colIndex).NumberFormat = "#,##0"
+                excelSheet.Cells(rowIndex, colIndex).HorizontalAlignment = Excel.XlHAlign.xlHAlignRight ' セルを右揃え
+                colIndex += 2
+
+                excelSheet.Cells(rowIndex, colIndex).Value = dr(3).ToString().Trim() ' 4列目
+                excelSheet.Cells(rowIndex, colIndex).NumberFormat = "#,##0"
+                excelSheet.Cells(rowIndex, colIndex).HorizontalAlignment = Excel.XlHAlign.xlHAlignRight ' セルを右揃え
+                colIndex += 1
+
+                rowIndex += 1 ' 次の行へ進む
+            Next
+
+            ' **印刷設定: 用紙の向きを横向きに設定**
+            excelSheet.PageSetup.Orientation = Excel.XlPageOrientation.xlLandscape
+
+            ' **印刷時にページの中央に配置（水平中央揃え）**
+            excelSheet.PageSetup.CenterHorizontally = True
+
+            ' **Excelファイルの保存（確認メッセージなしで上書き）**
+            excelApp.DisplayAlerts = False
+            excelBook.SaveAs(filePath)
+            excelApp.DisplayAlerts = True
+            excelBook.Close()
+            excelApp.Quit()
+
+        Catch ex As Exception
+            Console.WriteLine("エラー：" & ex.Message)
+        Finally
+            ' COMオブジェクトの解放
+            ReleaseObject(excelSheet)
+            ReleaseObject(excelBook)
+            ReleaseObject(excelApp)
+        End Try
+
+        Return filePath
+    End Function
+
+    ''' <summary>
+    ''' COMオブジェクトの解放を行う（メモリリーク防止）
+    ''' </summary>
+    ''' <param name="obj">解放するオブジェクト</param>
+    Private Shared Sub ReleaseObject(ByVal obj As Object)
+        Try
+            If obj IsNot Nothing Then
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(obj)
+                obj = Nothing
+            End If
+        Catch ex As Exception
+            obj = Nothing
+        Finally
+            GC.Collect()
+        End Try
     End Sub
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
