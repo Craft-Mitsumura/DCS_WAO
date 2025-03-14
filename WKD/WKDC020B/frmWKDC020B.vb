@@ -325,7 +325,7 @@ Public Class frmWKDC020B
 
         ' **Excelファイルの保存（確認メッセージなしで上書き）**
         excelApp.DisplayAlerts = False
-        excelBook.SaveAs(filePath)
+        excelBook.SaveAs(filePath, Excel.XlFileFormat.xlOpenXMLWorkbook)
         excelApp.DisplayAlerts = True
         excelBook.Close()
         excelApp.Quit()

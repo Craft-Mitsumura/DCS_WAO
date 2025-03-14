@@ -244,6 +244,24 @@ Public Class frmWKDT020B
         Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True, True)
         msg.AppendLine("・" & filePath3)
 
+        ' 各CSVファイルの行数をカウント
+        Dim count1 As Integer = dt.Rows.Count
+        Dim count3 As Integer = dt3.Rows.Count
+
+        ' 件数を記録するDataTableを作成
+        Dim dt4 As New DataTable()
+        dt4.Columns.Add("ファイル名", GetType(String))
+        dt4.Columns.Add("件数", GetType(Integer))
+
+        ' 各ファイルの名前と件数をDataTableに追加
+        dt4.Rows.Add("退職源泉徴収票.csv", count1)
+        dt4.Rows.Add("退職送付状.csv", count3)
+
+        ' 件数.csv を出力
+        Dim fileName4 As String = "退職分件数.csv"
+        Dim filePath4 As String = WriteCsvData(dt4, SettingManager.GetInstance.OutputDirectory, fileName4,,, True)
+        msg.AppendLine("・" & filePath4)
+
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
