@@ -369,7 +369,6 @@ Friend Class frmFurikaeReqImportAuto
         sql = sql & ",CAKYED = " & chgDate
         sql = sql & ",CAUSID = '" & MainModule.gcImportHogoshaUser & "_Adjust'"
         sql = sql & ",CAUPDT = current_timestamp"
-        sql = sql & ",onlinekb = 1" & vbCrLf
         sql = sql & " WHERE CAKYCD = " & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & vbCrLf
         sql = sql & "   AND CAHGCD = " & gdDBS.ColumnDataSet(arrContent(row, 2), vEnd:=True) & vbCrLf
         sql = sql & "   AND CASQNO <> " & gdDBS.ColumnDataSet(arrContent(row, 0), "L", vEnd:=True) & vbCrLf
