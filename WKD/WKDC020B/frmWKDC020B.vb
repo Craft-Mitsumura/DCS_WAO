@@ -199,7 +199,7 @@ Public Class frmWKDC020B
         dtOut2.Rows.Add("", "総合計", dtF.Rows.Count.ToString("#,##0"), kingakuSum.ToString("#,##0")) ' 総合計
 
         ' ファイル出力
-        Dim fileName2 As String = "委託者別請求金額・件数一覧データ.xlsx"
+        Dim fileName2 As String = "委託者別請求金額・件数一覧.xlsx"
         Dim filePath2 As String = WriteExcelData(dtOut2, SettingManager.GetInstance.OutputDirectory, fileName2, True, True)
         msg.AppendLine("・" & filePath2)
 
