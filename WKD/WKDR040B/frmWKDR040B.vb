@@ -222,29 +222,33 @@ Public Class frmWKDR040B
         recordListHikiwatasiFile.Rows.Add("委託者コード", "委託者名", "振込件数", "振込金額")
         recordListHikiwatasiFile.Rows.Add(itakuno, itaknm, strcnt, strgoukei)
 
-        ' ＣＳＶファイル出力
-        Dim folderDialog As New FolderBrowserDialog()
-
-        If folderDialog.ShowDialog() = DialogResult.OK Then
-            Dim directoryPath As String = folderDialog.SelectedPath
-
-            Dim fileNames As String() = {"引渡票.csv", "NWAo070S.S01"}
-            Dim hikiwatasiFilePath As String = ""
-            Dim sougouFilePath As String = ""
-            Dim sougouFilePath2 As String = ""
-
-            For Each fileName As String In fileNames
-                Dim fullPath As String = Path.Combine(directoryPath, fileName)
-                If fileName = "引渡票.csv" Then
-                    hikiwatasiFilePath = WriteCsvData(recordListHikiwatasiFile, directoryPath, fileName,,, True)
-                Else
-                    sougouFilePath = WriteCsvData(recordListSougouFile, directoryPath, fileName)
-                    sougouFilePath2 = WriteCsvData(recordListSougouFile, directoryPath, "NWAo070S.F01")
-                End If
-            Next
-
-            MessageBox.Show("「" & hikiwatasiFilePath & "」" & vbCrLf & "「 " & sougouFilePath & "」" & vbCrLf & "「 " & sougouFilePath2 & "」" & vbCrLf & "が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        If SettingManager.GetInstance.OutputType = SettingManager.EnmOutputType.Specify Then
+            Dim folderDialog As New FolderBrowserDialog()
+            If folderDialog.ShowDialog() = DialogResult.OK Then
+                SettingManager.GetInstance.OutputDirectory = folderDialog.SelectedPath
+            Else
+                Return
+            End If
         End If
+
+        ' ＣＳＶファイル出力
+        Dim fileNames As String() = {"総合振込データＭＴ引渡票.csv", "NWAo070S.S01"}
+        Dim hikiwatasiFilePath As String = ""
+        Dim sougouFilePath As String = ""
+        Dim sougouFilePath2 As String = ""
+
+        For Each fileName As String In fileNames
+            Dim fullPath As String = Path.Combine(SettingManager.GetInstance.OutputDirectory, fileName)
+            If fileName = "総合振込データＭＴ引渡票.csv" Then
+                hikiwatasiFilePath = WriteCsvData(recordListHikiwatasiFile, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+            Else
+                sougouFilePath = WriteCsvData(recordListSougouFile, SettingManager.GetInstance.OutputDirectory, fileName)
+                sougouFilePath2 = WriteCsvData(recordListSougouFile, SettingManager.GetInstance.OutputDirectory, "NWAo070S.F01")
+            End If
+        Next
+
+        MessageBox.Show("「" & hikiwatasiFilePath & "」" & vbCrLf & "「 " & sougouFilePath & "」" & vbCrLf & "「 " & sougouFilePath2 & "」" & vbCrLf & "が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
     End Sub
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click

@@ -162,6 +162,15 @@ Public Class frmWKDT010B
         ' 源泉徴収票に不要な列を削除
         dt1.Columns.Remove("postno") ' オーナー郵便番号
 
+        If SettingManager.GetInstance.OutputType = SettingManager.EnmOutputType.Specify Then
+            Dim folderDialog As New FolderBrowserDialog()
+            If folderDialog.ShowDialog() = DialogResult.OK Then
+                SettingManager.GetInstance.OutputDirectory = folderDialog.SelectedPath
+            Else
+                Return
+            End If
+        End If
+
         ' ＣＳＶファイル出力
         'Dim fileName1 As String = "源泉徴収票_" & txtShoriNendo.Text & ".csv"
         Dim fileName1 As String = "源泉徴収票.csv"

@@ -178,6 +178,15 @@ Public Class frmWKDT030B
         ' 解約先分源泉徴収票に不要な列を削除
         dt1.Columns.Remove("postno") ' オーナー郵便番号
 
+        If SettingManager.GetInstance.OutputType = SettingManager.EnmOutputType.Specify Then
+            Dim folderDialog As New FolderBrowserDialog()
+            If folderDialog.ShowDialog() = DialogResult.OK Then
+                SettingManager.GetInstance.OutputDirectory = folderDialog.SelectedPath
+            Else
+                Return
+            End If
+        End If
+
         ' ＣＳＶファイル出力
         Dim fileName As String = "解約先分源泉徴収票.csv"
         Dim filePath As String = WriteCsvData(dt1, SettingManager.GetInstance.OutputDirectory, fileName,,, True)

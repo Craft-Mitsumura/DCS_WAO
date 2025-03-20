@@ -62,6 +62,15 @@ Public Class frmWKDC030B
             Return
         End If
 
+        If SettingManager.GetInstance.OutputType = SettingManager.EnmOutputType.Specify Then
+            Dim folderDialog As New FolderBrowserDialog()
+            If folderDialog.ShowDialog() = DialogResult.OK Then
+                SettingManager.GetInstance.OutputDirectory = folderDialog.SelectedPath
+            Else
+                Return
+            End If
+        End If
+
         ' ＣＳＶファイル出力
         Dim fileName As String = "claim.csv"
         Dim filePath As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName, True,, True)

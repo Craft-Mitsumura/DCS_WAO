@@ -174,6 +174,15 @@ Public Class frmWKDC020B
         rec.Append(StrDup(119, " ")) ' ダミー
         dtOut.Rows.Add(rec.ToString)
 
+        If SettingManager.GetInstance.OutputType = SettingManager.EnmOutputType.Specify Then
+            Dim folderDialog As New FolderBrowserDialog()
+            If folderDialog.ShowDialog() = DialogResult.OK Then
+                SettingManager.GetInstance.OutputDirectory = folderDialog.SelectedPath
+            Else
+                Return
+            End If
+        End If
+
         ' ファイル出力
         Dim fileName1 As String = "WAO_SEIKYU.DAT"
         Dim filePath1 As String = WriteCsvData(dtOut, SettingManager.GetInstance.OutputDirectory, fileName1)

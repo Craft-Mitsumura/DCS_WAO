@@ -123,6 +123,15 @@ Public Class frmWKDR070B
         Dim msg As New StringBuilder()
         msg.AppendLine("以下のCSVファイルが出力されました。")
 
+        If SettingManager.GetInstance.OutputType = SettingManager.EnmOutputType.Specify Then
+            Dim folderDialog As New FolderBrowserDialog()
+            If folderDialog.ShowDialog() = DialogResult.OK Then
+                SettingManager.GetInstance.OutputDirectory = folderDialog.SelectedPath
+            Else
+                Return
+            End If
+        End If
+
         If dtS.Rows.Count > 0 Then
             ' ＣＳＶファイル出力
             Dim fileName As String = "instructor_detail.csv"

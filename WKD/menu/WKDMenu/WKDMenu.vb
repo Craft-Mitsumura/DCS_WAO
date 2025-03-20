@@ -15,6 +15,11 @@ Public Class WKDMenu
         'Diagnostics.Debug.WriteLine("接続文字列:" & connectionString)
         SettingManager.GetInstance.ConnectionString = connectionString
 
+        For i As Integer = 0 To 9
+            SettingManager.GetInstance.OutputTypes(i) = CnvInt(GetApplicationSetting(Directory.GetCurrentDirectory & "\WKDMenu.dll.config", SettingManager.GetInstance.OutputProgramIds(i) & "_OutputType"))
+            SettingManager.GetInstance.OutputDirectorys(i) = GetApplicationSetting(Directory.GetCurrentDirectory & "\WKDMenu.dll.config", SettingManager.GetInstance.OutputProgramIds(i) & "_OutputDirectory")
+        Next
+
     End Sub
 
     ''' <summary>

@@ -159,6 +159,15 @@ Public Class frmWKDC040B
             recordListCsv.Rows.Add(newRow)
         Next
 
+        If SettingManager.GetInstance.OutputType = SettingManager.EnmOutputType.Specify Then
+            Dim folderDialog As New FolderBrowserDialog()
+            If folderDialog.ShowDialog() = DialogResult.OK Then
+                SettingManager.GetInstance.OutputDirectory = folderDialog.SelectedPath
+            Else
+                Return
+            End If
+        End If
+
         ' ＣＳＶファイル出力
         Dim fileName As String = "コンビニ振込用紙.csv"
         Dim filePath As String = WriteCsvData(recordListCsv, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)

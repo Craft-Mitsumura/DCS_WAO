@@ -370,7 +370,7 @@ Public Class CustomFunction
                 If 0 < InStr(node.Name, "Settings") Then
                     For Each node2 As System.Xml.XmlNode In node.ChildNodes
                         '設定名と同じかどうか
-                        If node2.Attributes.GetNamedItem("name").Value = name Then
+                        If Not node2.Attributes Is Nothing AndAlso node2.Attributes.GetNamedItem("name").Value = name Then
                             strRet = node2.InnerText
                             Exit For
                         End If
