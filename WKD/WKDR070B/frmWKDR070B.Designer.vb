@@ -161,7 +161,7 @@ Partial Class frmWKDR070B
         Me.Controls.Add(Me.lblSysDate)
         Me.Controls.Add(Me.MainMenu1)
         Me.Name = "frmWKDR070B"
-        Me.Text = "振替結果通知書作成"
+        Me.Text = "振替結果通知書データ作成"
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
         Me.ResumeLayout(False)

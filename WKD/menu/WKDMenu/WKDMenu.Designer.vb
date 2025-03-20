@@ -136,7 +136,7 @@ Partial Class WKDMenu
         Me.btnWKDR060BExecute.Name = "btnWKDR060BExecute"
         Me.btnWKDR060BExecute.Size = New System.Drawing.Size(205, 31)
         Me.btnWKDR060BExecute.TabIndex = 9
-        Me.btnWKDR060BExecute.Text = "総括書データ作成"
+        Me.btnWKDR060BExecute.Text = "総括表データ作成"
         Me.btnWKDR060BExecute.UseVisualStyleBackColor = True
         '
         'btnWKDR070BExecute

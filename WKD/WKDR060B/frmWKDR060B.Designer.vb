@@ -138,7 +138,7 @@ Partial Class frmWKDR060B
         Me.Controls.Add(Me.lblSysDate)
         Me.Controls.Add(Me.MainMenu1)
         Me.Name = "frmWKDR060B"
-        Me.Text = "総括表作成"
+        Me.Text = "総括表データ作成"
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
         Me.ResumeLayout(False)
