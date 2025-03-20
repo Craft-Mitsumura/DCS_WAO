@@ -190,7 +190,7 @@ Public Class frmWKDT020B
         ' ＣＳＶファイル出力
         'Dim fileName As String = "源泉徴収票_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
         Dim fileName As String = "退職分源泉徴収票.csv"
-        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
+        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
         msg.AppendLine("・" & filePath)
 
         ' 送付状に出力する行を抽出
@@ -241,7 +241,7 @@ Public Class frmWKDT020B
         ' ＣＳＶファイル出力
         'Dim fileName3 As String = "送付状_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
         Dim fileName3 As String = "退職分送付状.csv"
-        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True, True)
+        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True)
         msg.AppendLine("・" & filePath3)
 
         ' 各CSVファイルの行数をカウント
@@ -254,8 +254,8 @@ Public Class frmWKDT020B
         dt4.Columns.Add("件数", GetType(Integer))
 
         ' 各ファイルの名前と件数をDataTableに追加
-        dt4.Rows.Add("退職源泉徴収票.csv", count1)
-        dt4.Rows.Add("退職送付状.csv", count3)
+        dt4.Rows.Add("退職分源泉徴収票.csv", count1)
+        dt4.Rows.Add("退職分送付状.csv", count3)
 
         ' 件数.csv を出力
         Dim fileName4 As String = "退職分件数.csv"

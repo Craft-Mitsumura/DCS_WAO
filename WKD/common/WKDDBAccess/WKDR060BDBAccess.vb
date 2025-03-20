@@ -44,8 +44,8 @@ Public Class WKDR060BDBAccess
         Dim sql As New StringBuilder()
         sql.AppendLine("select")
         sql.AppendLine("    t1.ownerno") ' 校番号
-        sql.AppendLine("  , rpad( koumei , 20 ,'　')") ' 校名
-        sql.AppendLine("  , rpad( name , 20 ,'　')") ' オーナー名
+        sql.AppendLine("  , rpad(koumei, 20 ,'　')") ' 校名
+        sql.AppendLine("  , rpad(to_zenkaku(name), 20 ,'　')") ' オーナー名
         'sql.AppendLine("  , lpad( cast(fuzken + fufken as character varying) , 7 ,'0') fusken") ' 振替請求件数
         'sql.AppendLine("  , lpad( cast(fufken as character varying) , 7 ,'0')") ' 振替不能件数
         'sql.AppendLine("  , lpad( cast(fuzken as character varying) , 7 ,'0')") ' 振替済件数

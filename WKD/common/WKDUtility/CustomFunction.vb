@@ -680,7 +680,10 @@ Public Class CustomFunction
                             OrElse dc.DataType Is GetType(Double) _
                             OrElse dc.DataType Is GetType(Decimal) _
                             OrElse dc.DataType Is GetType(Date) Then
-                                oneLine.Append(dr.Item(dc.ColumnName))
+                                '数値が 0 の場合 null(空文字) とする
+                                If CnvDec(dr.Item(dc.ColumnName)) <> 0 Then
+                                    oneLine.Append(dr.Item(dc.ColumnName))
+                                End If
                                 oneLine.Append(",")
                             Else
                                 If doubleQuotation Then

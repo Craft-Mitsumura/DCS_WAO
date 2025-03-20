@@ -165,7 +165,7 @@ Public Class frmWKDT010B
         ' ＣＳＶファイル出力
         'Dim fileName1 As String = "源泉徴収票_" & txtShoriNendo.Text & ".csv"
         Dim fileName1 As String = "源泉徴収票.csv"
-        Dim filePath1 As String = WriteCsvData(dt1, SettingManager.GetInstance.OutputDirectory, fileName1,,, True, True)
+        Dim filePath1 As String = WriteCsvData(dt1, SettingManager.GetInstance.OutputDirectory, fileName1,,, True)
         msg.AppendLine("・" & filePath1)
 
         ' 給与支払報告書に出力する行を抽出
@@ -187,7 +187,7 @@ Public Class frmWKDT010B
         ' ＣＳＶファイル出力
         'Dim fileName2 As String = "給与支払報告書_" & txtShoriNendo.Text & ".csv"
         Dim fileName2 As String = "給与支払報告書.csv"
-        Dim filePath2 As String = WriteCsvData(dt2, SettingManager.GetInstance.OutputDirectory, fileName2,,, True, True)
+        Dim filePath2 As String = WriteCsvData(dt2, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
         msg.AppendLine("・" & filePath2)
 
         ' 送付状に出力する行を抽出
@@ -238,8 +238,28 @@ Public Class frmWKDT010B
         ' ＣＳＶファイル出力
         'Dim fileName3 As String = "送付状_" & txtShoriNendo.Text & ".csv"
         Dim fileName3 As String = "送付状.csv"
-        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True, True)
+        Dim filePath3 As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName3,,, True)
         msg.AppendLine("・" & filePath3)
+
+        ' 各CSVファイルの行数をカウント
+        Dim count1 As Integer = dt1.Rows.Count
+        Dim count2 As Integer = dt2.Rows.Count
+        Dim count3 As Integer = dt3.Rows.Count
+
+        ' 件数を記録するDataTableを作成
+        Dim dt4 As New DataTable()
+        dt4.Columns.Add("ファイル名", GetType(String))
+        dt4.Columns.Add("件数", GetType(Integer))
+
+        ' 各ファイルの名前と件数をDataTableに追加
+        dt4.Rows.Add("源泉徴収票.csv", count1)
+        dt4.Rows.Add("給与支払報告書.csv", count2)
+        dt4.Rows.Add("送付状.csv", count3)
+
+        ' 件数.csv を出力
+        Dim fileName4 As String = "件数.csv"
+        Dim filePath4 As String = WriteCsvData(dt4, SettingManager.GetInstance.OutputDirectory, fileName4,,, True)
+        msg.AppendLine("・" & filePath4)
 
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 

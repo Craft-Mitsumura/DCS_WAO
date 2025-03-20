@@ -5,6 +5,7 @@ Imports System.Windows.Forms
 Imports System.Windows
 Imports System.IO
 Imports System.Text.RegularExpressions
+
 Public Class frmWKDC040B
     Private Sub frmWKDC040B_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -135,12 +136,16 @@ Public Class frmWKDC040B
             newRow("合計金額") = row(6)
             newRow("払込人氏名(右)") = row(17).ToString.Trim & "　様"
             newRow("金額(左)") = row(6)
-            newRow("払込人郵便番号(左)") = row(12)
-            newRow("払込人住所(左)") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
+            'newRow("払込人郵便番号(左)") = row(12)
+            newRow("払込人郵便番号(左)") = ""
+            'newRow("払込人住所(左)") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
+            newRow("払込人住所(左)") = ""
             newRow("金額(中)") = row(6)
             newRow("お客様コード(右)") = row(4) & row(2) & row(3)
-            newRow("払込人郵便番号(中)") = row(12)
-            newRow("払込人住所(中)") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
+            'newRow("払込人郵便番号(中)") = row(12)
+            newRow("払込人郵便番号(中)") = ""
+            'newRow("払込人住所(中)") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
+            newRow("払込人住所(中)") = ""
             newRow("金額(右)") = row(6)
             newRow("払込人氏名(左)") = row(17).ToString.Trim & "　様"
             newRow("収納締切日の年(左)") = sysDate.ToString("yyyy")

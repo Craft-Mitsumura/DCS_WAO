@@ -47,7 +47,7 @@ Public Class WKDC030BDBAccess
 
         sql.AppendLine("select")
         sql.AppendLine("  ytd.ownerno オーナー№")
-        sql.AppendLine(", own.bakome 校名")
+        sql.AppendLine(", replace(rtrim(replace(own.bakome, '　', ' ')), ' ', '　') 校名")
         sql.AppendLine(", @conditionDate 締年月")
         sql.AppendLine(", getdaypushback(@processingDate27) 口座振替日")
         sql.AppendLine(", @processingDate24 コンビニ収納締切日")
