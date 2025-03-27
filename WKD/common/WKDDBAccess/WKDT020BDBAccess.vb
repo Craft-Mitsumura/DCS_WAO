@@ -15,14 +15,14 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("    '2' sakuhyokbn") ' 作表区分
         sql.AppendLine("  , fin.*")
         sql.AppendLine("  , coalesce(case own.bakyny when '' then null else own.bakyny end,own.bakycd) bakyny") ' 名寄先オーナーＮｏ
-        sql.AppendLine("  , coalesce(own2.bakjnm,own.bakjnm) bakjnm") ' オーナー名（漢字）
-        sql.AppendLine("  , coalesce(own2.bazpc1,own.bazpc1) || '-' || coalesce(own2.bazpc2,own.bazpc2) bazpc") ' オーナー郵便番号
-        sql.AppendLine("  , coalesce(own2.baadj1,own.baadj1) baadj1") ' オーナー住所１（漢字）
-        sql.AppendLine("  , coalesce(own2.baadj2,own.baadj2) baadj2") ' オーナー住所２（漢字）
-        sql.AppendLine("  , coalesce(own2.batele,own.batele) batele") ' オーナー電話番号１
-        sql.AppendLine("  , coalesce(own2.bakkrn,own.bakkrn) bakkrn") ' オーナー電話番号２
-        sql.AppendLine("  , coalesce(own2.bakome,own.bakome) bakome") ' 校名（漢字）
-        sql.AppendLine("  , coalesce(own2.bahjno,own.bahjno) bahjno") ' 法人番号
+        sql.AppendLine("  , case when own2.bakycd is null then own.bakjnm else own2.bakjnm end bakjnm") ' オーナー名（漢字）
+        sql.AppendLine("  , case when own2.bakycd is null then concat(own.bazpc1,'-',own.bazpc2) else concat(own2.bazpc1,'-',own2.bazpc2) end bazpc") ' オーナー郵便番号
+        sql.AppendLine("  , case when own2.bakycd is null then own.baadj1 else own2.baadj1 end baadj1") ' オーナー住所１（漢字）
+        sql.AppendLine("  , case when own2.bakycd is null then own.baadj2 else own2.baadj2 end baadj2") ' オーナー住所２（漢字）
+        sql.AppendLine("  , case when own2.bakycd is null then own.batele else own2.batele end batele") ' オーナー電話番号１
+        sql.AppendLine("  , case when own2.bakycd is null then own.bakkrn else own2.bakkrn end bakkrn") ' オーナー電話番号２
+        sql.AppendLine("  , case when own2.bakycd is null then own.bakome else own2.bakome end bakome") ' 校名（漢字）
+        sql.AppendLine("  , case when own2.bakycd is null then own.bahjno else own2.bahjno end bahjno") ' 法人番号
         sql.AppendLine("  , null rerunno") ' リランＮｏ
         sql.AppendLine("  , @crt_user_id")
         sql.AppendLine("  , current_timestamp")
@@ -178,7 +178,7 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("  , seiyyyy || seimm || seidd seiyyyymmdd") ' 生年月日（和暦）
         sql.AppendLine("  , houjinno") ' 法人番号
         sql.AppendLine("  , postno") ' オーナー郵便番号
-        sql.AppendLine("  , rtrim(addr1) || rtrim(addr2) addr") ' オーナー住所
+        sql.AppendLine("  , rtrim(concat(addr1,addr2)) addr") ' オーナー住所
         sql.AppendLine("  , name") ' オーナー氏名
         sql.AppendLine("  , nm.chohyoshurui") ' 帳票種類
         sql.AppendLine("  , 'ＷＡＯ'") ' 業者コード
