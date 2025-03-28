@@ -73,7 +73,7 @@ Public Class WKDC030BDBAccess
         sql.AppendLine(", case syokbn when '2' then cakzsb else null end 預金種目")
         sql.AppendLine(", case syokbn when '2' then case cakkbn when '1' then substring(caybtn,1,7) else cakzno end else null end 口座番号")
         sql.AppendLine(", case syokbn when '2' then cakznm else null end ""口座名義人(カナ)""")
-        sql.AppendLine(", case syokbn when '2' then cafkst else null end 振替開始年月")
+        sql.AppendLine(", case syokbn when '2' then cast(cafkst as character varying) else null end 振替開始年月")
         sql.AppendLine(", case syokbn when '2' then onlinekb else null end オンライン区分")
         sql.AppendLine("from")
         sql.AppendLine("    t_yoteihyo ytd")
