@@ -962,7 +962,7 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("select")
         sql.AppendLine("    ownerno オーナー№")
         sql.AppendLine("  , replace(rtrim(replace(koumei, '　', ' ')), ' ', '　') 校名")
-        sql.AppendLine("  , @ngZengetu 締年月")
+        sql.AppendLine("  , cast(@ngZengetu as character varying) 締年月")
         sql.AppendLine("  , @ngn 結果発行日")
         sql.AppendLine("  , @ngnNyukinbi オーナー入金日")
         'sql.AppendLine("  , tesur1nm 手数料１名称")
