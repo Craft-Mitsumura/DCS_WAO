@@ -211,7 +211,7 @@ Public Class frmWKDC010B
             Return
         End If
 
-        MessageBox.Show("「" & filePath & "」が取り込まれました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show("「" & filePath & "」が取り込まれました。" & vbCrLf & "(" & entityList.Count & "件)", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
 

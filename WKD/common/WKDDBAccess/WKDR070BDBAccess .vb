@@ -822,10 +822,31 @@ Public Class WKDR070BDBAccess
         sql.AppendLine("  , case when (syuunou = '0') then '収納' else '未収納' end")
         sql.AppendLine("  , filler")
         sql.AppendLine("  , fkkin")
-        sql.AppendLine("  , case when (fkkin >= @inshisyohi) then (@konbini + @inshi) else @konbini end")
+        'sql.AppendLine("  , case when (fkkin >= @inshisyohi) then (@konbini + @inshi) else @konbini end")
+        sql.AppendLine("  , tesur")
         sql.AppendLine("from w_tsuchisho")
+        'sql.AppendLine("where dtnengetu = @shoriNengatu")
+        'sql.AppendLine("and syokbn = @kbn")
+
         sql.AppendLine("where dtnengetu = @shoriNengatu")
-        sql.AppendLine("and syokbn = @kbn")
+        sql.AppendLine("and syokbn = '2' and syuunou = '0'")
+
+        sql.AppendLine("union")
+
+        sql.AppendLine("select")
+        sql.AppendLine("    cfr.dtnengetu")
+        sql.AppendLine("  , cfr.itakuno")
+        sql.AppendLine("  , cfr.ownerno")
+        sql.AppendLine("  , 'コンビニ収納'")
+        sql.AppendLine("  , '未収納'")
+        sql.AppendLine("  , cfr.seitono")
+        sql.AppendLine("  , cfr.skingaku")
+        sql.AppendLine("  , null")
+        sql.AppendLine("from t_conveni_furikomi cfr")
+        sql.AppendLine("where cfr.dtnengetu = @shoriNengatu")
+        sql.AppendLine("and not exists (select * from t_conveni_furikomi_kakuho cfk")
+        sql.AppendLine("where cfr.dtnengetu = cfk.dtnengetu and cfr.ownerno = cfk.ownerno and cfr.seitono = cfk.seitono and cfr.kseqno = cfk.kseqno)")
+
         sql.AppendLine("order by dtnengetu, itakuno, ownerno, filler")
 
         Dim params As New List(Of NpgsqlParameter) From {
