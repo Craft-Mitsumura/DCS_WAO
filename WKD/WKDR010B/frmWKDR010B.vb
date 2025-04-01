@@ -260,20 +260,22 @@ Public Class frmWKDR010B
         WriteCsvData(dtErrDetail, inputDirectory, strName,, True, True)
 
         ' 完了メッセ―ジ
-        If tableHeaderList.Count <> "6" OrElse errCnt > 0 Then
-            MessageBox.Show("確報データエラー有り", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Else
-            'コンビニ振込確報データのデータ年月が該当年月と同一のデータを削除
-            If Not dba.Delete(monthAgo) Then
+        If tableHeaderList.Count <> 6 OrElse 0 < errCnt Then
+            If MessageBox.Show("確報データエラー有り" & vbCrLf & vbCrLf & "取込処理を継続しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.No Then
                 Return
             End If
-
-            ' コンビニ振込確報データに登録
-            If Not dba.Insert(monthAgo) Then
-                Return
-            End If
-            MessageBox.Show("「" & filePath & "」が取り込まれました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
         End If
+
+        'コンビニ振込確報データのデータ年月が該当年月と同一のデータを削除
+        If Not dba.Delete(monthAgo) Then
+            Return
+        End If
+
+        ' コンビニ振込確報データに登録
+        If Not dba.Insert(monthAgo) Then
+            Return
+        End If
+        MessageBox.Show("「" & filePath & "」が取り込まれました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         tableHeaderList.Clear()
         entityList.Clear()
