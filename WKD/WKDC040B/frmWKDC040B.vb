@@ -102,7 +102,8 @@ Public Class frmWKDC040B
             newRow("作成月") = sysDate.ToString("MM")
             newRow("作成日") = sysDate.ToString("dd")
             newRow("保護者郵便番号") = row(12)
-            newRow("保護者住所") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
+            'newRow("保護者住所") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
+            newRow("保護者住所") = (row(13).ToString & row(14).ToString).Trim & (row(15).ToString & row(16).ToString).Trim
 
             Dim nameLength1 As Integer = row(17).ToString.Trim.Length
             Dim nameLength2 As Integer = row(18).ToString.Trim.Length
