@@ -8,9 +8,6 @@ Imports System.Text.RegularExpressions
 
 Public Class frmWKDR010B
 
-    Dim tableHeaderList As New List(Of tableHeader)
-    'Dim tableDetail As New List(Of (RECKBN As String, Name As String))
-
     Private Sub frmWKDC010B_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         ' システム日付
@@ -29,6 +26,7 @@ Public Class frmWKDR010B
         Dim filePath As String = String.Empty
         Dim inputDirectory As String = String.Empty
         Dim fileName As String = String.Empty
+        Dim tableHeaderList As New List(Of tableHeader)
 
         ' 日付論理チェック
         Dim nengetuDate As Date
