@@ -58,7 +58,12 @@ Public Class frmWKDR040B
         Dim tbKeiyakushamaster As New DataTable
         tbKeiyakushamaster = dba.GetTbKeiyakushamaster(monthAgo)
         If tbKeiyakushamaster.Rows.Count > 0 Then
-            MessageBox.Show("オーナーマスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            ' ＣＳＶファイル出力
+            Dim fileNameE As String = "オーナー向け口座振込データ_オーナーマスタ存在チェックリスト.csv"
+            Dim filePathE As String = WriteCsvData(tbKeiyakushamaster, SettingManager.GetInstance.OutputDirectory, fileNameE, True,, True)
+
+            MessageBox.Show("オーナーマスタ存在チェックエラー" & vbCrLf &
+                            "「" & filePathE & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 

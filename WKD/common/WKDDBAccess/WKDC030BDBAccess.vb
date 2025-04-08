@@ -111,15 +111,16 @@ Public Class WKDC030BDBAccess
         Dim sql As New StringBuilder()
 
         sql.AppendLine("select")
-        sql.AppendLine("    ownerno")
+        sql.AppendLine("    ownerno オーナー№")
         sql.AppendLine("from")
-        sql.AppendLine("    t_yoteihyo ytd ")
+        sql.AppendLine("    t_yoteihyo ytd")
         sql.AppendLine("left join")
         sql.AppendLine("    tbkeiyakushamaster own")
         sql.AppendLine("on (ytd.ownerno = own.bakycd")
         sql.AppendLine("and own.bakome is not null and own.bakyfg = '0')")
         sql.AppendLine("where ytd.dtnengetu = @dtnengetu")
         sql.AppendLine("and own.bakycd is null")
+        sql.AppendLine("group by ytd.ownerno")
 
         Dim params = New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)

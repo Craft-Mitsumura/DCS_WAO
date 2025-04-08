@@ -52,7 +52,12 @@ Public Class frmWKDC030B
         ' オーナーマスタ取得
         Dim dt2 As DataTable = dba.GetOwner(shoriNengetsu)
         If 0 < dt2.Rows.Count Then
-            MessageBox.Show("オーナーマスタが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            ' ＣＳＶファイル出力
+            Dim fileNameE As String = "予定表還元データ_オーナーマスタ存在チェックリスト.csv"
+            Dim filePathE As String = WriteCsvData(dt2, SettingManager.GetInstance.OutputDirectory, fileNameE, True,, True)
+
+            MessageBox.Show("オーナーマスタ存在チェックエラー" & vbCrLf &
+                            "「" & filePathE & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 
