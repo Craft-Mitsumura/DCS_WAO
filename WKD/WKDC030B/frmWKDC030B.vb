@@ -76,11 +76,84 @@ Public Class frmWKDC030B
             End If
         End If
 
+        Dim msg As New StringBuilder()
+        msg.AppendLine("以下のCSVファイルが出力されました。")
+
         ' ＣＳＶファイル出力
         Dim fileName As String = "claim.csv"
         Dim filePath As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName, True,, True)
+        msg.AppendLine("・" & filePath)
 
-        MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        Dim kbnRows = From row In dt3.AsEnumerable()
+                      Where row.Field(Of String)("区分(1:振替,2:ｺﾝﾋﾞﾆ)") = "1" OrElse row.Field(Of String)("区分(1:振替,2:ｺﾝﾋﾞﾆ)") = "2"
+                      Select row
+
+        Dim dt3a As DataTable = New DataTable() ' 新しいDataTableを作成
+
+        ' 件数と区分名を表示するための2つの列を作成
+        dt3a.Columns.Add("区分名")
+        dt3a.Columns.Add("件数")
+
+        ' 区分ごとの件数を取得
+        Dim groupCount = From row In kbnRows
+                         Group row By kubun = row.Field(Of String)("区分(1:振替,2:ｺﾝﾋﾞﾆ)") Into Group
+                         Select 区分 = kubun, 件数 = Group.Count()
+
+        Dim totalCount As Integer = 0
+
+        '区分1が存在する場合
+        Dim group1 = groupCount.FirstOrDefault(Function(g) g.区分 = "1")
+        If group1 IsNot Nothing Then
+            Dim newRow1 As DataRow = dt3a.NewRow()
+            newRow1("区分名") = "ｺｳｻﾞﾌﾘｶｴ"
+            newRow1("件数") = String.Format("{0:#,##0}", group1.件数)
+            dt3a.Rows.Add(newRow1)
+            totalCount += group1.件数
+        Else
+            Dim newRow1 As DataRow = dt3a.NewRow()
+            newRow1("区分名") = "ｺｳｻﾞﾌﾘｶｴ"
+            newRow1("件数") = "0"
+            dt3a.Rows.Add(newRow1)
+        End If
+
+        ' 区分2が存在する場合
+        Dim group2 = groupCount.FirstOrDefault(Function(g) g.区分 = "2")
+        If group2 IsNot Nothing Then
+            Dim newRow2 As DataRow = dt3a.NewRow()
+            newRow2("区分名") = "ｺﾝﾋﾞﾆﾌﾘｺﾐ"
+            newRow2("件数") = String.Format("{0:#,##0}", group2.件数)
+            dt3a.Rows.Add(newRow2)
+            totalCount += group2.件数
+        Else
+            Dim newRow2 As DataRow = dt3a.NewRow()
+            newRow2("区分名") = "ｺﾝﾋﾞﾆﾌﾘｺﾐ"
+            newRow2("件数") = "0"
+            dt3a.Rows.Add(newRow2)
+        End If
+
+        Dim kbnfRows As IEnumerable(Of DataRow) = From row In kbnRows
+                                                  Where row.Field(Of String)("区分(1:振替,2:ｺﾝﾋﾞﾆ)") = "1" _
+                                                  AndAlso Not IsDBNull(row("振替開始年月")) _
+                                                  AndAlso row.Field(Of String)("振替開始年月").Substring(0, 6) = shoriNengetsu
+                                                  Select row
+
+        Dim newRowForCondition As DataRow = dt3a.NewRow()
+        newRowForCondition("区分名") = "ｼﾝｷｹﾝｽｳ"
+        newRowForCondition("件数") = String.Format("{0:#,##0}", kbnfRows.Count())
+        dt3a.Rows.Add(newRowForCondition)
+
+        ' 合計行を追加
+        Dim totalRow As DataRow = dt3a.NewRow()
+        totalRow("区分名") = "ﾃｽｳﾘｮｳ"
+        totalRow("件数") = String.Format("{0:#,##0}", totalCount)
+        dt3a.Rows.Add(totalRow)
+
+        Dim fileName2 As String = "予定表還元データ_件数.csv"
+        Dim filePath2 As String = WriteCsvData(dt3a, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
+        msg.AppendLine("・" & filePath2)
+
+        MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
 
     End Sub
 
