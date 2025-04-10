@@ -67,7 +67,7 @@ Public Class frmWKDT010B
                 If dtOwn.Rows.Count <= 0 Then
                     ' 存在しなかったオーナーNoを追加
                     Dim newRow As DataRow = dtErrOwn.NewRow()
-                    newRow("オーナーNo") = target.ownerno
+                    newRow("オーナー№") = target.ownerno
                     dtErrOwn.Rows.Add(newRow)
 
                     ' チェックは続行
