@@ -46,38 +46,54 @@ Public Class frmWKDT030B
             End While
         End Using
 
+        Dim dtErrOwn As New DataTable()
+        dtErrOwn.Columns.Add("オーナー№", GetType(String))
+
         For Each target As TNenchoEntity In targetList
             ' オーナーマスタ存在チェック
             Dim dtOwn As DataTable = dba.GetOwner(target.ownerno)
             If dtOwn.Rows.Count <= 0 Then
-                MessageBox.Show("オーナーが存在しません。（" & target.ownerno & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                Return
+                ' 存在しなかったオーナーNoをエラー一覧に追加
+                Dim newRow As DataRow = dtErrOwn.NewRow()
+                newRow("オーナー№") = target.ownerno
+                dtErrOwn.Rows.Add(newRow)
+
+                Continue For
             End If
 
             ' 締年月のチェック（フォーマットおよび範囲）
             Dim nengetuDate As Date
-
-            ' 日付形式の確認
             If Not Date.TryParseExact(target.dtnengetu, "yyyyMM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
                 MessageBox.Show("締年月が正しくありません。（" & target.dtnengetu & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 Return
             End If
 
-            ' 範囲の確認（処理年1月～処理月まで）
             Dim targetYear As Integer = CInt(target.dtnengetu.Substring(0, 4)) ' 年
             Dim targetMonth As Integer = CInt(target.dtnengetu.Substring(4, 2)) ' 月
             Dim currentYear As Integer = Now.Year
             Dim currentMonth As Integer = Now.Month
 
-            ' 処理年が一致し、月が1月から当月までの範囲内か確認
             If targetYear < currentYear OrElse
-                 targetYear > currentYear OrElse
-                (targetYear = currentYear AndAlso targetMonth < 1) OrElse
-                (targetYear = currentYear AndAlso targetMonth > currentMonth) Then
+                targetYear > currentYear OrElse
+                (targetYear = currentYear AndAlso (targetMonth < 1 OrElse targetMonth > currentMonth)) Then
                 MessageBox.Show("締年月が1月～当月までの範囲外です。（" & target.dtnengetu & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 Return
             End If
         Next
+
+        ' エラーがあった場合にCSV出力（重複排除 & 昇順ソート）
+        If dtErrOwn.Rows.Count > 0 Then
+            Dim distinctSortedDt As DataTable = dtErrOwn.DefaultView.ToTable(True, "オーナー№")
+            distinctSortedDt.DefaultView.Sort = "オーナー№ ASC"
+            distinctSortedDt = distinctSortedDt.DefaultView.ToTable()
+
+            Dim fileNameE As String = "解約源泉徴収票作表データ作成_オーナーマスタ存在チェックリスト.csv"
+            Dim filePathE As String = WriteCsvData(distinctSortedDt, SettingManager.GetInstance.OutputDirectory, fileNameE, True,, True)
+
+            MessageBox.Show("オーナーマスタ存在チェックエラー" & vbCrLf &
+                    "「" & filePathE & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
+        End If
 
         Dim dt As DataTable = Nothing
 

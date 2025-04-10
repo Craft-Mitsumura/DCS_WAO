@@ -121,6 +121,7 @@ Public Class WKDC030BDBAccess
         sql.AppendLine("where ytd.dtnengetu = @dtnengetu")
         sql.AppendLine("and own.bakycd is null")
         sql.AppendLine("group by ytd.ownerno")
+        sql.AppendLine("order by ytd.ownerno")
 
         Dim params = New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)

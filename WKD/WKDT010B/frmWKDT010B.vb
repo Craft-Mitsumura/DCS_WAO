@@ -58,14 +58,38 @@ Public Class frmWKDT010B
                 End While
             End Using
 
+            Dim dtErrOwn As New DataTable()
+            dtErrOwn.Columns.Add("オーナー№", GetType(String))
+
             For Each target As TNenchoEntity In targetList
                 ' オーナーマスタ存在チェック
                 Dim dtOwn As DataTable = dba.GetOwner(target.ownerno)
                 If dtOwn.Rows.Count <= 0 Then
-                    MessageBox.Show("オーナーが存在しません。（" & target.ownerno & "）", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    Return
+                    ' 存在しなかったオーナーNoを追加
+                    Dim newRow As DataRow = dtErrOwn.NewRow()
+                    newRow("オーナーNo") = target.ownerno
+                    dtErrOwn.Rows.Add(newRow)
+
+                    ' チェックは続行
+                    Continue For
                 End If
             Next
+
+            ' エラーがあればCSV出力して処理終了
+            If dtErrOwn.Rows.Count > 0 Then
+                ' 重複排除＋昇順ソート
+                Dim sortedDistinctDt As DataTable = dtErrOwn.DefaultView.ToTable(True, "オーナー№")
+                sortedDistinctDt.DefaultView.Sort = "オーナー№ ASC"
+                sortedDistinctDt = sortedDistinctDt.DefaultView.ToTable()
+
+                ' CSV出力
+                Dim fileNameE As String = "法定調書作表データ作成_オーナーマスタ存在チェックリスト.csv"
+                Dim filePathE As String = WriteCsvData(sortedDistinctDt, SettingManager.GetInstance.OutputDirectory, fileNameE, True,, True)
+
+                MessageBox.Show("オーナーマスタ存在チェックエラー" & vbCrLf &
+                                "「" & filePathE & "」を参照してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            End If
         End If
 
         Dim dt As DataTable = Nothing
