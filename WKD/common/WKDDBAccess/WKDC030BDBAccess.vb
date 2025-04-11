@@ -133,4 +133,26 @@ Public Class WKDC030BDBAccess
 
     End Function
 
+    Public Function GetOwnerKensuKingaku(shoriNengetsu As String) As DataTable
+
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
+        Dim sql As New StringBuilder()
+
+        sql.AppendLine("select")
+        sql.AppendLine("    sum(kensu) 新規件数")
+        sql.AppendLine("from")
+        sql.AppendLine("    t_owner_kensu_kingaku")
+        sql.AppendLine("where dtnengetu = @shoriNengetsu")
+        sql.AppendLine("group by dtnengetu")
+
+        Dim params = New List(Of NpgsqlParameter) From {
+            New NpgsqlParameter("@shoriNengetsu", shoriNengetsu)
+        }
+
+        dt = dbc.GetData(sql.ToString(), params)
+
+        Return dt
+
+    End Function
 End Class
