@@ -100,33 +100,27 @@ Public Class frmWKDC030B
 
         ' 区分1が存在する場合
         Dim group1 = kbnRows.FirstOrDefault(Function(g) g.区分 = "1")
+        Dim newRow1 As DataRow = dt3a.NewRow()
+        newRow1("区分名") = "ｺｳｻﾞﾌﾘｶｴ"
         If group1 IsNot Nothing Then
-            Dim newRow1 As DataRow = dt3a.NewRow()
-            newRow1("区分名") = "ｺｳｻﾞﾌﾘｶｴ"
             newRow1("件数") = group1.件数
-            dt3a.Rows.Add(newRow1)
             totalCount += group1.件数
         Else
-            Dim newRow1 As DataRow = dt3a.NewRow()
-            newRow1("区分名") = "ｺｳｻﾞﾌﾘｶｴ"
-            newRow1("件数") = "0"
-            dt3a.Rows.Add(newRow1)
+            newRow1("件数") = 0
         End If
+        dt3a.Rows.Add(newRow1)
 
         ' 区分2が存在する場合
         Dim group2 = kbnRows.FirstOrDefault(Function(g) g.区分 = "2")
+        Dim newRow2 As DataRow = dt3a.NewRow()
+        newRow2("区分名") = "ｺﾝﾋﾞﾆﾌﾘｺﾐ"
         If group2 IsNot Nothing Then
-            Dim newRow2 As DataRow = dt3a.NewRow()
-            newRow2("区分名") = "ｺﾝﾋﾞﾆﾌﾘｺﾐ"
             newRow2("件数") = group2.件数
-            dt3a.Rows.Add(newRow2)
             totalCount += group2.件数
         Else
-            Dim newRow2 As DataRow = dt3a.NewRow()
-            newRow2("区分名") = "ｺﾝﾋﾞﾆﾌﾘｺﾐ"
-            newRow2("件数") = "0"
-            dt3a.Rows.Add(newRow2)
+            newRow2("件数") = 0
         End If
+        dt3a.Rows.Add(newRow2)
 
         ' 新規件数
         Dim dt5 As DataTable = dba.GetOwnerKensuKingaku(shoriNengetsu)
@@ -135,7 +129,7 @@ Public Class frmWKDC030B
         If dt5.Rows.Count > 0 Then
             newRowForCondition("件数") = CnvInt(dt5.Rows(0)("新規件数"))
         Else
-            newRowForCondition("件数") = "0"
+            newRowForCondition("件数") = 0
         End If
         dt3a.Rows.Add(newRowForCondition)
 
