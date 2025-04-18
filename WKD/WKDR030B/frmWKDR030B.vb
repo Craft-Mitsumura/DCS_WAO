@@ -226,7 +226,8 @@ Public Class frmWKDR030B
             Exit Sub
         End If
 
-        MessageBox.Show("「" & filePath & "」が取り込まれました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show("「" & filePath & "」が取り込まれました。" & vbCrLf & "(" & entityList.Count & "件)", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
     End Sub
     ' インストラクター向け振込データ 取込処理
     Private Sub processtTinstructorfurikomi(filePath As String, inputDirectory As String, fileName As String)
@@ -500,7 +501,7 @@ Public Class frmWKDR030B
             Exit Sub
         End If
 
-        MessageBox.Show("「" & filePath & "」が取り込まれました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show("「" & filePath & "」が取り込まれました。" & vbCrLf & "(" & entityList.Count & "件)", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
