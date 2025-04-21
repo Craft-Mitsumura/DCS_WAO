@@ -32,6 +32,7 @@ Partial Class frmWKDR030B
         Me.btnInput = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.txtShoriNengetsu = New System.Windows.Forms.TextBox()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.MainMenu1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -126,12 +127,23 @@ Partial Class frmWKDR030B
         Me.txtShoriNengetsu.TabIndex = 7
         Me.txtShoriNengetsu.Text = "9999/99"
         '
+        'Label2
+        '
+        Me.Label2.Location = New System.Drawing.Point(62, 153)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(343, 116)
+        Me.Label2.TabIndex = 3
+        Me.Label2.Text = "■注意" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ファイルを取り込む順序が 決まっています。" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "必ず以下の順序で操作してください。" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "① 可変項目データ 【hiyou_kakuninsho.txt】" &
+    " を先に取り込む" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "② 次にインストラクターデータ 【KSSB0040.txt】 を取り込む" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "順序を間違えると、システムが正しく動作しない可能性があります" &
+    "ので、" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "必ず取込順を守ってください"
+        '
         'frmWKDR030B
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(466, 333)
         Me.Controls.Add(Me.txtShoriNengetsu)
+        Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnInput)
         Me.Controls.Add(Me.btnClose)
@@ -155,4 +167,5 @@ Partial Class frmWKDR030B
     Public WithEvents btnInput As Windows.Forms.Button
     Friend WithEvents Label1 As Windows.Forms.Label
     Friend WithEvents txtShoriNengetsu As Windows.Forms.TextBox
+    Friend WithEvents Label2 As Windows.Forms.Label
 End Class
