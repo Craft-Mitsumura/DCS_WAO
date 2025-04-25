@@ -235,6 +235,7 @@ Friend Class frmBankDataImport
                         sql = sql & " FROM tdBankMaster b "
                         sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(arrContent(x, 0), vEnd:=True)
                         sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(x, 1), vEnd:=True)
+                        sql = sql & "   AND DASQNO = " & gdDBS.ColumnDataSet(Chr(176 + arrContent(x, 10)), vEnd:=True)
                         dt = gdDBS.ExecuteDataTable(cmd, sql)
                         If IsNothing(dt) Then
                             If False = tdBankMasterInsert(arrContent, x, cmd) Then
@@ -319,7 +320,7 @@ Friend Class frmBankDataImport
         sql = sql & "'1'," & vbCrLf  '//金融機関区分
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & "," & vbCrLf '//銀行コード					
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & "," & vbCrLf '//支店コード
-        sql = sql & "'ｱ' ," & vbCrLf '//SEQ-CODE
+        sql = sql & gdDBS.ColumnDataSet(Chr(176 + arrContent(row, 10)), vEnd:=True) & "," & vbCrLf '//SEQ-CODE
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 4), vEnd:=True) & "," & vbCrLf '//銀行名_カナ
         sql = sql & gdDBS.ColumnDataSet(GetMidByte(arrContent(row, 5) & StrDup(30, " "), 1, 30), vEnd:=True) & "," & vbCrLf '//銀行名_漢字
         sql = sql & "'1000'," & vbCrLf                                                 '//廃店情報					
@@ -364,6 +365,7 @@ Friend Class frmBankDataImport
         sql = sql & " DAUPDT = current_timestamp" & vbCrLf
         sql = sql & " WHERE DABANK = " & gdDBS.ColumnDataSet(arrContent(row, 0), vEnd:=True) & vbCrLf
         sql = sql & "   AND DASITN = " & gdDBS.ColumnDataSet(arrContent(row, 1), vEnd:=True) & vbCrLf
+        sql = sql & "   AND DASQNO = " & gdDBS.ColumnDataSet(Chr(176 + arrContent(row, 10)), vEnd:=True) & vbCrLf
 
         cmd.CommandText = sql
         result = cmd.ExecuteNonQuery()
