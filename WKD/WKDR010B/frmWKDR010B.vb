@@ -8,7 +8,7 @@ Imports System.Text.RegularExpressions
 
 Public Class frmWKDR010B
 
-    Private Sub frmWKDC010B_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub frmWKDR010B_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         ' システム日付
         Dim sysDate As Date = Now
@@ -93,7 +93,8 @@ Public Class frmWKDR010B
                 ' 固定長のフィールドの幅を指定
                 If reckbn = "1" OrElse j = 0 Then
                     ' 1行目（ヘッダーレコード）
-                    Dim fields As String() = GetFieldString(rec, 1, 8, 5, 5, 40, 61)
+                    'Dim fields As String() = GetFieldString(rec, 1, 8, 5, 5, 40, 61)
+                    Dim fields As String() = GetFieldString(rec, 1, 8, 5, 5, 40, 59)
                     Dim th As New tableHeader
                     th.reckbn = fields(0)
                     th.skdate = fields(1)
@@ -105,7 +106,8 @@ Public Class frmWKDR010B
                     j += 1
                 ElseIf reckbn = "2" Then
                     ' 2行目以降（明細レコード）
-                    Dim fields As String() = GetFieldString(rec, 1, 2, 8, 4, 2, 1, 5, 5, 16, 1, 6, 1, 6, 1, 3, 7, 8, 8, 8, 8, 4, 15)
+                    'Dim fields As String() = GetFieldString(rec, 1, 2, 8, 4, 2, 1, 5, 5, 16, 1, 6, 1, 6, 1, 3, 7, 8, 8, 8, 8, 4, 15)
+                    Dim fields As String() = GetFieldString(rec, 1, 2, 8, 4, 2, 1, 5, 5, 16, 1, 6, 1, 6, 1, 3, 7, 8, 8, 8, 8, 4, 13)
                     Dim entity As New TConveniFurikomiKakuhoEntity
                     entity.dtnengetu = GetMidByte((fields(2)), 1, 6)
                     If entity.dtnengetu <> monthAgo Then
