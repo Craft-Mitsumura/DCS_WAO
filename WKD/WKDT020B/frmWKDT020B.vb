@@ -222,7 +222,7 @@ Public Class frmWKDT020B
         ' ＣＳＶファイル出力
         'Dim fileName As String = "源泉徴収票_" & txtShoriNengetsu.Text.Replace("/", "") & ".csv"
         Dim fileName As String = "退職分源泉徴収票.csv"
-        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
+        Dim filePath As String = WriteCsvData(dt1, SettingManager.GetInstance.OutputDirectory, fileName,,, True)
         msg.AppendLine("・" & filePath)
 
         ' 送付状に出力する行を抽出
