@@ -71,7 +71,6 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("    where c.itakuno = a.itakuno")
         sql.AppendLine("    and   c.ownerno = a.ownerno")
         sql.AppendLine("    and   c.instno = a.instno")
-        'sql.AppendLine("    and   c.frinengetu <= @sime2)")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
@@ -86,13 +85,15 @@ Public Class WKDT030BDBAccess
                 i += 1
                 params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
                 params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
-                sqlIn.Append("(@ownerno" & i.ToString & ", case when c.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
+                'sqlIn.Append("(@ownerno" & i.ToString & ", case when c.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
+                sqlIn.Append("@ownerno" & i.ToString & ",")
             Next
 
             If 0 < sqlIn.Length Then
                 ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
-                sql.AppendLine("and (c.ownerno, 1) in (" & sqlIn.ToString & "))")
+                'sql.AppendLine("and (c.ownerno, 1) in (" & sqlIn.ToString & "))")
+                sql.AppendLine("and c.ownerno in (" & sqlIn.ToString & "))")
             End If
         End If
 
@@ -107,13 +108,15 @@ Public Class WKDT030BDBAccess
                 i += 1
                 params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
                 params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
-                sqlIn.Append("(@ownerno" & i.ToString & ", case when a.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
+                'sqlIn.Append("(@ownerno" & i.ToString & ", case when a.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
+                sqlIn.Append("@ownerno" & i.ToString & ",")
             Next
 
             If 0 < sqlIn.Length Then
                 ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
-                sql.AppendLine("and (a.ownerno, 1) in (" & sqlIn.ToString & ")")
+                'sql.AppendLine("and (a.ownerno, 1) in (" & sqlIn.ToString & ")")
+                sql.AppendLine("and a.ownerno in (" & sqlIn.ToString & ")")
             End If
         End If
 
