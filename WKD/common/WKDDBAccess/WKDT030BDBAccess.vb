@@ -70,35 +70,39 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("    and   b.frinengetu = (select max(frinengetu) from t_instructor_furikomi c")
         sql.AppendLine("    where c.itakuno = a.itakuno")
         sql.AppendLine("    and   c.ownerno = a.ownerno")
-        sql.AppendLine("    and   c.instno = a.instno")
+        sql.AppendLine("    and   c.instno = a.instno)")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
             New NpgsqlParameter("@crt_user_pg_id", pgid)
         }
 
-        If Not targetList Is Nothing Then
-            Dim i As Integer = 0
-            Dim sqlIn As New StringBuilder()
+        'If Not targetList Is Nothing Then
+        '    Dim i As Integer = 0
+        '    Dim sqlIn As New StringBuilder()
 
-            For Each target As TNenchoEntity In targetList
-                i += 1
-                params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
-                params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
-                'sqlIn.Append("(@ownerno" & i.ToString & ", case when c.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
-                sqlIn.Append("@ownerno" & i.ToString & ",")
-            Next
+        '    For Each target As TNenchoEntity In targetList
+        '        i += 1
+        '        params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
+        '        params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
+        '        'sqlIn.Append("(@ownerno" & i.ToString & ", case when c.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
+        '        sqlIn.Append("@ownerno" & i.ToString & ",")
+        '    Next
 
-            If 0 < sqlIn.Length Then
-                ' 最後の余計なカンマを削除
-                sqlIn.Remove(sqlIn.Length - 1, 1)
-                'sql.AppendLine("and (c.ownerno, 1) in (" & sqlIn.ToString & "))")
-                sql.AppendLine("and c.ownerno in (" & sqlIn.ToString & "))")
-            End If
-        End If
+        '    If 0 < sqlIn.Length Then
+        '        ' 最後の余計なカンマを削除
+        '        sqlIn.Remove(sqlIn.Length - 1, 1)
+        '        'sql.AppendLine("and (c.ownerno, 1) in (" & sqlIn.ToString & "))")
+        '        sql.AppendLine("and c.ownerno in (" & sqlIn.ToString & "))")
+        '    End If
+        'End If
 
         sql.AppendLine("    where substr(a.frinengetu,1,4) = substr(@sime1,1,4)")
         'sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
+
+        sql.AppendLine("  and exists (")
+        sql.AppendLine("      select 1")
+        sql.AppendLine("      from tbkeiyakushamaster d")
 
         If Not targetList Is Nothing Then
             Dim i As Integer = 0
@@ -109,14 +113,20 @@ Public Class WKDT030BDBAccess
                 params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
                 params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
                 'sqlIn.Append("(@ownerno" & i.ToString & ", case when a.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
-                sqlIn.Append("@ownerno" & i.ToString & ",")
+                'sqlIn.Append("@ownerno" & i.ToString & ",")
+                sqlIn.Append("(d.bakyny = @ownerno" & i.ToString() & ") or ")
+
             Next
 
             If 0 < sqlIn.Length Then
                 ' 最後の余計なカンマを削除
-                sqlIn.Remove(sqlIn.Length - 1, 1)
+                'sqlIn.Remove(sqlIn.Length - 1, 1)
                 'sql.AppendLine("and (a.ownerno, 1) in (" & sqlIn.ToString & ")")
-                sql.AppendLine("and a.ownerno in (" & sqlIn.ToString & ")")
+                'sql.AppendLine("and a.ownerno in (" & sqlIn.ToString & "))")
+                sqlIn.Length -= 4
+                sqlIn.AppendLine("where (" & sqlIn.ToString() & ")")
+                sql.AppendLine(")")
+
             End If
         End If
 
@@ -150,6 +160,25 @@ Public Class WKDT030BDBAccess
         sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own.bafkst and own.bafked)")
         sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null")
         sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own2.bafkst and own2.bafked)")
+
+        If Not targetList Is Nothing AndAlso targetList.Count > 0 Then
+            Dim i As Integer = 0
+            Dim orConditions As New StringBuilder()
+
+            For Each target As TNenchoEntity In targetList
+                i += 1
+                Dim paramName As String = "@ownerno" & i.ToString()
+                params.Add(New NpgsqlParameter(paramName, target.ownerno))
+                orConditions.Append("(own.bakyny = " & paramName & ") or ")
+            Next
+
+            If orConditions.Length > 0 Then
+                ' 最後の " OR " を削除
+                orConditions.Length -= 4
+                sql.AppendLine("where (" & orConditions.ToString() & ")")
+            End If
+        End If
+
         sql.AppendLine(")")
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
@@ -164,7 +193,8 @@ Public Class WKDT030BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("update t_instructor_furikomi set")
+        sql.AppendLine("update t_instructor_furikomi tif")
+        sql.AppendLine("set")
         sql.AppendLine("    tainen = substr(frinengetu,1,4)")
         sql.AppendLine("  , taituki = substr(frinengetu,5,2)")
         sql.AppendLine("  , taihi = extract(day from (date_trunc('month', to_date(substr(frinengetu, 1, 6), 'YYYYMM')) + interval '1 month - 1 day'))")
@@ -172,29 +202,32 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("  , upd_user_id = @upd_user_id")
         sql.AppendLine("  , upd_user_dtm = current_timestamp")
         sql.AppendLine("  , upd_user_pg_id = @upd_user_pg_id")
-        sql.AppendLine("    where   coalesce(nencho_flg,'0') <> '1'")
+        sql.AppendLine("from tbkeiyakushamaster km")
+        sql.AppendLine("where tif.ownerno = km.bakycd")
 
         Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@upd_user_pg_id", pgid)
+        New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
+        New NpgsqlParameter("@upd_user_pg_id", pgid)
         }
 
-        If Not targetList Is Nothing Then
+        If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
             Dim i As Integer = 0
             Dim sqlIn As New StringBuilder()
 
             For Each target As TNenchoEntity In targetList
                 i += 1
-                params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
-                sqlIn.Append("@ownerno" & i.ToString & ",")
+                Dim paramName As String = "@ownerno" & i.ToString()
+                params.Add(New NpgsqlParameter(paramName, target.ownerno))
+                sqlIn.Append(paramName & ",")
             Next
 
-            If 0 < sqlIn.Length Then
-                ' 最後の余計なカンマを削除
-                sqlIn.Remove(sqlIn.Length - 1, 1)
-                sql.AppendLine("and ownerno in (" & sqlIn.ToString & ")")
+            If sqlIn.Length > 0 Then
+                sqlIn.Length -= 1
+                sql.AppendLine("  and km.bakyny in (" & sqlIn.ToString() & ")")
             End If
         End If
+
+        sql.AppendLine("  and coalesce(tif.nencho_flg,'0') <> '1'")
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
 
@@ -286,7 +319,7 @@ Public Class WKDT030BDBAccess
                 ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
                 'sql.AppendLine("and (ownerno, 1) in (" & sqlIn.ToString & ")")
-                sql.AppendLine("and ownerno in (" & sqlIn.ToString & ")")
+                sql.AppendLine("and nys_ownerno in (" & sqlIn.ToString & ")")
             End If
         End If
 
@@ -331,7 +364,7 @@ Public Class WKDT030BDBAccess
                 ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
                 'sql.AppendLine("and (ownerno, 1) in (" & sqlIn.ToString & ")")
-                sql.AppendLine("and ownerno in (" & sqlIn.ToString & ")")
+                sql.AppendLine("and nys_ownerno in (" & sqlIn.ToString & ")")
             End If
         End If
 

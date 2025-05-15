@@ -201,7 +201,7 @@ Public Class WKDT010BDBAccess
             If 0 < sqlIn.Length Then
                 ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
-                sql.AppendLine("and ownerno in (" & sqlIn.ToString & ")")
+                sql.AppendLine("and nys_ownerno in (" & sqlIn.ToString & ")")
             End If
         End If
 

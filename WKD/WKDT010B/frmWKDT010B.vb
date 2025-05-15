@@ -157,7 +157,7 @@ Public Class frmWKDT010B
                 Dim seiwareki As Integer = jpCalendar.GetYear(seiday)
                 Dim seinen As String = (seiwareki Mod 100).ToString("00")
                 row("seiyyyy") = seigengou
-                row("seiyyyymmdd") = seinen
+                row("seiyyyymmdd") = seinen & seiday.ToString("MMdd")
             End If
 
             If CnvStr(row("nyutaishabi")).Length = 8 Then

@@ -84,23 +84,23 @@ Public Class WKDT020BDBAccess
             New NpgsqlParameter("@crt_user_pg_id", pgid)
         }
 
-        If Not targetList Is Nothing Then
-            Dim i As Integer = 0
-            Dim sqlIn As New StringBuilder()
+        'If Not targetList Is Nothing Then
+        '    Dim i As Integer = 0
+        '    Dim sqlIn As New StringBuilder()
 
-            For Each target As TNenchoEntity In targetList
-                i += 1
-                params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
-                params.Add(New NpgsqlParameter("@instno" & i.ToString, target.instno))
-                sqlIn.Append("(@ownerno" & i.ToString & ", @instno" & i.ToString & "),")
-            Next
+        '    For Each target As TNenchoEntity In targetList
+        '        i += 1
+        '        params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
+        '        params.Add(New NpgsqlParameter("@instno" & i.ToString, target.instno))
+        '        sqlIn.Append("(@ownerno" & i.ToString & ", @instno" & i.ToString & "),")
+        '    Next
 
-            If 0 < sqlIn.Length Then
-                ' 最後の余計なカンマを削除
-                sqlIn.Remove(sqlIn.Length - 1, 1)
-                sql.AppendLine("and (a.ownerno, a.instno) in (" & sqlIn.ToString & ")")
-            End If
-        End If
+        '    If 0 < sqlIn.Length Then
+        '        ' 最後の余計なカンマを削除
+        '        sqlIn.Remove(sqlIn.Length - 1, 1)
+        '        sql.AppendLine("and (a.ownerno, a.instno) in (" & sqlIn.ToString & ")")
+        '    End If
+        'End If
 
         sql.AppendLine("    group by")
         sql.AppendLine("        a.itakuno") ' 顧客番号（委託者Ｎｏ）
@@ -132,6 +132,25 @@ Public Class WKDT020BDBAccess
         sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own.bafkst and own.bafked)")
         sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null")
         sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own2.bafkst and own2.bafked)")
+
+        If Not targetList Is Nothing Then
+            Dim i As Integer = 0
+            Dim orConditions As New StringBuilder()
+
+            For Each target As TNenchoEntity In targetList
+                i += 1
+                params.Add(New NpgsqlParameter("@ownerno" & i.ToString(), target.ownerno))
+                params.Add(New NpgsqlParameter("@instno" & i.ToString, target.instno))
+                orConditions.Append("(own.bakyny = @ownerno" & i.ToString() & " and fin.instno = @instno" & i.ToString() & ") or ")
+            Next
+
+            If orConditions.Length > 0 Then
+                ' 最後の " OR " を削除
+                orConditions.Length -= 4
+                sql.AppendLine("where (" & orConditions.ToString() & ")")
+            End If
+        End If
+
         sql.AppendLine(")")
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
@@ -219,7 +238,7 @@ Public Class WKDT020BDBAccess
             If 0 < sqlIn.Length Then
                 ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
-                sql.AppendLine("and (ownerno, instno) in (" & sqlIn.ToString & ")")
+                sql.AppendLine("and (nys_ownerno, instno) in (" & sqlIn.ToString & ")")
             End If
         End If
 
@@ -318,7 +337,7 @@ Public Class WKDT020BDBAccess
             If 0 < sqlIn.Length Then
                 ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
-                sql.AppendLine("and (ownerno, instno) in (" & sqlIn.ToString & ")")
+                sql.AppendLine("and (nys_ownerno, instno) in (" & sqlIn.ToString & ")")
             End If
         End If
 
@@ -328,14 +347,14 @@ Public Class WKDT020BDBAccess
 
     End Function
 
-
     Public Function UpdateTInstructorFurikomi(pgid As String, shoriNengetsu As String, ownerno As String, instno As String, tainen As String, taituki As String, taihi As String) As Boolean
 
         Dim ret As Boolean = False
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("update t_instructor_furikomi set")
+        sql.AppendLine("update t_instructor_furikomi a")
+        sql.AppendLine("set")
         sql.AppendLine("    tainen = @tainen")
         sql.AppendLine("  , taituki = @taituki")
         sql.AppendLine("  , taihi = @taihi")
@@ -343,23 +362,30 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("  , upd_user_dtm = current_timestamp")
         sql.AppendLine("  , upd_user_pg_id = @upd_user_pg_id")
         sql.AppendLine("where coalesce(nencho_flg,'0') <> '1'")
-        sql.AppendLine("  and ownerno = @ownerno")
-        sql.AppendLine("  and instno = @instno")
+        sql.AppendLine("  and exists (")
+        sql.AppendLine("      select 1")
+        sql.AppendLine("      from tbkeiyakushamaster b")
+        sql.AppendLine("      where a.ownerno = b.bakycd")
+        sql.AppendLine("        and b.bakyny = @bakyny")
+        'sql.AppendLine("        and cast(a.frinengetu || '01' as integer) between b.bafkst and b.bafked")
+        sql.AppendLine("  )")
+        sql.AppendLine("  and a.instno = @instno")
 
         Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@upd_user_pg_id", pgid),
-            New NpgsqlParameter("@tainen", tainen),
-            New NpgsqlParameter("@taituki", taituki),
-            New NpgsqlParameter("@taihi", taihi),
-            New NpgsqlParameter("@ownerno", ownerno),
-            New NpgsqlParameter("@instno", instno)
-        }
+        New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
+        New NpgsqlParameter("@upd_user_pg_id", pgid),
+        New NpgsqlParameter("@tainen", tainen),
+        New NpgsqlParameter("@taituki", taituki),
+        New NpgsqlParameter("@taihi", taihi),
+        New NpgsqlParameter("@bakyny", ownerno), ' ← 名寄先オーナーNoで照合
+        New NpgsqlParameter("@instno", instno)
+    }
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
 
         Return ret
 
     End Function
+
 
 End Class
