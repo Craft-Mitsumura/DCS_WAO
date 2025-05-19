@@ -141,7 +141,10 @@ Public Class WKDT020BDBAccess
                 i += 1
                 params.Add(New NpgsqlParameter("@ownerno" & i.ToString(), target.ownerno))
                 params.Add(New NpgsqlParameter("@instno" & i.ToString, target.instno))
-                orConditions.Append("(own.bakyny = @ownerno" & i.ToString() & " and fin.instno = @instno" & i.ToString() & ") or ")
+                orConditions.Append("(" &
+                            "(own.bakyny = @ownerno" & i.ToString() & " or own.bakycd = @ownerno" & i.ToString() & ")" &
+                            " and fin.instno = @instno" & i.ToString() &
+                            ") or ")
             Next
 
             If orConditions.Length > 0 Then
@@ -362,12 +365,14 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("  , upd_user_dtm = current_timestamp")
         sql.AppendLine("  , upd_user_pg_id = @upd_user_pg_id")
         sql.AppendLine("where coalesce(nencho_flg,'0') <> '1'")
-        sql.AppendLine("  and exists (")
-        sql.AppendLine("      select 1")
-        sql.AppendLine("      from tbkeiyakushamaster b")
-        sql.AppendLine("      where a.ownerno = b.bakycd")
-        sql.AppendLine("        and b.bakyny = @bakyny")
-        'sql.AppendLine("        and cast(a.frinengetu || '01' as integer) between b.bafkst and b.bafked")
+        sql.AppendLine("  and (")
+        sql.AppendLine("        a.ownerno = @bakyny")
+        sql.AppendLine("     or exists (")
+        sql.AppendLine("        select 1")
+        sql.AppendLine("        from tbkeiyakushamaster b")
+        sql.AppendLine("        where a.ownerno = b.bakycd")
+        sql.AppendLine("          and b.bakyny = @bakyny")
+        sql.AppendLine("     )")
         sql.AppendLine("  )")
         sql.AppendLine("  and a.instno = @instno")
 

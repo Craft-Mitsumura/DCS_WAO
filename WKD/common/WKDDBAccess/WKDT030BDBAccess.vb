@@ -114,8 +114,7 @@ Public Class WKDT030BDBAccess
                 params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
                 'sqlIn.Append("(@ownerno" & i.ToString & ", case when a.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
                 'sqlIn.Append("@ownerno" & i.ToString & ",")
-                sqlIn.Append("(d.bakyny = @ownerno" & i.ToString() & ") or ")
-
+                sqlIn.Append("(d.bakyny = @ownerno" & i.ToString() & " or d.bakycd = @ownerno" & i.ToString() & ") or ")
             Next
 
             If 0 < sqlIn.Length Then
@@ -169,7 +168,7 @@ Public Class WKDT030BDBAccess
                 i += 1
                 Dim paramName As String = "@ownerno" & i.ToString()
                 params.Add(New NpgsqlParameter(paramName, target.ownerno))
-                orConditions.Append("(own.bakyny = " & paramName & ") or ")
+                orConditions.Append("(own.bakyny = " & paramName & " or own.bakycd = " & paramName & ") or ")
             Next
 
             If orConditions.Length > 0 Then
@@ -213,17 +212,24 @@ Public Class WKDT030BDBAccess
         If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
             Dim i As Integer = 0
             Dim sqlIn As New StringBuilder()
+            Dim sqlOwnernoIn As New StringBuilder()
 
             For Each target As TNenchoEntity In targetList
                 i += 1
                 Dim paramName As String = "@ownerno" & i.ToString()
                 params.Add(New NpgsqlParameter(paramName, target.ownerno))
                 sqlIn.Append(paramName & ",")
+                sqlOwnernoIn.Append(paramName & ",")
             Next
 
             If sqlIn.Length > 0 Then
                 sqlIn.Length -= 1
-                sql.AppendLine("  and km.bakyny in (" & sqlIn.ToString() & ")")
+                sqlOwnernoIn.Length -= 1
+
+                sql.AppendLine("  and (")
+                sql.AppendLine("         km.bakyny in (" & sqlIn.ToString() & ")")
+                sql.AppendLine("      or tif.ownerno in (" & sqlOwnernoIn.ToString() & ")")
+                sql.AppendLine("      )")
             End If
         End If
 
