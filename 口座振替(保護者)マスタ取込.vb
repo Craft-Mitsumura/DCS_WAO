@@ -279,6 +279,10 @@ Friend Class frmFurikaeReqImportAuto
         sql = sql & "CASQNO," & vbCrLf '//•ÛŒìÒ‚r‚d‚p
         sql = sql & "CASTNM," & vbCrLf '//¶“k–¼
         sql = sql & "CAKKBN," & vbCrLf '//æˆø‹à—Z‹@ŠÖ‹æ•ª
+        If arrContent(row, 6) = "9900" Then
+            sql = sql & "CAYBTK," & vbCrLf '//’Ê’ ‹L†
+            sql = sql & "CAYBTN," & vbCrLf '//’Ê’ ”Ô†
+        End If
         sql = sql & "CABANK," & vbCrLf '//æˆø‹âs
         sql = sql & "CASITN," & vbCrLf '//æˆøx“X
         sql = sql & "CAKZSB," & vbCrLf '//ŒûÀí•Ê
@@ -303,6 +307,8 @@ Friend Class frmFurikaeReqImportAuto
         sql = sql & gdDBS.ColumnDataSet(arrContent(row, 3), vEnd:=True) & "," & vbCrLf '//¶“k–¼
         If arrContent(row, 6) = "9900" Then
             sql = sql & gdDBS.ColumnDataSet("1", vEnd:=True) & "," & vbCrLf '//æˆø‹à—Z‹@ŠÖ‹æ•ª
+            sql = sql & gdDBS.ColumnDataSet(arrContent(row, 7), vEnd:=True) & "," & vbCrLf '//’Ê’ ‹L†
+            sql = sql & gdDBS.ColumnDataSet(arrContent(row, 9), vEnd:=True) & "," & vbCrLf '//’Ê’ ”Ô†
         Else
             sql = sql & gdDBS.ColumnDataSet("0", vEnd:=True) & "," & vbCrLf '//æˆø‹à—Z‹@ŠÖ‹æ•ª
         End If
@@ -336,6 +342,8 @@ Friend Class frmFurikaeReqImportAuto
         sql = sql & " CASTNM = " & gdDBS.ColumnDataSet(arrContent(row, 3), vEnd:=True) & "," & vbCrLf
         If arrContent(row, 6) = "9900" Then
             sql = sql & " CAKKBN = " & gdDBS.ColumnDataSet("1", vEnd:=True) & "," & vbCrLf '//æˆø‹à—Z‹@ŠÖ‹æ•ª
+            sql = sql & " CAYBTK = " & gdDBS.ColumnDataSet(arrContent(row, 7), vEnd:=True) & "," & vbCrLf '//’Ê’ ‹L†
+            sql = sql & " CAYBTN = " & gdDBS.ColumnDataSet(arrContent(row, 9), vEnd:=True) & "," & vbCrLf '//’Ê’ ”Ô†
         Else
             sql = sql & " CAKKBN = " & gdDBS.ColumnDataSet("0", vEnd:=True) & "," & vbCrLf '//æˆø‹à—Z‹@ŠÖ‹æ•ª
         End If
