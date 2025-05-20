@@ -84,67 +84,87 @@ Public Class frmWKDC030B
         Dim filePath As String = WriteCsvData(dt3, SettingManager.GetInstance.OutputDirectory, fileName, True,, True)
         msg.AppendLine("・" & filePath)
 
-        ' 区分ごとの件数を取得
+        ' 件数用データテーブルの作成
+        Dim dt3a As New DataTable()
+        dt3a.Columns.Add("区分名", GetType(String))
+        dt3a.Columns.Add("件数", GetType(Integer))
+
+        ' 件数集計
+        Dim countMap As New Dictionary(Of String, Integer)
+        Dim totalCount As Integer = 0
+        Dim totalCount2 As Integer = 0
+
+        ' 区分（1:口座振替, 2:コンビニ）
         Dim kbnRows = From row In dt3.AsEnumerable()
                       Where row.Field(Of String)("区分(1:振替,2:ｺﾝﾋﾞﾆ)") = "1" OrElse row.Field(Of String)("区分(1:振替,2:ｺﾝﾋﾞﾆ)") = "2"
                       Group row By kubun = row.Field(Of String)("区分(1:振替,2:ｺﾝﾋﾞﾆ)") Into Group
                       Select 区分 = kubun, 件数 = Group.Count()
 
-        Dim dt3a As DataTable = New DataTable() ' 新しいDataTableを作成
+        ' 初期化（存在しない場合も含めるため）
+        countMap("ｺｳｻﾞﾌﾘｶｴ") = 0
+        countMap("ｺﾝﾋﾞﾆﾌﾘｺﾐ") = 0
 
-        ' 件数と区分名を表示するための2つの列を作成
-        dt3a.Columns.Add("区分名", GetType(String))
-        dt3a.Columns.Add("件数", GetType(Integer))
+        For Each result In kbnRows
+            Select Case result.区分
+                Case "1"
+                    countMap("ｺｳｻﾞﾌﾘｶｴ") = result.件数
+                Case "2"
+                    countMap("ｺﾝﾋﾞﾆﾌﾘｺﾐ") = result.件数
+            End Select
+        Next
 
-        Dim totalCount As Integer = 0
+        totalCount = countMap("ｺｳｻﾞﾌﾘｶｴ") + countMap("ｺﾝﾋﾞﾆﾌﾘｺﾐ")
 
-        ' 区分1が存在する場合
-        Dim group1 = kbnRows.FirstOrDefault(Function(g) g.区分 = "1")
-        Dim newRow1 As DataRow = dt3a.NewRow()
-        newRow1("区分名") = "ｺｳｻﾞﾌﾘｶｴ"
-        If group1 IsNot Nothing Then
-            newRow1("件数") = group1.件数
-            totalCount += group1.件数
-        Else
-            newRow1("件数") = 0
-        End If
-        dt3a.Rows.Add(newRow1)
+        ' オンライン区分の集計
+        Dim onlineKbnRows = From row In dt3.AsEnumerable()
+                            Let onlineKbn = If(row.IsNull("オンライン区分"), "-1", row("オンライン区分").ToString())
+                            Where onlineKbn = "1" OrElse onlineKbn <> "1"
+                            Group row By 区分名 = If(onlineKbn = "1", "ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ）", "ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ含まない）") Into Group
+                            Select 区分名, 件数 = Group.Count()
 
-        ' 区分2が存在する場合
-        Dim group2 = kbnRows.FirstOrDefault(Function(g) g.区分 = "2")
-        Dim newRow2 As DataRow = dt3a.NewRow()
-        newRow2("区分名") = "ｺﾝﾋﾞﾆﾌﾘｺﾐ"
-        If group2 IsNot Nothing Then
-            newRow2("件数") = group2.件数
-            totalCount += group2.件数
-        Else
-            newRow2("件数") = 0
-        End If
-        dt3a.Rows.Add(newRow2)
+        ' 初期化（存在しない場合も含めるため）
+        countMap("ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ）") = 0
+        countMap("ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ含まない）") = 0
 
-        ' 新規件数
-        Dim dt5 As DataTable = dba.GetOwnerKensuKingaku(shoriNengetsu)
-        Dim newRowForCondition As DataRow = dt3a.NewRow()
-        newRowForCondition("区分名") = "ｼﾝｷｹﾝｽｳ"
-        If dt5.Rows.Count > 0 Then
-            newRowForCondition("件数") = CnvInt(dt5.Rows(0)("新規件数"))
-        Else
-            newRowForCondition("件数") = 0
-        End If
-        dt3a.Rows.Add(newRowForCondition)
+        For Each result In onlineKbnRows
+            countMap(result.区分名) = result.件数
+            totalCount2 += result.件数
+        Next
 
-        ' 合計行
-        Dim totalRow As DataRow = dt3a.NewRow()
-        totalRow("区分名") = "ﾃｽｳﾘｮｳ"
-        totalRow("件数") = totalCount
-        dt3a.Rows.Add(totalRow)
+        ' 合計
+        countMap("ﾃｽｳﾘｮｳ") = totalCount
+        countMap("ｼﾝｷｹﾝｽｳ ｺﾞｳｹｲ") = totalCount2
+
+        ' 指定順で表示
+        Dim orderedKeys As String() = {
+            "ｺｳｻﾞﾌﾘｶｴ",
+            "ｺﾝﾋﾞﾆﾌﾘｺﾐ",
+            "ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ含まない）",
+            "ﾃｽｳﾘｮｳ",
+             Nothing,
+            "ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ）",
+            "ｼﾝｷｹﾝｽｳ ｺﾞｳｹｲ"
+        }
+
+        For Each key In orderedKeys
+            Dim row As DataRow = dt3a.NewRow()
+
+            If key IsNot Nothing Then
+                row("区分名") = key
+                row("件数") = countMap(key)
+            Else
+                row("区分名") = DBNull.Value
+                row("件数") = 0
+            End If
+
+            dt3a.Rows.Add(row)
+        Next
 
         Dim fileName2 As String = "予定表還元データ_件数.csv"
         Dim filePath2 As String = WriteCsvData(dt3a, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
         msg.AppendLine("・" & filePath2)
 
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
 
     End Sub
 
