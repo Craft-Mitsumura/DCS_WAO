@@ -85,14 +85,14 @@ Public Class frmWKDC030B
         msg.AppendLine("・" & filePath)
 
         ' 件数用データテーブルの作成
-        Dim dt3a As New DataTable()
-        dt3a.Columns.Add("区分名", GetType(String))
-        dt3a.Columns.Add("件数", GetType(Integer))
+        Dim dt3a1 As New DataTable()
+        dt3a1.Columns.Add("区分名", GetType(String))
+        dt3a1.Columns.Add("件数", GetType(Integer))
 
         ' 件数集計
         Dim countMap As New Dictionary(Of String, Integer)
         Dim totalCount As Integer = 0
-        Dim totalCount2 As Integer = 0
+        Dim Count2 As Integer = 0
 
         ' 区分（1:口座振替, 2:コンビニ）
         Dim kbnRows = From row In dt3.AsEnumerable()
@@ -117,9 +117,11 @@ Public Class frmWKDC030B
 
         ' オンライン区分の集計
         Dim onlineKbnRows = From row In dt3.AsEnumerable()
+                            Let furikaeKaishi = If(row.IsNull("振替開始年月"), "", row.Field(Of String)("振替開始年月"))
+                            Let furikaeKaishi6 = If(furikaeKaishi.Length >= 6, furikaeKaishi.Substring(0, 6), "")
                             Let onlineKbn = If(row.IsNull("オンライン区分"), "-1", row("オンライン区分").ToString())
-                            Where onlineKbn = "1" OrElse onlineKbn <> "1"
-                            Group row By 区分名 = If(onlineKbn = "1", "ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ）", "ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ含まない）") Into Group
+                            Where furikaeKaishi6 = shoriNengetsu AndAlso onlineKbn = "1"
+                            Group row By 区分名 = "ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ）" Into Group
                             Select 区分名, 件数 = Group.Count()
 
         ' 初期化（存在しない場合も含めるため）
@@ -128,12 +130,21 @@ Public Class frmWKDC030B
 
         For Each result In onlineKbnRows
             countMap(result.区分名) = result.件数
-            totalCount2 += result.件数
         Next
 
         ' 合計
         countMap("ﾃｽｳﾘｮｳ") = totalCount
-        countMap("ｼﾝｷｹﾝｽｳ ｺﾞｳｹｲ") = totalCount2
+
+        Dim dt3a2 As DataTable = dba.GetOwnerKensuKingaku(shoriNengetsu)
+        If 0 < dt3a2.Rows.Count Then
+            countMap("ｼﾝｷｹﾝｽｳ ｺﾞｳｹｲ") = CnvInt(dt3a2.Rows(0)("新規件数"))
+        Else
+            countMap("ｼﾝｷｹﾝｽｳ ｺﾞｳｹｲ") = 0
+        End If
+
+        Count2 = countMap("ｼﾝｷｹﾝｽｳ ｺﾞｳｹｲ") - countMap("ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ）")
+
+        countMap("ｼﾝｷｹﾝｽｳ（ｵﾝﾗｲﾝ含まない）") = Count2
 
         ' 指定順で表示
         Dim orderedKeys As String() = {
@@ -147,7 +158,7 @@ Public Class frmWKDC030B
         }
 
         For Each key In orderedKeys
-            Dim row As DataRow = dt3a.NewRow()
+            Dim row As DataRow = dt3a1.NewRow()
 
             If key IsNot Nothing Then
                 row("区分名") = key
@@ -157,11 +168,11 @@ Public Class frmWKDC030B
                 row("件数") = 0
             End If
 
-            dt3a.Rows.Add(row)
+            dt3a1.Rows.Add(row)
         Next
 
         Dim fileName2 As String = "予定表還元データ_件数.csv"
-        Dim filePath2 As String = WriteCsvData(dt3a, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
+        Dim filePath2 As String = WriteCsvData(dt3a1, SettingManager.GetInstance.OutputDirectory, fileName2,,, True)
         msg.AppendLine("・" & filePath2)
 
         MessageBox.Show(msg.ToString(), "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
