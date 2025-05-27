@@ -121,6 +121,13 @@ Public Class frmWKDT030B
                 Return
             End If
 
+            ' 年調作表データ更新
+            For Each target As TNenchoEntity In targetList
+                If Not dba.UpdateTInstructorFurikomi(Me.ProductName, target.dtnengetu, target.ownerno) Then
+                    Return
+                End If
+            Next
+
             ' 年調作表データ作成
             If Not dba.InsertTNencho(Me.ProductName, targetList) Then
                 Return
@@ -130,11 +137,6 @@ Public Class frmWKDT030B
             dt = dba.GetTNencho(targetList)
             If dt.Rows.Count <= 0 Then
                 MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                Return
-            End If
-
-            ' 年調作表データ更新
-            If Not dba.UpdateTInstructorFurikomi(Me.ProductName, targetList) Then
                 Return
             End If
         End If

@@ -186,7 +186,7 @@ Public Class WKDT030BDBAccess
 
     End Function
 
-    Public Function UpdateTInstructorFurikomi(pgid As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As Boolean
+    Public Function UpdateTInstructorFurikomi(pgid As String, simenengetsu As String, ownerno As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As Boolean
 
         Dim ret As Boolean = False
         Dim dbc As New DBClient
@@ -194,46 +194,55 @@ Public Class WKDT030BDBAccess
         Dim sql As New StringBuilder()
         sql.AppendLine("update t_instructor_furikomi tif")
         sql.AppendLine("set")
-        sql.AppendLine("    tainen = substr(frinengetu,1,4)")
-        sql.AppendLine("  , taituki = substr(frinengetu,5,2)")
-        sql.AppendLine("  , taihi = extract(day from (date_trunc('month', to_date(substr(frinengetu, 1, 6), 'YYYYMM')) + interval '1 month - 1 day'))")
+        'sql.AppendLine("    tainen = substr(@simenengetsu,1,4)")
+        'sql.AppendLine("  , taituki = substr(@simenengetsu,5,2)")
+        'sql.AppendLine("  , taihi = extract(day from (date_trunc('month', to_date(substr(@simenengetsu, 1, 6), 'YYYYMM')) + interval '1 month - 1 day'))")
+        sql.AppendLine("    tainen = case when coalesce(tif.tainen, '') in ('', '0000') then substr(@simenengetsu,1,4) else tif.tainen end")
+        sql.AppendLine("  , taituki = case when coalesce(tif.taituki, '') in ('', '00') then substr(@simenengetsu,5,2) else tif.taituki end")
+        sql.AppendLine("  , taihi = case when coalesce(tif.taihi, '') in ('', '00') then lpad(extract(day from (date_trunc('month', to_date(substr(@simenengetsu, 1, 6), 'YYYYMM')) + interval '1 month - 1 day'))::text, 2, '0') else tif.taihi end")
         sql.AppendLine("  , nencho_flg = '1'")
         sql.AppendLine("  , upd_user_id = @upd_user_id")
         sql.AppendLine("  , upd_user_dtm = current_timestamp")
         sql.AppendLine("  , upd_user_pg_id = @upd_user_pg_id")
         sql.AppendLine("from tbkeiyakushamaster km")
         sql.AppendLine("where tif.ownerno = km.bakycd")
+        sql.AppendLine("  and (km.bakyny = @ownerno")
+        sql.AppendLine("  or tif.ownerno = @ownerno)")
+        'sql.AppendLine("  and coalesce(tif.nencho_flg,'0') <> '1'")
+        sql.AppendLine("  and substr(tif.frinengetu,1,4) = substr(@simenengetsu,1,4)")
+        sql.AppendLine("  and cast(tif.frinengetu || '01' as integer) between km.bafkst and km.bafked")
+        sql.AppendLine("  and km.bakome is not null")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
-        New NpgsqlParameter("@upd_user_pg_id", pgid)
+        New NpgsqlParameter("@upd_user_pg_id", pgid),
+        New NpgsqlParameter("@simenengetsu", simenengetsu),
+        New NpgsqlParameter("@ownerno", ownerno)
         }
 
-        If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
-            Dim i As Integer = 0
-            Dim sqlIn As New StringBuilder()
-            Dim sqlOwnernoIn As New StringBuilder()
+        'If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
+        '    Dim i As Integer = 0
+        '    Dim sqlIn As New StringBuilder()
+        '    Dim sqlOwnernoIn As New StringBuilder()
 
-            For Each target As TNenchoEntity In targetList
-                i += 1
-                Dim paramName As String = "@ownerno" & i.ToString()
-                params.Add(New NpgsqlParameter(paramName, target.ownerno))
-                sqlIn.Append(paramName & ",")
-                sqlOwnernoIn.Append(paramName & ",")
-            Next
+        '    For Each target As TNenchoEntity In targetList
+        '        i += 1
+        '        Dim paramName As String = "@ownerno" & i.ToString()
+        '        params.Add(New NpgsqlParameter(paramName, target.ownerno))
+        '        sqlIn.Append(paramName & ",")
+        '        sqlOwnernoIn.Append(paramName & ",")
+        '    Next
 
-            If sqlIn.Length > 0 Then
-                sqlIn.Length -= 1
-                sqlOwnernoIn.Length -= 1
+        '    If sqlIn.Length > 0 Then
+        '        sqlIn.Length -= 1
+        '        sqlOwnernoIn.Length -= 1
 
-                sql.AppendLine("  and (")
-                sql.AppendLine("         km.bakyny in (" & sqlIn.ToString() & ")")
-                sql.AppendLine("      or tif.ownerno in (" & sqlOwnernoIn.ToString() & ")")
-                sql.AppendLine("      )")
-            End If
-        End If
-
-        sql.AppendLine("  and coalesce(tif.nencho_flg,'0') <> '1'")
+        '        sql.AppendLine("  and (")
+        '        sql.AppendLine("         km.bakyny in (" & sqlIn.ToString() & ")")
+        '        sql.AppendLine("      or tif.ownerno in (" & sqlOwnernoIn.ToString() & ")")
+        '        sql.AppendLine("      )")
+        '    End If
+        'End If
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
 

@@ -372,9 +372,12 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("        from tbkeiyakushamaster b")
         sql.AppendLine("        where a.ownerno = b.bakycd")
         sql.AppendLine("          and b.bakyny = @bakyny")
+        sql.AppendLine("          and cast(a.frinengetu || '01' as integer) between b.bafkst and b.bafked")
+        sql.AppendLine("          and b.bakome is not null")
         sql.AppendLine("     )")
         sql.AppendLine("  )")
         sql.AppendLine("  and a.instno = @instno")
+        sql.AppendLine("  and substr(a.frinengetu,1,4) = substr(@shoriNengetsu,1,4)")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
@@ -383,7 +386,8 @@ Public Class WKDT020BDBAccess
         New NpgsqlParameter("@taituki", taituki),
         New NpgsqlParameter("@taihi", taihi),
         New NpgsqlParameter("@bakyny", ownerno), ' ← 名寄先オーナーNoで照合
-        New NpgsqlParameter("@instno", instno)
+        New NpgsqlParameter("@instno", instno),
+        New NpgsqlParameter("@shoriNengetsu", shoriNengetsu)
     }
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
