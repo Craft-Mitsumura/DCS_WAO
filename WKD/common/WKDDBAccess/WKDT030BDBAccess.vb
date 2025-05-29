@@ -272,18 +272,20 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("        when substring(frinengetu,1,4) = nyunen then '＊'")
         sql.AppendLine("        else ''")
         sql.AppendLine("    end shushokuran")
-        sql.AppendLine("  , case") ' 退職欄
-        sql.AppendLine("        when substring(frinengetu,1,4) = tainen then '＊'")
-        sql.AppendLine("        else ''")
-        sql.AppendLine("    end taishokuran")
-        sql.AppendLine("  , case") ' 入社/退職年月日（和暦）
-        sql.AppendLine("        when substring(frinengetu,1,4) = tainen then tainen || taituki || taihi")
-        sql.AppendLine("        else ")
-        sql.AppendLine("            case")
-        sql.AppendLine("                when substring(frinengetu,1,4) = nyunen then nyunen || nyutuki || nyuhi")
-        sql.AppendLine("                else ''")
-        sql.AppendLine("            end")
-        sql.AppendLine("    end nyutaishabi")
+        'sql.AppendLine("  , case") ' 退職欄
+        'sql.AppendLine("        when substring(frinengetu,1,4) = tainen then '＊'")
+        'sql.AppendLine("        else ''")
+        'sql.AppendLine("    end taishokuran")
+        sql.AppendLine("  , '＊' taishokuran") ' 退職欄
+        'sql.AppendLine("  , case") ' 入社/退職年月日（和暦）
+        'sql.AppendLine("        when substring(frinengetu,1,4) = tainen then tainen || taituki || taihi")
+        'sql.AppendLine("        else ")
+        'sql.AppendLine("            case")
+        'sql.AppendLine("                when substring(frinengetu,1,4) = nyunen then nyunen || nyutuki || nyuhi")
+        'sql.AppendLine("                else ''")
+        'sql.AppendLine("            end")
+        'sql.AppendLine("    end nyutaishabi")
+        sql.AppendLine("  , tainen || taituki || taihi nyutaishabi") ' 入社/退職年月日（和暦）
         sql.AppendLine("  , seiyyyy") ' 生年月日元号
         sql.AppendLine("  , seiyyyy || seimm || seidd seiyyyymmdd") ' 生年月日（和暦）
         sql.AppendLine("  , houjinno") ' 法人番号
