@@ -124,7 +124,8 @@ Public Class WKDR060BDBAccess
         sql.AppendLine("      between -10000 and 0 then")
         sql.AppendLine("            lpad( cast((((coalesce(fuzkin, 0) + coalesce(cszkin, 0) + coalesce(tyosei, 0)) - ")
         'sql.AppendLine("           (coalesce(tesur1, 0) + coalesce(tesur2, 0) + coalesce(tesur3, 0) + coalesce(tesur4, 0) + coalesce(tesur5, 0) + coalesce(tesur6, 0) + coalesce(fritesu, 0))) - coalesce(fritesu, 0))  * -1 as character varying) , 12 ,' ') ")
-        sql.AppendLine("           (coalesce(tesur1, 0) + coalesce(tesur2, 0) + coalesce(tesur3, 0) + coalesce(tesur4, 0) + coalesce(tesur5, 0) + coalesce(tesur6, 0) + coalesce(fritesu, 0)))) * -1 as character varying) , 12 ,' ') ")
+        'sql.AppendLine("           (coalesce(tesur1, 0) + coalesce(tesur2, 0) + coalesce(tesur3, 0) + coalesce(tesur4, 0) + coalesce(tesur5, 0) + coalesce(tesur6, 0) + coalesce(fritesu, 0)))) * -1 as character varying) , 12 ,' ') ")
+        sql.AppendLine("           (coalesce(tesur1, 0) + coalesce(tesur2, 0) + coalesce(tesur3, 0) + coalesce(tesur4, 0) + coalesce(tesur5, 0) + coalesce(tesur6, 0) + coalesce(fritesu, 0)))) as character varying) , 12 ,' ') ")
         sql.AppendLine("      else '           0'")
         sql.AppendLine("  end yokuchou") ' 翌月調整分
         'sql.AppendLine("  , lpad( cast(coalesce(kensu, 0) as character varying) , 7 ,'0') kensu") ' 新規登録件数
