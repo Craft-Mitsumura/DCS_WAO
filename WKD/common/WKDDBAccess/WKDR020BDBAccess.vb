@@ -231,57 +231,57 @@ Public Class WKDR020BDBAccess
 
     End Function
 
-    'Public Function getConvenifurikomikakuho(dtnengetu As String) As DataTable
+    Public Function getConvenifurikomikakuho(dtnengetu As String) As DataTable
 
-    '    Dim dt As DataTable = Nothing
-    '    Dim dbc As New DBClient
+        Dim dt As DataTable = Nothing
+        Dim dbc As New DBClient
 
-    '    Dim sql As New StringBuilder()
-    '    sql.AppendLine("SELECT ")
-    '    sql.AppendLine("    dtnengetu ")
-    '    sql.AppendLine("    , itakuno ")
-    '    sql.AppendLine("    , ownerno ")
-    '    sql.AppendLine("    , seitono ")
-    '    sql.AppendLine("    , kseqno ")
-    '    sql.AppendLine("    , dtsybt ")
-    '    sql.AppendLine("    , syndate ")
-    '    sql.AppendLine("    , syntime ")
-    '    sql.AppendLine("    , skbt ")
-    '    sql.AppendLine("    , kuni ")
-    '    sql.AppendLine("    , mufcd ")
-    '    sql.AppendLine("    , kgycd ")
-    '    sql.AppendLine("    , kgynmkn ")
-    '    sql.AppendLine("    , shkkkbn ")
-    '    sql.AppendLine("    , shrikgn ")
-    '    sql.AppendLine("    , insiflg ")
-    '    sql.AppendLine("    , kingk ")
-    '    sql.AppendLine("    , cd ")
-    '    sql.AppendLine("    , uktncd ")
-    '    sql.AppendLine("    , stkdate ")
-    '    sql.AppendLine("    , frytdate ")
-    '    sql.AppendLine("    , krsydate ")
-    '    sql.AppendLine("    , cvscd ")
-    '    sql.AppendLine("    , a.crt_user_id ")
-    '    sql.AppendLine("    , a.crt_user_dtm ")
-    '    sql.AppendLine("    , a.crt_user_pg_id ")
-    '    sql.AppendLine("    , a.upd_user_id ")
-    '    sql.AppendLine("    , a.upd_user_dtm ")
-    '    sql.AppendLine("    , a.upd_user_pg_id ")
-    '    sql.AppendLine("    , b.code ")
-    '    sql.AppendLine("FROM t_conveni_furikomi_kakuho a")
-    '    sql.AppendLine("left join m_kubun b")
-    '    sql.AppendLine("on b.kubun = '01'")
-    '    sql.AppendLine("and a.cvscd = b.code")
-    '    sql.AppendLine("where dtnengetu = @dtnengetu")
+        Dim sql As New StringBuilder()
+        sql.AppendLine("SELECT ")
+        sql.AppendLine("    dtnengetu ")
+        sql.AppendLine("    , itakuno ")
+        sql.AppendLine("    , ownerno ")
+        sql.AppendLine("    , seitono ")
+        sql.AppendLine("    , kseqno ")
+        sql.AppendLine("    , dtsybt ")
+        sql.AppendLine("    , syndate ")
+        sql.AppendLine("    , syntime ")
+        sql.AppendLine("    , skbt ")
+        sql.AppendLine("    , kuni ")
+        sql.AppendLine("    , mufcd ")
+        sql.AppendLine("    , kgycd ")
+        sql.AppendLine("    , kgynmkn ")
+        sql.AppendLine("    , shkkkbn ")
+        sql.AppendLine("    , shrikgn ")
+        sql.AppendLine("    , insiflg ")
+        sql.AppendLine("    , kingk ")
+        sql.AppendLine("    , cd ")
+        sql.AppendLine("    , uktncd ")
+        sql.AppendLine("    , stkdate ")
+        sql.AppendLine("    , frytdate ")
+        sql.AppendLine("    , krsydate ")
+        sql.AppendLine("    , cvscd ")
+        sql.AppendLine("    , a.crt_user_id ")
+        sql.AppendLine("    , a.crt_user_dtm ")
+        sql.AppendLine("    , a.crt_user_pg_id ")
+        sql.AppendLine("    , a.upd_user_id ")
+        sql.AppendLine("    , a.upd_user_dtm ")
+        sql.AppendLine("    , a.upd_user_pg_id ")
+        sql.AppendLine("    , b.code ")
+        sql.AppendLine("FROM t_conveni_furikomi_kakuho a")
+        sql.AppendLine("left join m_kubun b")
+        sql.AppendLine("on b.kubun = '01'")
+        sql.AppendLine("and a.cvscd = b.code")
+        sql.AppendLine("where dtnengetu = @dtnengetu")
 
-    '    Dim params As New List(Of NpgsqlParameter) From {
-    '    New NpgsqlParameter("@dtnengetu", dtnengetu)
-    '    }
+        Dim params As New List(Of NpgsqlParameter) From {
+        New NpgsqlParameter("@dtnengetu", dtnengetu)
+        }
 
-    '    dt = dbc.GetData(sql.ToString(), params)
+        dt = dbc.GetData(sql.ToString(), params)
 
-    '    Return dt
+        Return dt
 
-    'End Function
+    End Function
 
 End Class

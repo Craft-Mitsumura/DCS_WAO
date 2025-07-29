@@ -275,85 +275,11 @@ Public Class frmWKDR010B
         If Not dba.Insert(monthAgo) Then
             Return
         End If
+        MessageBox.Show("「" & filePath & "」が取り込まれました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         tableHeaderList.Clear()
         entityList.Clear()
         'tableDetail.Clear()
-
-        ' コンビニ振込情報データ取得
-        Dim tbConvenifurikomikakuho As DataTable = Nothing
-        If monthAgo <> "" Then
-            tbConvenifurikomikakuho = dba.getConvenifurikomikakuho(monthAgo)
-            ' コンビニ振込確報データが存在しない場合はエラーメッセージを表示し、処理中断、存在する場合は後ほど取得データをentitiyに格納
-            If tbConvenifurikomikakuho.Rows.Count = 0 Then
-                MessageBox.Show("コンビニ振込確報データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                Exit Sub
-            End If
-        End If
-
-        ' 振替結果明細データ(該当年月データ)削除
-        If Not dba.DeleteTFurikaekekkameisai(monthAgo) Then
-            Return
-        End If
-
-        '手数料データ取得
-        Dim tbTesuryo As DataTable = dba.getTesuryo("")
-        Dim koufuri As String = ""
-        Dim konbini As String = ""
-        Dim insi31500 As String = ""
-        If tbTesuryo.Rows.Count <> 0 Then
-            Dim dtrow2 As DataRow = tbTesuryo.Rows(0)
-            koufuri = dtrow2("koufuri")
-            konbini = dtrow2("konbini")
-            insi31500 = dtrow2("insi31500")
-        Else
-            MessageBox.Show("手数料テーブルからデータを取得できませんでした", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End If
-
-        ' コンビニ振込情報データ取得(取得したものをentityに格納)
-        Dim entityList3 As New List(Of TFurikaeKekkaMeisaiEntity)
-        If Not tbConvenifurikomikakuho Is Nothing Then
-            For Each dtrow As DataRow In tbConvenifurikomikakuho.Rows
-                Dim entity As New TFurikaeKekkaMeisaiEntity
-                entity.dtnengetu = dtrow("dtnengetu") ' データ年月
-                entity.itakuno = dtrow("itakuno") ' 顧客番号（委託者Ｎｏ）
-                entity.ownerno = dtrow("ownerno") ' 顧客番号（オーナーＮｏ）
-                entity.seitono = dtrow("seitono") ' 顧客番号（生徒Ｎｏ）
-                entity.kseqno = dtrow("kseqno") ' 顧客番号内ＳＥＱ番
-                entity.syokbn = "2" ' 処理区分
-                entity.funocd = "" ' 不能コード
-                entity.syuunou = "0" ' 収納状況
-                entity.h_hkdate = "" ' 入金日
-                entity.fkkin = dtrow("kingk") ' 金額
-                Dim tesuryo As String = ""
-                Dim intkonbini As Integer = CnvDec(konbini)
-                If dtrow("insiflg") = "1" Then
-                    If IsDBNull(dtrow("code")) Then
-                        intkonbini += insi31500
-                    End If
-                End If
-                entity.tesur = intkonbini.ToString ' 手数料金額
-                entity.bankcd = "" ' 振込先銀行番号
-                entity.banmnm = "" ' 振込先銀行名
-                entity.sitencd = "" ' 振込先支店番号
-                entity.sitennm = "" ' 振込先支店名
-                entity.syumoku = "" ' 預金種目
-                entity.kouzano = "" ' 口座番号
-                entity.kouzanm = "" ' 預金者名義人名
-                entity.crt_user_id = dtrow("crt_user_id") ' 登録ユーザーID
-                entity.crt_user_dtm = dtrow("crt_user_dtm") ' 登録日時
-                entity.crt_user_pg_id = dtrow("crt_user_pg_id") ' 登録プログラムID
-                entityList3.Add(entity)
-            Next
-        End If
-
-        ' 振替結果明細データ作成
-        If Not dba.InsertTFurikaeKekkaMeisai(entityList3) Then
-            Return
-        End If
-
-        MessageBox.Show("「" & filePath & "」が取り込まれました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
 
