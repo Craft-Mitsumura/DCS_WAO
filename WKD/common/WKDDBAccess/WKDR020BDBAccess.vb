@@ -95,6 +95,7 @@ Public Class WKDR020BDBAccess
 
         Dim sql As New StringBuilder()
         sql.AppendLine("delete from t_furikae_kekka_meisai where dtnengetu = @dtnengetu")
+        sql.AppendLine("and syokbn = '1'")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)
