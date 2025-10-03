@@ -140,11 +140,11 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("        else ''")
         sql.AppendLine("    end shushokuran")
         sql.AppendLine("  , case") ' 退職欄
-        sql.AppendLine("        when substring(frinengetu,1,4) = tainen then '＊'")
+        sql.AppendLine("        when tainen is not null and tainen <> '0' then '＊'")
         sql.AppendLine("        else ''")
         sql.AppendLine("    end taishokuran")
         sql.AppendLine("  , case") ' 入社/退職年月日（和暦）
-        sql.AppendLine("        when substring(frinengetu,1,4) = tainen then tainen || taituki || taihi")
+        sql.AppendLine("         when tainen is not null and tainen <> '0' then tainen || taituki || taihi")
         sql.AppendLine("        else ")
         sql.AppendLine("            case")
         sql.AppendLine("                when substring(frinengetu,1,4) = nyunen then nyunen || nyutuki || nyuhi")
