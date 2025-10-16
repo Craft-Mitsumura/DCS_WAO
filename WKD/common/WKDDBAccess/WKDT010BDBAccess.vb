@@ -157,6 +157,7 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("  , postno") ' オーナー郵便番号
         sql.AppendLine("  , rtrim(concat(addr1,addr2)) addr") ' オーナー住所
         sql.AppendLine("  , name") ' オーナー氏名
+        sql.AppendLine("  , koumei") ' 校名
         sql.AppendLine("  , nm.chohyoshurui") ' 帳票種類
         sql.AppendLine("  , 'ＷＡＯ'") ' 業者コード
         sql.AppendLine("  , nys_ownerno") ' 名寄オーナーNo

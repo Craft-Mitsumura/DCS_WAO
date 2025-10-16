@@ -258,6 +258,7 @@ Public Class frmWKDT030B
         dt3.Columns.Add("name", GetType(String))
         dt3.Columns.Add("shiryonm", GetType(String))
         dt3.Columns.Add("count", GetType(Int64))
+        dt3.Columns.Add("school_owner", GetType(String))
 
         Dim shiryonm As String = String.Empty
 
@@ -272,7 +273,8 @@ Public Class frmWKDT030B
                          row.Addr,
                          row.Name,
                          shiryonm,
-                         row.Count) ' 行を新しいDataTableに追加
+                         row.Count,
+                         String.Empty)
         Next
 
         ' ＣＳＶファイル出力

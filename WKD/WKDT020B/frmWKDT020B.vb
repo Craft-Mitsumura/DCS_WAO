@@ -209,8 +209,9 @@ Public Class frmWKDT020B
 
         ' 源泉徴収票に不要な列を削除
         dt1.Columns.Remove("postno") ' オーナー郵便番号
+        dt1.Columns.Remove("koumei")
 
-        If SettingManager.GetInstance.OutputType = SettingManager.EnmOutputType.Specify Then
+            If SettingManager.GetInstance.OutputType = SettingManager.EnmOutputType.Specify Then
             Dim folderDialog As New FolderBrowserDialog()
             If folderDialog.ShowDialog() = DialogResult.OK Then
                 SettingManager.GetInstance.OutputDirectory = folderDialog.SelectedPath
@@ -233,6 +234,7 @@ Public Class frmWKDT020B
                                   Addr = row.Field(Of String)("addr"),
                                   Name = row.Field(Of String)("name"),
                                   Shurui = row.Field(Of String)("chohyoshurui"),
+                                  Koumei = row.Field(Of String)("koumei"),
                                   Category = Category,
                                   Count = row.Field(Of Int64)("cnt") Into Grouped = Group
                      Order By Ownerno, Category
@@ -242,6 +244,7 @@ Public Class frmWKDT020B
                     .Addr = Addr,
                     .Name = Name,
                     .Shurui = Shurui,
+                    .koumei = Koumei,
                     .Count = Count
                     }
 
@@ -253,6 +256,7 @@ Public Class frmWKDT020B
         dt3.Columns.Add("name", GetType(String))
         dt3.Columns.Add("shiryonm", GetType(String))
         dt3.Columns.Add("count", GetType(Int64))
+        dt3.Columns.Add("school_owner", GetType(String))
 
         Dim shiryonm As String = String.Empty
 
@@ -262,12 +266,23 @@ Public Class frmWKDT020B
             Else
                 shiryonm = row.Shurui
             End If
+
+            ' koumei(オーナーNO) の結合
+            Dim schoolOwner As String = ""
+            Dim cleanKoumei As String = If(row.koumei, "").Trim()            ' 前後の空白を削除
+            cleanKoumei = cleanKoumei.Replace(" ", "").Replace("　", "")     ' 半角/全角スペース削除
+
+            If Not String.IsNullOrEmpty(cleanKoumei) Then
+                schoolOwner = String.Format("{0}({1})", cleanKoumei, row.Ownerno)
+            End If
+
             dt3.Rows.Add(row.Ownerno,
-                         row.Postno,
-                         row.Addr,
-                         row.Name,
-                         shiryonm,
-                         row.Count) ' 行を新しいDataTableに追加
+                 row.Postno,
+                 row.Addr,
+                 row.Name,
+                 shiryonm,
+                 row.Count,
+                 schoolOwner)
         Next
 
         ' ＣＳＶファイル出力
