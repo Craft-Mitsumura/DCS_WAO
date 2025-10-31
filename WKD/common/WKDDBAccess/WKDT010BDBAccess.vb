@@ -72,7 +72,7 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("    and   c.ownerno = a.ownerno")
         sql.AppendLine("    and   c.instno = a.instno)")
         sql.AppendLine("    where substr(a.frinengetu,1,4) = @shoriNendo")
-        'sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
+        sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
         sql.AppendLine("    group by")
         sql.AppendLine("        a.itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("      , a.ownerno") ' 顧客番号（オーナーＮｏ）
