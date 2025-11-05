@@ -98,7 +98,7 @@ Public Class WKDT030BDBAccess
         'End If
 
         sql.AppendLine("    where substr(a.frinengetu,1,4) = substr(@sime1,1,4)")
-        'sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
+        sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
 
         sql.AppendLine("  and exists (")
         sql.AppendLine("      select 1")
@@ -200,7 +200,6 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("    tainen = case when coalesce(tif.tainen, '') in ('', '0000') then substr(@simenengetsu,1,4) else tif.tainen end")
         sql.AppendLine("  , taituki = case when coalesce(tif.taituki, '') in ('', '00') then substr(@simenengetsu,5,2) else tif.taituki end")
         sql.AppendLine("  , taihi = case when coalesce(tif.taihi, '') in ('', '00') then lpad(extract(day from (date_trunc('month', to_date(substr(@simenengetsu, 1, 6), 'YYYYMM')) + interval '1 month - 1 day'))::text, 2, '0') else tif.taihi end")
-        sql.AppendLine("  , nencho_flg = '1'")
         sql.AppendLine("  , upd_user_id = @upd_user_id")
         sql.AppendLine("  , upd_user_dtm = current_timestamp")
         sql.AppendLine("  , upd_user_pg_id = @upd_user_pg_id")
@@ -243,6 +242,40 @@ Public Class WKDT030BDBAccess
         '        sql.AppendLine("      )")
         '    End If
         'End If
+
+        ret = dbc.ExecuteNonQuery(sql.ToString(), params)
+
+        Return ret
+
+    End Function
+
+    Public Function UpdateTInstructorFurikomiNenchoFlg(pgid As String, simenengetsu As String, ownerno As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As Boolean
+
+        Dim ret As Boolean = False
+        Dim dbc As New DBClient
+
+        Dim sql As New StringBuilder()
+        sql.AppendLine("update t_instructor_furikomi tif")
+        sql.AppendLine("set")
+        sql.AppendLine("    nencho_flg = '1'")
+        sql.AppendLine("  , upd_user_id = @upd_user_id")
+        sql.AppendLine("  , upd_user_dtm = current_timestamp")
+        sql.AppendLine("  , upd_user_pg_id = @upd_user_pg_id")
+        sql.AppendLine("from tbkeiyakushamaster km")
+        sql.AppendLine("where tif.ownerno = km.bakycd")
+        sql.AppendLine("  and (km.bakyny = @ownerno")
+        sql.AppendLine("  or tif.ownerno = @ownerno)")
+        'sql.AppendLine("  and coalesce(tif.nencho_flg,'0') <> '1'")
+        sql.AppendLine("  and substr(tif.frinengetu,1,4) = substr(@simenengetsu,1,4)")
+        sql.AppendLine("  and cast(tif.frinengetu || '01' as integer) between km.bafkst and km.bafked")
+        sql.AppendLine("  and km.bakome is not null")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+        New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),
+        New NpgsqlParameter("@upd_user_pg_id", pgid),
+        New NpgsqlParameter("@simenengetsu", simenengetsu),
+        New NpgsqlParameter("@ownerno", ownerno)
+        }
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
 

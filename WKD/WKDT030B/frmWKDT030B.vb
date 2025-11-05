@@ -139,6 +139,13 @@ Public Class frmWKDT030B
                 MessageBox.Show("該当データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 Return
             End If
+
+            ' 年調作表データ年調作表フラグ更新
+            For Each target As TNenchoEntity In targetList
+                If Not dba.UpdateTInstructorFurikomiNenchoFlg(Me.ProductName, target.dtnengetu, target.ownerno) Then
+                    Return
+                End If
+            Next
         End If
 
         Dim ci As New System.Globalization.CultureInfo("ja-JP", False)

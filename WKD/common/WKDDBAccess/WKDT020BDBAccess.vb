@@ -76,7 +76,7 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("                         )")
         sql.AppendLine("    where substr(a.frinengetu,1,4) = substr(@shoriNengetsu,1,4)")
         'sql.AppendLine("    and   a.frinengetu <= (b.tainen || b.taituki)")
-        'sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
+        sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengetsu", shoriNengetsu),
