@@ -11,54 +11,7 @@ Public Class WKDT010BDBAccess
         Dim sql As New StringBuilder()
         sql.AppendLine("insert into t_nencho")
         sql.AppendLine("(")
-        sql.AppendLine("select")
-        sql.AppendLine("    nen.sakuhyokbn") ' 作表区分
-        sql.AppendLine("  , nen.dtnengetu") ' データ年月
-        sql.AppendLine("  , nen.itakuno") ' 顧客番号（委託者Ｎｏ）
-        sql.AppendLine("  , nen.bakyny") ' 顧客番号（オーナーＮｏ）
-        sql.AppendLine("  , nen.instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("  , sum(nen.fkinzem)") ' 振込金額（税引前）
-        sql.AppendLine("  , nen.bankcd") ' 銀行コード
-        sql.AppendLine("  , nen.sitencd") ' 支店コード
-        sql.AppendLine("  , nen.syumok") ' 預金種目
-        sql.AppendLine("  , nen.kozono") ' 口座番号
-        sql.AppendLine("  , nen.meigkn") ' 預金者名義（カナ）
-        sql.AppendLine("  , sum(nen.fkinzeg)") ' 振込金額（税引後）
-        sql.AppendLine("  , sum(nen.zeigak)") ' 源泉徴収税額
-        sql.AppendLine("  , max(nen.frinengetu)") ' 振込年月
-        sql.AppendLine("  , nen.yubin") ' 郵便番号
-        sql.AppendLine("  , nen.jusyo1") ' 住所１（漢字）
-        sql.AppendLine("  , nen.jusyo2") ' 住所２（漢字）
-        sql.AppendLine("  , nen.namekj") ' 氏名（漢字）
-        sql.AppendLine("  , nen.namekn") ' 氏名（カナ）
-        sql.AppendLine("  , nen.seiyyyy") ' 生年
-        sql.AppendLine("  , nen.seimm") ' 生月
-        sql.AppendLine("  , nen.seidd") ' 生日
-        sql.AppendLine("  , nen.nyunen") ' 入社年
-        sql.AppendLine("  , nen.nyutuki") ' 入社月
-        sql.AppendLine("  , nen.nyuhi") ' 入社日
-        sql.AppendLine("  , nen.tainen") ' 退職年
-        sql.AppendLine("  , nen.taituki") ' 退職月
-        sql.AppendLine("  , nen.taihi") ' 退職年
-        sql.AppendLine("  , nen.fritesu") ' 振込手数料
-        sql.AppendLine("  , nen.nencho_flg") ' 年調資料出力フラグ
-        sql.AppendLine("  , nen.bakyny") ' 名寄先オーナーＮｏ
-        sql.AppendLine("  , nen.bakjnm") ' オーナー名（漢字）
-        sql.AppendLine("  , nen.bazpc") ' オーナー郵便番号
-        sql.AppendLine("  , nen.baadj1") ' オーナー住所１（漢字）
-        sql.AppendLine("  , nen.baadj2") ' オーナー住所２（漢字）
-        sql.AppendLine("  , nen.batele") ' オーナー電話番号１
-        sql.AppendLine("  , nen.bakkrn") ' オーナー電話番号２
-        sql.AppendLine("  , nen.bakome") ' 校名（漢字）
-        sql.AppendLine("  , nen.bahjno") ' 法人番号
-        sql.AppendLine("  , null") ' リランＮｏ
-        sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
-        sql.AppendLine("  , current_timestamp") ' 登録日時
-        sql.AppendLine("  , @crt_user_pg_id") ' 登録プログラムID
-        sql.AppendLine("  , null") ' 更新ユーザーID
-        sql.AppendLine("  , null") ' 更新日時
-        sql.AppendLine("  , null") ' 更新プログラムID
-        sql.AppendLine("from")
+        sql.AppendLine("with nen as")
         sql.AppendLine("(")
         sql.AppendLine("select")
         sql.AppendLine("    '1' sakuhyokbn") ' 作表区分
@@ -145,43 +98,123 @@ Public Class WKDT010BDBAccess
         sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own.bafkst and own.bafked)")
         sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null")
         sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own2.bafkst and own2.bafked)")
-        sql.AppendLine(") nen")
+        sql.AppendLine("),")
+        sql.AppendLine("nen2 as (")
+        sql.AppendLine("select nen.sakuhyokbn, nen.dtnengetu, nen.itakuno, nen.bakyny, nen.instno, max(nen.frinengetu) max_frinengetu")
+        sql.AppendLine("from nen")
+        sql.AppendLine("group by nen.sakuhyokbn, nen.dtnengetu, nen.itakuno, nen.bakyny, nen.instno")
+        sql.AppendLine("),")
+        sql.AppendLine("nen3 as (")
+        sql.AppendLine("select nen.sakuhyokbn, nen.dtnengetu, nen.itakuno, nen.bakyny, nen.instno, max(nen.ownerno) max_ownerno")
+        sql.AppendLine("from nen")
+        sql.AppendLine("inner join nen2 on nen.sakuhyokbn = nen2.sakuhyokbn")
+        sql.AppendLine(" and nen.dtnengetu = nen2.dtnengetu")
+        sql.AppendLine(" and nen.itakuno = nen2.itakuno")
+        sql.AppendLine(" and nen.bakyny = nen2.bakyny")
+        sql.AppendLine(" and nen.instno = nen2.instno ")
+        sql.AppendLine(" and nen.frinengetu = nen2.max_frinengetu")
+        sql.AppendLine("group by nen.sakuhyokbn, nen.dtnengetu, nen.itakuno, nen.bakyny, nen.instno")
+        sql.AppendLine("),")
+        sql.AppendLine("nen4 as (")
+        sql.AppendLine("select nen.*")
+        sql.AppendLine("from nen")
+        sql.AppendLine("inner join nen3 on nen.sakuhyokbn = nen3.sakuhyokbn")
+        sql.AppendLine(" and nen.dtnengetu = nen3.dtnengetu")
+        sql.AppendLine(" and nen.itakuno = nen3.itakuno")
+        sql.AppendLine(" and nen.bakyny = nen3.bakyny")
+        sql.AppendLine(" and nen.instno = nen3.instno ")
+        sql.AppendLine(" and nen.ownerno = nen3.max_ownerno")
+        sql.AppendLine(")")
+        sql.AppendLine("select")
+        sql.AppendLine("    nen.sakuhyokbn") ' 作表区分
+        sql.AppendLine("  , nen.dtnengetu") ' データ年月
+        sql.AppendLine("  , nen.itakuno") ' 顧客番号（委託者Ｎｏ）
+        sql.AppendLine("  , nen.bakyny") ' 顧客番号（オーナーＮｏ）
+        sql.AppendLine("  , nen.instno") ' 顧客番号（インストラクターＮｏ）
+        sql.AppendLine("  , sum(nen.fkinzem)") ' 振込金額（税引前）
+        sql.AppendLine("  , nen4.bankcd") ' 銀行コード
+        sql.AppendLine("  , nen4.sitencd") ' 支店コード
+        sql.AppendLine("  , nen4.syumok") ' 預金種目
+        sql.AppendLine("  , nen4.kozono") ' 口座番号
+        sql.AppendLine("  , nen4.meigkn") ' 預金者名義（カナ）
+        sql.AppendLine("  , sum(nen.fkinzeg)") ' 振込金額（税引後）
+        sql.AppendLine("  , sum(nen.zeigak)") ' 源泉徴収税額
+        sql.AppendLine("  , max(nen.frinengetu)") ' 振込年月
+        sql.AppendLine("  , nen4.yubin") ' 郵便番号
+        sql.AppendLine("  , nen4.jusyo1") ' 住所１（漢字）
+        sql.AppendLine("  , nen4.jusyo2") ' 住所２（漢字）
+        sql.AppendLine("  , nen4.namekj") ' 氏名（漢字）
+        sql.AppendLine("  , nen4.namekn") ' 氏名（カナ）
+        sql.AppendLine("  , nen4.seiyyyy") ' 生年
+        sql.AppendLine("  , nen4.seimm") ' 生月
+        sql.AppendLine("  , nen4.seidd") ' 生日
+        sql.AppendLine("  , nen4.nyunen") ' 入社年
+        sql.AppendLine("  , nen4.nyutuki") ' 入社月
+        sql.AppendLine("  , nen4.nyuhi") ' 入社日
+        sql.AppendLine("  , nen4.tainen") ' 退職年
+        sql.AppendLine("  , nen4.taituki") ' 退職月
+        sql.AppendLine("  , nen4.taihi") ' 退職年
+        sql.AppendLine("  , nen4.fritesu") ' 振込手数料
+        sql.AppendLine("  , nen4.nencho_flg") ' 年調資料出力フラグ
+        sql.AppendLine("  , nen4.bakyny") ' 名寄先オーナーＮｏ
+        sql.AppendLine("  , nen4.bakjnm") ' オーナー名（漢字）
+        sql.AppendLine("  , nen4.bazpc") ' オーナー郵便番号
+        sql.AppendLine("  , nen4.baadj1") ' オーナー住所１（漢字）
+        sql.AppendLine("  , nen4.baadj2") ' オーナー住所２（漢字）
+        sql.AppendLine("  , nen4.batele") ' オーナー電話番号１
+        sql.AppendLine("  , nen4.bakkrn") ' オーナー電話番号２
+        sql.AppendLine("  , nen4.bakome") ' 校名（漢字）
+        sql.AppendLine("  , nen4.bahjno") ' 法人番号
+        sql.AppendLine("  , null") ' リランＮｏ
+        sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
+        sql.AppendLine("  , current_timestamp") ' 登録日時
+        sql.AppendLine("  , @crt_user_pg_id") ' 登録プログラムID
+        sql.AppendLine("  , null") ' 更新ユーザーID
+        sql.AppendLine("  , null") ' 更新日時
+        sql.AppendLine("  , null") ' 更新プログラムID
+        sql.AppendLine("from")
+        sql.AppendLine("    nen")
+        sql.AppendLine("inner join nen4 on nen4.sakuhyokbn = nen.sakuhyokbn")
+        sql.AppendLine(" and nen4.dtnengetu = nen.dtnengetu")
+        sql.AppendLine(" and nen4.itakuno = nen.itakuno")
+        sql.AppendLine(" and nen4.bakyny = nen.bakyny")
+        sql.AppendLine(" and nen4.instno = nen.instno")
         sql.AppendLine("group by")
         sql.AppendLine("    nen.sakuhyokbn") ' 作表区分
         sql.AppendLine("  , nen.dtnengetu") ' データ年月
         sql.AppendLine("  , nen.itakuno") ' 顧客番号（委託者Ｎｏ）
         sql.AppendLine("  , nen.bakyny") ' 顧客番号（オーナーＮｏ）
         sql.AppendLine("  , nen.instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("  , nen.bankcd") ' 銀行コード
-        sql.AppendLine("  , nen.sitencd") ' 支店コード
-        sql.AppendLine("  , nen.syumok") ' 預金種目
-        sql.AppendLine("  , nen.kozono") ' 口座番号
-        sql.AppendLine("  , nen.meigkn") ' 預金者名義（カナ）
-        sql.AppendLine("  , nen.yubin") ' 郵便番号
-        sql.AppendLine("  , nen.jusyo1") ' 住所１（漢字）
-        sql.AppendLine("  , nen.jusyo2") ' 住所２（漢字）
-        sql.AppendLine("  , nen.namekj") ' 氏名（漢字）
-        sql.AppendLine("  , nen.namekn") ' 氏名（カナ）
-        sql.AppendLine("  , nen.seiyyyy") ' 生年
-        sql.AppendLine("  , nen.seimm") ' 生月
-        sql.AppendLine("  , nen.seidd") ' 生日
-        sql.AppendLine("  , nen.nyunen") ' 入社年
-        sql.AppendLine("  , nen.nyutuki") ' 入社月
-        sql.AppendLine("  , nen.nyuhi") ' 入社日
-        sql.AppendLine("  , nen.tainen") ' 退職年
-        sql.AppendLine("  , nen.taituki") ' 退職月
-        sql.AppendLine("  , nen.taihi") ' 退職年
-        sql.AppendLine("  , nen.fritesu") ' 振込手数料
-        sql.AppendLine("  , nen.nencho_flg") ' 年調資料出力フラグ
-        sql.AppendLine("  , nen.bakyny") ' 名寄先オーナーＮｏ
-        sql.AppendLine("  , nen.bakjnm") ' オーナー名（漢字）
-        sql.AppendLine("  , nen.bazpc") ' オーナー郵便番号
-        sql.AppendLine("  , nen.baadj1") ' オーナー住所１（漢字）
-        sql.AppendLine("  , nen.baadj2") ' オーナー住所２（漢字）
-        sql.AppendLine("  , nen.batele") ' オーナー電話番号１
-        sql.AppendLine("  , nen.bakkrn") ' オーナー電話番号２
-        sql.AppendLine("  , nen.bakome") ' 校名（漢字）
-        sql.AppendLine("  , nen.bahjno") ' 法人番号
+        sql.AppendLine("  , nen4.bankcd") ' 銀行コード
+        sql.AppendLine("  , nen4.sitencd") ' 支店コード
+        sql.AppendLine("  , nen4.syumok") ' 預金種目
+        sql.AppendLine("  , nen4.kozono") ' 口座番号
+        sql.AppendLine("  , nen4.meigkn") ' 預金者名義（カナ）
+        sql.AppendLine("  , nen4.yubin") ' 郵便番号
+        sql.AppendLine("  , nen4.jusyo1") ' 住所１（漢字）
+        sql.AppendLine("  , nen4.jusyo2") ' 住所２（漢字）
+        sql.AppendLine("  , nen4.namekj") ' 氏名（漢字）
+        sql.AppendLine("  , nen4.namekn") ' 氏名（カナ）
+        sql.AppendLine("  , nen4.seiyyyy") ' 生年
+        sql.AppendLine("  , nen4.seimm") ' 生月
+        sql.AppendLine("  , nen4.seidd") ' 生日
+        sql.AppendLine("  , nen4.nyunen") ' 入社年
+        sql.AppendLine("  , nen4.nyutuki") ' 入社月
+        sql.AppendLine("  , nen4.nyuhi") ' 入社日
+        sql.AppendLine("  , nen4.tainen") ' 退職年
+        sql.AppendLine("  , nen4.taituki") ' 退職月
+        sql.AppendLine("  , nen4.taihi") ' 退職年
+        sql.AppendLine("  , nen4.fritesu") ' 振込手数料
+        sql.AppendLine("  , nen4.nencho_flg") ' 年調資料出力フラグ
+        sql.AppendLine("  , nen4.bakyny") ' 名寄先オーナーＮｏ
+        sql.AppendLine("  , nen4.bakjnm") ' オーナー名（漢字）
+        sql.AppendLine("  , nen4.bazpc") ' オーナー郵便番号
+        sql.AppendLine("  , nen4.baadj1") ' オーナー住所１（漢字）
+        sql.AppendLine("  , nen4.baadj2") ' オーナー住所２（漢字）
+        sql.AppendLine("  , nen4.batele") ' オーナー電話番号１
+        sql.AppendLine("  , nen4.bakkrn") ' オーナー電話番号２
+        sql.AppendLine("  , nen4.bakome") ' 校名（漢字）
+        sql.AppendLine("  , nen4.bahjno") ' 法人番号
         sql.AppendLine(")")
 
         Dim params As New List(Of NpgsqlParameter) From {
