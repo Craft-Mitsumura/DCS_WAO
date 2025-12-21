@@ -180,7 +180,7 @@ Public Class frmWKDT030B
 
         ' ＣＳＶファイル出力
         Dim fileName As String = "解約先分源泉徴収票.csv"
-        Dim filePath As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
+        Dim filePath As String = WriteCsvData(dt1, SettingManager.GetInstance.OutputDirectory, fileName,,, True, True)
         MessageBox.Show("「" & filePath & "」が出力されました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         ' 解約先分給与支払報告書に出力する行を抽出
@@ -200,7 +200,7 @@ Public Class frmWKDT030B
         dt2.Columns.Remove("chohyoshurui") ' 帳票種類
 
         Dim fileName2 As String = "解約先分給与支払報告書.csv"
-        Dim filePath2 As String = WriteCsvData(dt, SettingManager.GetInstance.OutputDirectory, fileName2,,, True, True)
+        Dim filePath2 As String = WriteCsvData(dt2, SettingManager.GetInstance.OutputDirectory, fileName2,,, True, True)
         msg.AppendLine("「" & filePath2 & "」が出力されました。")
 
         ' 解約先分送付状に出力する行を抽出
