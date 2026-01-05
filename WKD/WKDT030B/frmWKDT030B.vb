@@ -160,7 +160,12 @@ Public Class frmWKDT030B
 
         For Each row As DataRow In dt.Rows
             If CnvStr(row("dtnengetu")).Length = 6 Then
-                Dim days As Date = CnvDat(row("dtnengetu").ToString & "01")
+                Dim days As Date
+                If row("chohyoshurui") = "給与支払報告書" Then
+                    days = CnvDat(row("dtnengetu").ToString & "01").AddYears(1)
+                Else
+                    days = CnvDat(row("dtnengetu").ToString & "01")
+                End If
                 Dim gengou As String = days.ToString("gg", ci)
                 Dim wareki As Integer = jpCalendar.GetYear(days)
                 Dim dtnen As String = (wareki Mod 100).ToString("00")
