@@ -3,449 +3,490 @@ Imports System.Text
 
 Public Class WKDT030BDBAccess
 
+    'Public Function InsertTNencho(pgid As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As Boolean
+
+    '    Dim ret As Boolean = False
+    '    Dim dbc As New DBClient
+
+    '    Dim sql As New StringBuilder()
+    '    sql.AppendLine("insert into t_nencho")
+    '    sql.AppendLine("(")
+    '    sql.AppendLine("select")
+    '    sql.AppendLine("    nen.sakuhyokbn") ' 作表区分
+    '    'sql.AppendLine("  , nen.dtnengetu") ' データ年月
+    '    sql.AppendLine("  , max(nen.dtnengetu)") ' データ年月
+    '    sql.AppendLine("  , nen.itakuno") ' 顧客番号（委託者Ｎｏ）
+    '    sql.AppendLine("  , nen.bakyny") ' 顧客番号（オーナーＮｏ）
+    '    sql.AppendLine("  , nen.instno") ' 顧客番号（インストラクターＮｏ）
+    '    sql.AppendLine("  , sum(nen.fkinzem)") ' 振込金額（税引前）
+    '    sql.AppendLine("  , nen.bankcd") ' 銀行コード
+    '    sql.AppendLine("  , nen.sitencd") ' 支店コード
+    '    sql.AppendLine("  , nen.syumok") ' 預金種目
+    '    sql.AppendLine("  , nen.kozono") ' 口座番号
+    '    sql.AppendLine("  , nen.meigkn") ' 預金者名義（カナ）
+    '    sql.AppendLine("  , sum(nen.fkinzeg)") ' 振込金額（税引後）
+    '    sql.AppendLine("  , sum(nen.zeigak)") ' 源泉徴収税額
+    '    sql.AppendLine("  , max(nen.frinengetu)") ' 振込年月
+    '    sql.AppendLine("  , nen.yubin") ' 郵便番号
+    '    sql.AppendLine("  , nen.jusyo1") ' 住所１（漢字）
+    '    sql.AppendLine("  , nen.jusyo2") ' 住所２（漢字）
+    '    sql.AppendLine("  , nen.namekj") ' 氏名（漢字）
+    '    sql.AppendLine("  , nen.namekn") ' 氏名（カナ）
+    '    sql.AppendLine("  , nen.seiyyyy") ' 生年
+    '    sql.AppendLine("  , nen.seimm") ' 生月
+    '    sql.AppendLine("  , nen.seidd") ' 生日
+    '    sql.AppendLine("  , nen.nyunen") ' 入社年
+    '    sql.AppendLine("  , nen.nyutuki") ' 入社月
+    '    sql.AppendLine("  , nen.nyuhi") ' 入社日
+    '    sql.AppendLine("  , nen.tainen") ' 退職年
+    '    sql.AppendLine("  , nen.taituki") ' 退職月
+    '    sql.AppendLine("  , nen.taihi") ' 退職年
+    '    sql.AppendLine("  , nen.fritesu") ' 振込手数料
+    '    sql.AppendLine("  , nen.nencho_flg") ' 年調資料出力フラグ
+    '    sql.AppendLine("  , nen.bakyny") ' 名寄先オーナーＮｏ
+    '    sql.AppendLine("  , nen.bakjnm") ' オーナー名（漢字）
+    '    sql.AppendLine("  , nen.bazpc") ' オーナー郵便番号
+    '    sql.AppendLine("  , nen.baadj1") ' オーナー住所１（漢字）
+    '    sql.AppendLine("  , nen.baadj2") ' オーナー住所２（漢字）
+    '    sql.AppendLine("  , nen.batele") ' オーナー電話番号１
+    '    sql.AppendLine("  , nen.bakkrn") ' オーナー電話番号２
+    '    sql.AppendLine("  , nen.bakome") ' 校名（漢字）
+    '    sql.AppendLine("  , nen.bahjno") ' 法人番号
+    '    sql.AppendLine("  , null") ' リランＮｏ
+    '    sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
+    '    sql.AppendLine("  , current_timestamp") ' 登録日時
+    '    sql.AppendLine("  , @crt_user_pg_id") ' 登録プログラムID
+    '    sql.AppendLine("  , null") ' 更新ユーザーID
+    '    sql.AppendLine("  , null") ' 更新日時
+    '    sql.AppendLine("  , null") ' 更新プログラムID
+    '    sql.AppendLine("from")
+    '    sql.AppendLine("(")
+    '    sql.AppendLine("select")
+    '    sql.AppendLine("    '3' sakuhyokbn") ' 作表区分
+    '    sql.AppendLine("  , fin.*")
+    '    sql.AppendLine("  , coalesce(case own.bakyny when '' then null else own.bakyny end,own.bakycd) bakyny") ' 名寄先オーナーＮｏ
+    '    sql.AppendLine("  , case when own2.bakycd is null then own.bakjnm else own2.bakjnm end bakjnm") ' オーナー名（漢字）
+    '    sql.AppendLine("  , case when own2.bakycd is null then concat(own.bazpc1,'-',own.bazpc2) else concat(own2.bazpc1,'-',own2.bazpc2) end bazpc") ' オーナー郵便番号
+    '    sql.AppendLine("  , case when own2.bakycd is null then own.baadj1 else own2.baadj1 end baadj1") ' オーナー住所１（漢字）
+    '    sql.AppendLine("  , case when own2.bakycd is null then own.baadj2 else own2.baadj2 end baadj2") ' オーナー住所２（漢字）
+    '    sql.AppendLine("  , case when own2.bakycd is null then own.batele else own2.batele end batele") ' オーナー電話番号１
+    '    sql.AppendLine("  , case when own2.bakycd is null then own.bakkrn else own2.bakkrn end bakkrn") ' オーナー電話番号２
+    '    sql.AppendLine("  , case when own2.bakycd is null then own.bakome else own2.bakome end bakome") ' 校名（漢字）
+    '    sql.AppendLine("  , case when own2.bakycd is null then own.bahjno else own2.bahjno end bahjno") ' 法人番号
+    '    'sql.AppendLine("  , null rerunno") ' リランＮｏ
+    '    'sql.AppendLine("  , @crt_user_id")
+    '    'sql.AppendLine("  , current_timestamp")
+    '    'sql.AppendLine("  , @crt_user_pg_id")
+    '    'sql.AppendLine("  , null")
+    '    'sql.AppendLine("  , null")
+    '    'sql.AppendLine("  , null")
+    '    sql.AppendLine("from")
+    '    sql.AppendLine("(")
+    '    sql.AppendLine("    select")
+    '    sql.AppendLine("        max(a.frinengetu) dtnengetu") ' データ年月
+    '    sql.AppendLine("      , a.itakuno") ' 顧客番号（委託者Ｎｏ）
+    '    sql.AppendLine("      , a.ownerno") ' 顧客番号（オーナーＮｏ）
+    '    sql.AppendLine("      , a.instno") ' 顧客番号（インストラクターＮｏ）
+    '    sql.AppendLine("      , sum(a.fkinzem) fkinzem") ' 振込金額（税引前）
+    '    sql.AppendLine("      , b.bankcd") ' 銀行コード
+    '    sql.AppendLine("      , b.sitencd") ' 支店コード
+    '    sql.AppendLine("      , b.syumok") ' 預金種目
+    '    sql.AppendLine("      , b.kozono") ' 口座番号
+    '    sql.AppendLine("      , b.meigkn") ' 預金者名義（カナ）
+    '    sql.AppendLine("      , sum(a.fkinzeg) fkinzeg") ' 振込金額（税引後）
+    '    sql.AppendLine("      , sum(a.zeigak) zeigak") ' 源泉徴収税額
+    '    sql.AppendLine("      , max(a.frinengetu) frinengetu") ' 振込年月
+    '    sql.AppendLine("      , b.yubin") ' 郵便番号
+    '    sql.AppendLine("      , b.jusyo1") ' 住所１（漢字）
+    '    sql.AppendLine("      , b.jusyo2") ' 住所２（漢字）
+    '    sql.AppendLine("      , b.namekj") ' 氏名（漢字）
+    '    sql.AppendLine("      , b.namekn") ' 氏名（カナ）
+    '    sql.AppendLine("      , b.seiyyyy") ' 生年
+    '    sql.AppendLine("      , b.seimm") ' 生月
+    '    sql.AppendLine("      , b.seidd") ' 生日
+    '    sql.AppendLine("      , b.nyunen") ' 入社年
+    '    sql.AppendLine("      , b.nyutuki") ' 入社月
+    '    sql.AppendLine("      , b.nyuhi") ' 入社日
+    '    sql.AppendLine("      , b.tainen") ' 退職年
+    '    sql.AppendLine("      , b.taituki") ' 退職月
+    '    sql.AppendLine("      , b.taihi") ' 退職年
+    '    sql.AppendLine("      , b.fritesu") ' 振込手数料
+    '    sql.AppendLine("      , b.nencho_flg") ' 年調資料出力フラグ
+    '    sql.AppendLine("    from")
+    '    sql.AppendLine("        t_instructor_furikomi a")
+    '    sql.AppendLine("    left join t_instructor_furikomi b on a.itakuno = b.itakuno")
+    '    sql.AppendLine("    and   a.ownerno = b.ownerno")
+    '    sql.AppendLine("    and   a.instno = b.instno")
+    '    sql.AppendLine("    and   b.frinengetu = (select max(frinengetu) from t_instructor_furikomi c")
+    '    sql.AppendLine("    where c.itakuno = a.itakuno")
+    '    sql.AppendLine("    and   c.ownerno = a.ownerno")
+    '    sql.AppendLine("    and   c.instno = a.instno)")
+
+    '    Dim params As New List(Of NpgsqlParameter) From {
+    '        New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
+    '        New NpgsqlParameter("@crt_user_pg_id", pgid)
+    '    }
+
+    '    'If Not targetList Is Nothing Then
+    '    '    Dim i As Integer = 0
+    '    '    Dim sqlIn As New StringBuilder()
+
+    '    '    For Each target As TNenchoEntity In targetList
+    '    '        i += 1
+    '    '        params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
+    '    '        params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
+    '    '        'sqlIn.Append("(@ownerno" & i.ToString & ", case when c.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
+    '    '        sqlIn.Append("@ownerno" & i.ToString & ",")
+    '    '    Next
+
+    '    '    If 0 < sqlIn.Length Then
+    '    '        ' 最後の余計なカンマを削除
+    '    '        sqlIn.Remove(sqlIn.Length - 1, 1)
+    '    '        'sql.AppendLine("and (c.ownerno, 1) in (" & sqlIn.ToString & "))")
+    '    '        sql.AppendLine("and c.ownerno in (" & sqlIn.ToString & "))")
+    '    '    End If
+    '    'End If
+
+    '    sql.AppendLine("    where substr(a.frinengetu,1,4) = substr(@sime1,1,4)")
+    '    sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
+
+    '    sql.AppendLine("  and exists (")
+    '    sql.AppendLine("      select 1")
+    '    sql.AppendLine("      from tbkeiyakushamaster d")
+
+    '    If Not targetList Is Nothing Then
+    '        Dim i As Integer = 0
+    '        Dim sqlIn As New StringBuilder()
+
+    '        For Each target As TNenchoEntity In targetList
+    '            i += 1
+    '            params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
+    '            params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
+    '            'sqlIn.Append("(@ownerno" & i.ToString & ", case when a.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
+    '            'sqlIn.Append("@ownerno" & i.ToString & ",")
+    '            sqlIn.Append("(d.bakyny = @ownerno" & i.ToString() & " or d.bakycd = @ownerno" & i.ToString() & ") or ")
+    '        Next
+
+    '        If 0 < sqlIn.Length Then
+    '            ' 最後の余計なカンマを削除
+    '            'sqlIn.Remove(sqlIn.Length - 1, 1)
+    '            'sql.AppendLine("and (a.ownerno, 1) in (" & sqlIn.ToString & ")")
+    '            'sql.AppendLine("and a.ownerno in (" & sqlIn.ToString & "))")
+    '            sqlIn.Length -= 4
+    '            sqlIn.AppendLine("where (" & sqlIn.ToString() & ")")
+    '            sql.AppendLine(")")
+
+    '        End If
+    '    End If
+
+    '    sql.AppendLine("    group by")
+    '    sql.AppendLine("        a.itakuno") ' 顧客番号（委託者Ｎｏ）
+    '    sql.AppendLine("      , a.ownerno") ' 顧客番号（オーナーＮｏ）
+    '    sql.AppendLine("      , a.instno") ' 顧客番号（インストラクターＮｏ）
+    '    sql.AppendLine("      , b.bankcd") ' 銀行コード
+    '    sql.AppendLine("      , b.sitencd") ' 支店コード
+    '    sql.AppendLine("      , b.syumok") ' 預金種目
+    '    sql.AppendLine("      , b.kozono") ' 口座番号
+    '    sql.AppendLine("      , b.meigkn") ' 預金者名義（カナ）
+    '    sql.AppendLine("      , b.yubin") ' 郵便番号
+    '    sql.AppendLine("      , b.jusyo1") ' 住所１（漢字）
+    '    sql.AppendLine("      , b.jusyo2") ' 住所２（漢字）
+    '    sql.AppendLine("      , b.namekj") ' 氏名（漢字）
+    '    sql.AppendLine("      , b.namekn") ' 氏名（カナ）
+    '    sql.AppendLine("      , b.seiyyyy") ' 生年
+    '    sql.AppendLine("      , b.seimm") ' 生月
+    '    sql.AppendLine("      , b.seidd") ' 生日
+    '    sql.AppendLine("      , b.nyunen") ' 入社年
+    '    sql.AppendLine("      , b.nyutuki") ' 入社月
+    '    sql.AppendLine("      , b.nyuhi") ' 入社日
+    '    sql.AppendLine("      , b.tainen") ' 退職年
+    '    sql.AppendLine("      , b.taituki") ' 退職月
+    '    sql.AppendLine("      , b.taihi") ' 退職年
+    '    sql.AppendLine("      , b.fritesu") ' 振込手数料
+    '    sql.AppendLine("      , b.nencho_flg") ' 年調資料出力フラグ
+    '    sql.AppendLine(") fin")
+    '    sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd and own.bakome is not null")
+    '    sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own.bafkst and own.bafked)")
+    '    sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null")
+    '    sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own2.bafkst and own2.bafked)")
+
+    '    If Not targetList Is Nothing AndAlso targetList.Count > 0 Then
+    '        Dim i As Integer = 0
+    '        Dim orConditions As New StringBuilder()
+
+    '        For Each target As TNenchoEntity In targetList
+    '            i += 1
+    '            Dim paramName As String = "@ownerno" & i.ToString()
+    '            params.Add(New NpgsqlParameter(paramName, target.ownerno))
+    '            orConditions.Append("(own.bakyny = " & paramName & " or own.bakycd = " & paramName & ") or ")
+    '        Next
+
+    '        If orConditions.Length > 0 Then
+    '            ' 最後の " OR " を削除
+    '            orConditions.Length -= 4
+    '            sql.AppendLine("where (" & orConditions.ToString() & ")")
+    '        End If
+    '    End If
+
+    '    sql.AppendLine(") nen")
+    '    sql.AppendLine("group by")
+    '    sql.AppendLine("    nen.sakuhyokbn") ' 作表区分
+    '    'sql.AppendLine("  , nen.dtnengetu") ' データ年月
+    '    sql.AppendLine("  , nen.itakuno") ' 顧客番号（委託者Ｎｏ）
+    '    sql.AppendLine("  , nen.bakyny") ' 顧客番号（オーナーＮｏ）
+    '    sql.AppendLine("  , nen.instno") ' 顧客番号（インストラクターＮｏ）
+    '    sql.AppendLine("  , nen.bankcd") ' 銀行コード
+    '    sql.AppendLine("  , nen.sitencd") ' 支店コード
+    '    sql.AppendLine("  , nen.syumok") ' 預金種目
+    '    sql.AppendLine("  , nen.kozono") ' 口座番号
+    '    sql.AppendLine("  , nen.meigkn") ' 預金者名義（カナ）
+    '    sql.AppendLine("  , nen.yubin") ' 郵便番号
+    '    sql.AppendLine("  , nen.jusyo1") ' 住所１（漢字）
+    '    sql.AppendLine("  , nen.jusyo2") ' 住所２（漢字）
+    '    sql.AppendLine("  , nen.namekj") ' 氏名（漢字）
+    '    sql.AppendLine("  , nen.namekn") ' 氏名（カナ）
+    '    sql.AppendLine("  , nen.seiyyyy") ' 生年
+    '    sql.AppendLine("  , nen.seimm") ' 生月
+    '    sql.AppendLine("  , nen.seidd") ' 生日
+    '    sql.AppendLine("  , nen.nyunen") ' 入社年
+    '    sql.AppendLine("  , nen.nyutuki") ' 入社月
+    '    sql.AppendLine("  , nen.nyuhi") ' 入社日
+    '    sql.AppendLine("  , nen.tainen") ' 退職年
+    '    sql.AppendLine("  , nen.taituki") ' 退職月
+    '    sql.AppendLine("  , nen.taihi") ' 退職年
+    '    sql.AppendLine("  , nen.fritesu") ' 振込手数料
+    '    sql.AppendLine("  , nen.nencho_flg") ' 年調資料出力フラグ
+    '    sql.AppendLine("  , nen.bakyny") ' 名寄先オーナーＮｏ
+    '    sql.AppendLine("  , nen.bakjnm") ' オーナー名（漢字）
+    '    sql.AppendLine("  , nen.bazpc") ' オーナー郵便番号
+    '    sql.AppendLine("  , nen.baadj1") ' オーナー住所１（漢字）
+    '    sql.AppendLine("  , nen.baadj2") ' オーナー住所２（漢字）
+    '    sql.AppendLine("  , nen.batele") ' オーナー電話番号１
+    '    sql.AppendLine("  , nen.bakkrn") ' オーナー電話番号２
+    '    sql.AppendLine("  , nen.bakome") ' 校名（漢字）
+    '    sql.AppendLine("  , nen.bahjno") ' 法人番号
+    '    sql.AppendLine(")")
+
+    '    ret = dbc.ExecuteNonQuery(sql.ToString(), params)
+
+    '    Return ret
+
+    'End Function
+
     Public Function InsertTNencho(pgid As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As Boolean
 
-        Dim ret As Boolean = False
         Dim dbc As New DBClient
-
         Dim sql As New StringBuilder()
+
         sql.AppendLine("insert into t_nencho")
         sql.AppendLine("(")
+        sql.AppendLine("with nen as (")
+
         sql.AppendLine("select")
-        sql.AppendLine("    nen.sakuhyokbn") ' 作表区分
-        'sql.AppendLine("  , nen.dtnengetu") ' データ年月
-        sql.AppendLine("  , max(nen.dtnengetu)") ' データ年月
-        sql.AppendLine("  , nen.itakuno") ' 顧客番号（委託者Ｎｏ）
-        sql.AppendLine("  , nen.bakyny") ' 顧客番号（オーナーＮｏ）
-        sql.AppendLine("  , nen.instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("  , sum(nen.fkinzem)") ' 振込金額（税引前）
-        sql.AppendLine("  , nen.bankcd") ' 銀行コード
-        sql.AppendLine("  , nen.sitencd") ' 支店コード
-        sql.AppendLine("  , nen.syumok") ' 預金種目
-        sql.AppendLine("  , nen.kozono") ' 口座番号
-        sql.AppendLine("  , nen.meigkn") ' 預金者名義（カナ）
-        sql.AppendLine("  , sum(nen.fkinzeg)") ' 振込金額（税引後）
-        sql.AppendLine("  , sum(nen.zeigak)") ' 源泉徴収税額
-        sql.AppendLine("  , max(nen.frinengetu)") ' 振込年月
-        sql.AppendLine("  , nen.yubin") ' 郵便番号
-        sql.AppendLine("  , nen.jusyo1") ' 住所１（漢字）
-        sql.AppendLine("  , nen.jusyo2") ' 住所２（漢字）
-        sql.AppendLine("  , nen.namekj") ' 氏名（漢字）
-        sql.AppendLine("  , nen.namekn") ' 氏名（カナ）
-        sql.AppendLine("  , nen.seiyyyy") ' 生年
-        sql.AppendLine("  , nen.seimm") ' 生月
-        sql.AppendLine("  , nen.seidd") ' 生日
-        sql.AppendLine("  , nen.nyunen") ' 入社年
-        sql.AppendLine("  , nen.nyutuki") ' 入社月
-        sql.AppendLine("  , nen.nyuhi") ' 入社日
-        sql.AppendLine("  , nen.tainen") ' 退職年
-        sql.AppendLine("  , nen.taituki") ' 退職月
-        sql.AppendLine("  , nen.taihi") ' 退職年
-        sql.AppendLine("  , nen.fritesu") ' 振込手数料
-        sql.AppendLine("  , nen.nencho_flg") ' 年調資料出力フラグ
-        sql.AppendLine("  , nen.bakyny") ' 名寄先オーナーＮｏ
-        sql.AppendLine("  , nen.bakjnm") ' オーナー名（漢字）
-        sql.AppendLine("  , nen.bazpc") ' オーナー郵便番号
-        sql.AppendLine("  , nen.baadj1") ' オーナー住所１（漢字）
-        sql.AppendLine("  , nen.baadj2") ' オーナー住所２（漢字）
-        sql.AppendLine("  , nen.batele") ' オーナー電話番号１
-        sql.AppendLine("  , nen.bakkrn") ' オーナー電話番号２
-        sql.AppendLine("  , nen.bakome") ' 校名（漢字）
-        sql.AppendLine("  , nen.bahjno") ' 法人番号
-        sql.AppendLine("  , null") ' リランＮｏ
-        sql.AppendLine("  , @crt_user_id") ' 登録ユーザーID
-        sql.AppendLine("  , current_timestamp") ' 登録日時
-        sql.AppendLine("  , @crt_user_pg_id") ' 登録プログラムID
-        sql.AppendLine("  , null") ' 更新ユーザーID
-        sql.AppendLine("  , null") ' 更新日時
-        sql.AppendLine("  , null") ' 更新プログラムID
-        sql.AppendLine("from")
-        sql.AppendLine("(")
-        sql.AppendLine("select")
-        sql.AppendLine("    '3' sakuhyokbn") ' 作表区分
-        sql.AppendLine("  , fin.*")
-        sql.AppendLine("  , coalesce(case own.bakyny when '' then null else own.bakyny end,own.bakycd) bakyny") ' 名寄先オーナーＮｏ
-        sql.AppendLine("  , case when own2.bakycd is null then own.bakjnm else own2.bakjnm end bakjnm") ' オーナー名（漢字）
+        sql.AppendLine("    '3' sakuhyokbn")                                                                 ' 作表区分
+        sql.AppendLine("  , fin.*")                                                                         ' 振込集計（元データ一式）
+        sql.AppendLine("  , coalesce(case own.bakyny when '' then null else own.bakyny end, own.bakycd) bakyny") ' 名寄先オーナーＮｏ
+        sql.AppendLine("  , case when own2.bakycd is null then own.bakjnm else own2.bakjnm end bakjnm")      ' オーナー名（漢字）
         sql.AppendLine("  , case when own2.bakycd is null then concat(own.bazpc1,'-',own.bazpc2) else concat(own2.bazpc1,'-',own2.bazpc2) end bazpc") ' オーナー郵便番号
-        sql.AppendLine("  , case when own2.bakycd is null then own.baadj1 else own2.baadj1 end baadj1") ' オーナー住所１（漢字）
-        sql.AppendLine("  , case when own2.bakycd is null then own.baadj2 else own2.baadj2 end baadj2") ' オーナー住所２（漢字）
-        sql.AppendLine("  , case when own2.bakycd is null then own.batele else own2.batele end batele") ' オーナー電話番号１
-        sql.AppendLine("  , case when own2.bakycd is null then own.bakkrn else own2.bakkrn end bakkrn") ' オーナー電話番号２
-        sql.AppendLine("  , case when own2.bakycd is null then own.bakome else own2.bakome end bakome") ' 校名（漢字）
-        sql.AppendLine("  , case when own2.bakycd is null then own.bahjno else own2.bahjno end bahjno") ' 法人番号
-        'sql.AppendLine("  , null rerunno") ' リランＮｏ
-        'sql.AppendLine("  , @crt_user_id")
-        'sql.AppendLine("  , current_timestamp")
-        'sql.AppendLine("  , @crt_user_pg_id")
-        'sql.AppendLine("  , null")
-        'sql.AppendLine("  , null")
-        'sql.AppendLine("  , null")
-        sql.AppendLine("from")
-        sql.AppendLine("(")
+        sql.AppendLine("  , case when own2.bakycd is null then own.baadj1 else own2.baadj1 end baadj1")      ' オーナー住所１（漢字）
+        sql.AppendLine("  , case when own2.bakycd is null then own.baadj2 else own2.baadj2 end baadj2")      ' オーナー住所２（漢字）
+        sql.AppendLine("  , case when own2.bakycd is null then own.batele else own2.batele end batele")      ' オーナー電話番号１
+        sql.AppendLine("  , case when own2.bakycd is null then own.bakkrn else own2.bakkrn end bakkrn")      ' オーナー電話番号２
+        sql.AppendLine("  , case when own2.bakycd is null then own.bakome else own2.bakome end bakome")      ' 校名（漢字）
+        sql.AppendLine("  , case when own2.bakycd is null then own.bahjno else own2.bahjno end bahjno")      ' 法人番号
+        sql.AppendLine("from (")
         sql.AppendLine("    select")
-        sql.AppendLine("        max(a.frinengetu) dtnengetu") ' データ年月
-        sql.AppendLine("      , a.itakuno") ' 顧客番号（委託者Ｎｏ）
-        sql.AppendLine("      , a.ownerno") ' 顧客番号（オーナーＮｏ）
-        sql.AppendLine("      , a.instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("      , sum(a.fkinzem) fkinzem") ' 振込金額（税引前）
-        sql.AppendLine("      , b.bankcd") ' 銀行コード
-        sql.AppendLine("      , b.sitencd") ' 支店コード
-        sql.AppendLine("      , b.syumok") ' 預金種目
-        sql.AppendLine("      , b.kozono") ' 口座番号
-        sql.AppendLine("      , b.meigkn") ' 預金者名義（カナ）
-        sql.AppendLine("      , sum(a.fkinzeg) fkinzeg") ' 振込金額（税引後）
-        sql.AppendLine("      , sum(a.zeigak) zeigak") ' 源泉徴収税額
+        sql.AppendLine("        max(a.frinengetu) dtnengetu")  ' データ年月
+        sql.AppendLine("      , a.itakuno")                    ' 顧客番号（委託者Ｎｏ）
+        sql.AppendLine("      , a.ownerno")                    ' 顧客番号（オーナーＮｏ）
+        sql.AppendLine("      , a.instno")                     ' 顧客番号（インストラクターＮｏ）
+        sql.AppendLine("      , sum(a.fkinzem) fkinzem")       ' 振込金額（税引前）
+        sql.AppendLine("      , b.bankcd")                     ' 銀行コード
+        sql.AppendLine("      , b.sitencd")                    ' 支店コード
+        sql.AppendLine("      , b.syumok")                     ' 預金種目
+        sql.AppendLine("      , b.kozono")                     ' 口座番号
+        sql.AppendLine("      , b.meigkn")                     ' 預金者名義（カナ）
+        sql.AppendLine("      , sum(a.fkinzeg) fkinzeg")       ' 振込金額（税引後）
+        sql.AppendLine("      , sum(a.zeigak) zeigak")         ' 源泉徴収税額
         sql.AppendLine("      , max(a.frinengetu) frinengetu") ' 振込年月
-        sql.AppendLine("      , b.yubin") ' 郵便番号
-        sql.AppendLine("      , b.jusyo1") ' 住所１（漢字）
-        sql.AppendLine("      , b.jusyo2") ' 住所２（漢字）
-        sql.AppendLine("      , b.namekj") ' 氏名（漢字）
-        sql.AppendLine("      , b.namekn") ' 氏名（カナ）
-        sql.AppendLine("      , b.seiyyyy") ' 生年
-        sql.AppendLine("      , b.seimm") ' 生月
-        sql.AppendLine("      , b.seidd") ' 生日
-        sql.AppendLine("      , b.nyunen") ' 入社年
-        sql.AppendLine("      , b.nyutuki") ' 入社月
-        sql.AppendLine("      , b.nyuhi") ' 入社日
-        sql.AppendLine("      , b.tainen") ' 退職年
-        sql.AppendLine("      , b.taituki") ' 退職月
-        sql.AppendLine("      , b.taihi") ' 退職年
-        sql.AppendLine("      , b.fritesu") ' 振込手数料
-        sql.AppendLine("      , b.nencho_flg") ' 年調資料出力フラグ
-        sql.AppendLine("    from")
-        sql.AppendLine("        t_instructor_furikomi a")
-        sql.AppendLine("    left join t_instructor_furikomi b on a.itakuno = b.itakuno")
-        sql.AppendLine("    and   a.ownerno = b.ownerno")
-        sql.AppendLine("    and   a.instno = b.instno")
-        sql.AppendLine("    and   b.frinengetu = (select max(frinengetu) from t_instructor_furikomi c")
-        sql.AppendLine("    where c.itakuno = a.itakuno")
-        sql.AppendLine("    and   c.ownerno = a.ownerno")
-        sql.AppendLine("    and   c.instno = a.instno)")
+        sql.AppendLine("      , b.yubin")                      ' 郵便番号
+        sql.AppendLine("      , b.jusyo1")                     ' 住所１（漢字）
+        sql.AppendLine("      , b.jusyo2")                     ' 住所２（漢字）
+        sql.AppendLine("      , b.namekj")                     ' 氏名（漢字）
+        sql.AppendLine("      , b.namekn")                     ' 氏名（カナ）
+        sql.AppendLine("      , b.seiyyyy")                    ' 生年
+        sql.AppendLine("      , b.seimm")                      ' 生月
+        sql.AppendLine("      , b.seidd")                      ' 生日
+        sql.AppendLine("      , b.nyunen")                     ' 入社年
+        sql.AppendLine("      , b.nyutuki")                    ' 入社月
+        sql.AppendLine("      , b.nyuhi")                      ' 入社日
+        sql.AppendLine("      , b.tainen")                     ' 退職年
+        sql.AppendLine("      , b.taituki")                    ' 退職月
+        sql.AppendLine("      , b.taihi")                      ' 退職日
+        sql.AppendLine("      , b.fritesu")                    ' 振込手数料
+        sql.AppendLine("      , b.nencho_flg")                 ' 年調資料出力フラグ
+        sql.AppendLine("    from t_instructor_furikomi a")
+        sql.AppendLine("    left join t_instructor_furikomi b")
+        sql.AppendLine("      on a.itakuno = b.itakuno")
+        sql.AppendLine("     and a.ownerno = b.ownerno")
+        sql.AppendLine("     and a.instno  = b.instno")
+        sql.AppendLine("     and b.frinengetu = (")
+        sql.AppendLine("            select max(frinengetu)")
+        sql.AppendLine("            from t_instructor_furikomi c")
+        sql.AppendLine("            where c.itakuno = a.itakuno")
+        sql.AppendLine("              and c.ownerno = a.ownerno")
+        sql.AppendLine("              and c.instno  = a.instno")
+        sql.AppendLine("        )")
+        sql.AppendLine("    where substr(a.frinengetu,1,4) = substr(@sime1,1,4)")
+        sql.AppendLine("      and coalesce(a.nencho_flg,'0') <> '1'")
+        sql.AppendLine("    group by")
+        sql.AppendLine("        a.itakuno, a.ownerno, a.instno,")
+        sql.AppendLine("        b.bankcd, b.sitencd, b.syumok, b.kozono, b.meigkn,")
+        sql.AppendLine("        b.yubin, b.jusyo1, b.jusyo2, b.namekj, b.namekn,")
+        sql.AppendLine("        b.seiyyyy, b.seimm, b.seidd,")
+        sql.AppendLine("        b.nyunen, b.nyutuki, b.nyuhi,")
+        sql.AppendLine("        b.tainen, b.taituki, b.taihi,")
+        sql.AppendLine("        b.fritesu, b.nencho_flg")
+        sql.AppendLine(") fin")
+        sql.AppendLine("left join tbkeiyakushamaster own")
+        sql.AppendLine("  on fin.ownerno = own.bakycd")
+        sql.AppendLine(" and own.bakome is not null")
+        sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own.bafkst and own.bafked")
+        sql.AppendLine("left join tbkeiyakushamaster own2")
+        sql.AppendLine("  on own.bakyny = own2.bakycd")
+        sql.AppendLine(" and own2.bakome is not null")
+        sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own2.bafkst and own2.bafked")
 
         Dim params As New List(Of NpgsqlParameter) From {
-            New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-            New NpgsqlParameter("@crt_user_pg_id", pgid)
-        }
+        New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
+        New NpgsqlParameter("@crt_user_pg_id", pgid)
+    }
 
-        'If Not targetList Is Nothing Then
-        '    Dim i As Integer = 0
-        '    Dim sqlIn As New StringBuilder()
+        If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
+            params.Add(New NpgsqlParameter("@sime1", targetList(0).dtnengetu))
 
-        '    For Each target As TNenchoEntity In targetList
-        '        i += 1
-        '        params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
-        '        params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
-        '        'sqlIn.Append("(@ownerno" & i.ToString & ", case when c.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
-        '        sqlIn.Append("@ownerno" & i.ToString & ",")
-        '    Next
-
-        '    If 0 < sqlIn.Length Then
-        '        ' 最後の余計なカンマを削除
-        '        sqlIn.Remove(sqlIn.Length - 1, 1)
-        '        'sql.AppendLine("and (c.ownerno, 1) in (" & sqlIn.ToString & "))")
-        '        sql.AppendLine("and c.ownerno in (" & sqlIn.ToString & "))")
-        '    End If
-        'End If
-
-        sql.AppendLine("    where substr(a.frinengetu,1,4) = substr(@sime1,1,4)")
-        sql.AppendLine("    and   coalesce(a.nencho_flg,'0') <> '1'")
-
-        sql.AppendLine("  and exists (")
-        sql.AppendLine("      select 1")
-        sql.AppendLine("      from tbkeiyakushamaster d")
-
-        If Not targetList Is Nothing Then
-            Dim i As Integer = 0
-            Dim sqlIn As New StringBuilder()
-
-            For Each target As TNenchoEntity In targetList
-                i += 1
-                params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
-                params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
-                'sqlIn.Append("(@ownerno" & i.ToString & ", case when a.frinengetu <= @sime" & i.ToString & " then 1 else 0 end),")
-                'sqlIn.Append("@ownerno" & i.ToString & ",")
-                sqlIn.Append("(d.bakyny = @ownerno" & i.ToString() & " or d.bakycd = @ownerno" & i.ToString() & ") or ")
-            Next
-
-            If 0 < sqlIn.Length Then
-                ' 最後の余計なカンマを削除
-                'sqlIn.Remove(sqlIn.Length - 1, 1)
-                'sql.AppendLine("and (a.ownerno, 1) in (" & sqlIn.ToString & ")")
-                'sql.AppendLine("and a.ownerno in (" & sqlIn.ToString & "))")
-                sqlIn.Length -= 4
-                sqlIn.AppendLine("where (" & sqlIn.ToString() & ")")
-                sql.AppendLine(")")
-
-            End If
-        End If
-
-        sql.AppendLine("    group by")
-        sql.AppendLine("        a.itakuno") ' 顧客番号（委託者Ｎｏ）
-        sql.AppendLine("      , a.ownerno") ' 顧客番号（オーナーＮｏ）
-        sql.AppendLine("      , a.instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("      , b.bankcd") ' 銀行コード
-        sql.AppendLine("      , b.sitencd") ' 支店コード
-        sql.AppendLine("      , b.syumok") ' 預金種目
-        sql.AppendLine("      , b.kozono") ' 口座番号
-        sql.AppendLine("      , b.meigkn") ' 預金者名義（カナ）
-        sql.AppendLine("      , b.yubin") ' 郵便番号
-        sql.AppendLine("      , b.jusyo1") ' 住所１（漢字）
-        sql.AppendLine("      , b.jusyo2") ' 住所２（漢字）
-        sql.AppendLine("      , b.namekj") ' 氏名（漢字）
-        sql.AppendLine("      , b.namekn") ' 氏名（カナ）
-        sql.AppendLine("      , b.seiyyyy") ' 生年
-        sql.AppendLine("      , b.seimm") ' 生月
-        sql.AppendLine("      , b.seidd") ' 生日
-        sql.AppendLine("      , b.nyunen") ' 入社年
-        sql.AppendLine("      , b.nyutuki") ' 入社月
-        sql.AppendLine("      , b.nyuhi") ' 入社日
-        sql.AppendLine("      , b.tainen") ' 退職年
-        sql.AppendLine("      , b.taituki") ' 退職月
-        sql.AppendLine("      , b.taihi") ' 退職年
-        sql.AppendLine("      , b.fritesu") ' 振込手数料
-        sql.AppendLine("      , b.nencho_flg") ' 年調資料出力フラグ
-        sql.AppendLine(") fin")
-        sql.AppendLine("left join tbkeiyakushamaster own on (fin.ownerno = own.bakycd and own.bakome is not null")
-        sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own.bafkst and own.bafked)")
-        sql.AppendLine("left join tbkeiyakushamaster own2 on (own.bakyny = own2.bakycd and own2.bakome is not null")
-        sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own2.bafkst and own2.bafked)")
-
-        If Not targetList Is Nothing AndAlso targetList.Count > 0 Then
             Dim i As Integer = 0
             Dim orConditions As New StringBuilder()
 
             For Each target As TNenchoEntity In targetList
                 i += 1
-                Dim paramName As String = "@ownerno" & i.ToString()
-                params.Add(New NpgsqlParameter(paramName, target.ownerno))
-                orConditions.Append("(own.bakyny = " & paramName & " or own.bakycd = " & paramName & ") or ")
+                params.Add(New NpgsqlParameter("@ownerno" & i.ToString(), target.ownerno))
+
+                orConditions.Append("(" &
+                                "(own.bakyny = @ownerno" & i.ToString() & " or own.bakycd = @ownerno" & i.ToString() & ")" &
+                                ") or ")
             Next
 
             If orConditions.Length > 0 Then
-                ' 最後の " OR " を削除
                 orConditions.Length -= 4
                 sql.AppendLine("where (" & orConditions.ToString() & ")")
             End If
         End If
 
-        sql.AppendLine(") nen")
-        sql.AppendLine("group by")
-        sql.AppendLine("    nen.sakuhyokbn") ' 作表区分
-        'sql.AppendLine("  , nen.dtnengetu") ' データ年月
-        sql.AppendLine("  , nen.itakuno") ' 顧客番号（委託者Ｎｏ）
-        sql.AppendLine("  , nen.bakyny") ' 顧客番号（オーナーＮｏ）
-        sql.AppendLine("  , nen.instno") ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("  , nen.bankcd") ' 銀行コード
-        sql.AppendLine("  , nen.sitencd") ' 支店コード
-        sql.AppendLine("  , nen.syumok") ' 預金種目
-        sql.AppendLine("  , nen.kozono") ' 口座番号
-        sql.AppendLine("  , nen.meigkn") ' 預金者名義（カナ）
-        sql.AppendLine("  , nen.yubin") ' 郵便番号
-        sql.AppendLine("  , nen.jusyo1") ' 住所１（漢字）
-        sql.AppendLine("  , nen.jusyo2") ' 住所２（漢字）
-        sql.AppendLine("  , nen.namekj") ' 氏名（漢字）
-        sql.AppendLine("  , nen.namekn") ' 氏名（カナ）
-        sql.AppendLine("  , nen.seiyyyy") ' 生年
-        sql.AppendLine("  , nen.seimm") ' 生月
-        sql.AppendLine("  , nen.seidd") ' 生日
-        sql.AppendLine("  , nen.nyunen") ' 入社年
-        sql.AppendLine("  , nen.nyutuki") ' 入社月
-        sql.AppendLine("  , nen.nyuhi") ' 入社日
-        sql.AppendLine("  , nen.tainen") ' 退職年
-        sql.AppendLine("  , nen.taituki") ' 退職月
-        sql.AppendLine("  , nen.taihi") ' 退職年
-        sql.AppendLine("  , nen.fritesu") ' 振込手数料
-        sql.AppendLine("  , nen.nencho_flg") ' 年調資料出力フラグ
-        sql.AppendLine("  , nen.bakyny") ' 名寄先オーナーＮｏ
-        sql.AppendLine("  , nen.bakjnm") ' オーナー名（漢字）
-        sql.AppendLine("  , nen.bazpc") ' オーナー郵便番号
-        sql.AppendLine("  , nen.baadj1") ' オーナー住所１（漢字）
-        sql.AppendLine("  , nen.baadj2") ' オーナー住所２（漢字）
-        sql.AppendLine("  , nen.batele") ' オーナー電話番号１
-        sql.AppendLine("  , nen.bakkrn") ' オーナー電話番号２
-        sql.AppendLine("  , nen.bakome") ' 校名（漢字）
-        sql.AppendLine("  , nen.bahjno") ' 法人番号
+        sql.AppendLine("),") ' nen
+
+        sql.AppendLine("nen2 as (")
+        sql.AppendLine("select")
+        sql.AppendLine("    sakuhyokbn, itakuno, bakyny, instno,")
+        sql.AppendLine("    max(frinengetu) as max_frinengetu")
+        sql.AppendLine("from nen")
+        sql.AppendLine("group by sakuhyokbn, itakuno, bakyny, instno")
+        sql.AppendLine("),")
+
+        sql.AppendLine("nen3 as (")
+        sql.AppendLine("select")
+        sql.AppendLine("    nen.sakuhyokbn, nen.itakuno, nen.bakyny, nen.instno,")
+        sql.AppendLine("    max(nen.ownerno) as max_ownerno")
+        sql.AppendLine("from nen")
+        sql.AppendLine("inner join nen2")
+        sql.AppendLine("  on nen.sakuhyokbn = nen2.sakuhyokbn")
+        sql.AppendLine(" and nen.itakuno    = nen2.itakuno")
+        sql.AppendLine(" and nen.bakyny     = nen2.bakyny")
+        sql.AppendLine(" and nen.instno     = nen2.instno")
+        sql.AppendLine(" and nen.frinengetu = nen2.max_frinengetu")
+        sql.AppendLine("group by nen.sakuhyokbn, nen.itakuno, nen.bakyny, nen.instno")
+        sql.AppendLine("),")
+
+        sql.AppendLine("nen4 as (")
+        sql.AppendLine("select nen.*")
+        sql.AppendLine("from nen")
+        sql.AppendLine("inner join nen3")
+        sql.AppendLine("  on nen.sakuhyokbn = nen3.sakuhyokbn")
+        sql.AppendLine(" and nen.itakuno    = nen3.itakuno")
+        sql.AppendLine(" and nen.bakyny     = nen3.bakyny")
+        sql.AppendLine(" and nen.instno     = nen3.instno")
+        sql.AppendLine(" and nen.ownerno    = nen3.max_ownerno")
         sql.AppendLine(")")
 
-        ret = dbc.ExecuteNonQuery(sql.ToString(), params)
+        sql.AppendLine("select")
+        sql.AppendLine("    nen.sakuhyokbn")     ' 作表区分
+        sql.AppendLine("  , nen4.dtnengetu")     ' データ年月
+        sql.AppendLine("  , nen.itakuno")        ' 顧客番号（委託者Ｎｏ）
+        sql.AppendLine("  , nen.bakyny")         ' 顧客番号（オーナーＮｏ）
+        sql.AppendLine("  , nen.instno")         ' 顧客番号（インストラクターＮｏ）
+        sql.AppendLine("  , sum(nen.fkinzem)")   ' 振込金額（税引前）
+        sql.AppendLine("  , nen4.bankcd")        ' 銀行コード
+        sql.AppendLine("  , nen4.sitencd")       ' 支店コード
+        sql.AppendLine("  , nen4.syumok")        ' 預金種目
+        sql.AppendLine("  , nen4.kozono")        ' 口座番号
+        sql.AppendLine("  , nen4.meigkn")        ' 預金者名義（カナ）
+        sql.AppendLine("  , sum(nen.fkinzeg)")   ' 振込金額（税引後）
+        sql.AppendLine("  , sum(nen.zeigak)")    ' 源泉徴収税額
+        sql.AppendLine("  , max(nen.frinengetu)") ' 振込年月
+        sql.AppendLine("  , nen4.yubin")         ' 郵便番号
+        sql.AppendLine("  , nen4.jusyo1")        ' 住所１（漢字）
+        sql.AppendLine("  , nen4.jusyo2")        ' 住所２（漢字）
+        sql.AppendLine("  , nen4.namekj")        ' 氏名（漢字）
+        sql.AppendLine("  , nen4.namekn")        ' 氏名（カナ）
+        sql.AppendLine("  , nen4.seiyyyy")       ' 生年
+        sql.AppendLine("  , nen4.seimm")         ' 生月
+        sql.AppendLine("  , nen4.seidd")         ' 生日
+        sql.AppendLine("  , nen4.nyunen")        ' 入社年
+        sql.AppendLine("  , nen4.nyutuki")       ' 入社月
+        sql.AppendLine("  , nen4.nyuhi")         ' 入社日
+        sql.AppendLine("  , nen4.tainen")        ' 退職年
+        sql.AppendLine("  , nen4.taituki")       ' 退職月
+        sql.AppendLine("  , nen4.taihi")         ' 退職日
+        sql.AppendLine("  , nen4.fritesu")       ' 振込手数料
+        sql.AppendLine("  , nen4.nencho_flg")    ' 年調資料出力フラグ
+        sql.AppendLine("  , nen4.bakyny")        ' 名寄先オーナーＮｏ
+        sql.AppendLine("  , nen4.bakjnm")        ' オーナー名（漢字）
+        sql.AppendLine("  , nen4.bazpc")         ' オーナー郵便番号
+        sql.AppendLine("  , nen4.baadj1")        ' オーナー住所１（漢字）
+        sql.AppendLine("  , nen4.baadj2")        ' オーナー住所２（漢字）
+        sql.AppendLine("  , nen4.batele")        ' オーナー電話番号１
+        sql.AppendLine("  , nen4.bakkrn")        ' オーナー電話番号２
+        sql.AppendLine("  , nen4.bakome")        ' 校名（漢字）
+        sql.AppendLine("  , nen4.bahjno")        ' 法人番号
+        sql.AppendLine("  , null")               ' リランＮｏ
+        sql.AppendLine("  , @crt_user_id")       ' 登録ユーザーID
+        sql.AppendLine("  , current_timestamp")  ' 登録日時
+        sql.AppendLine("  , @crt_user_pg_id")    ' 登録プログラムID
+        sql.AppendLine("  , null")               ' 更新ユーザーID
+        sql.AppendLine("  , null")               ' 更新日時
+        sql.AppendLine("  , null")               ' 更新プログラムID
+        sql.AppendLine("from nen")
+        sql.AppendLine("inner join nen4")
+        sql.AppendLine("  on nen4.sakuhyokbn = nen.sakuhyokbn")
+        sql.AppendLine(" and nen4.itakuno    = nen.itakuno")
+        sql.AppendLine(" and nen4.bakyny     = nen.bakyny")
+        sql.AppendLine(" and nen4.instno     = nen.instno")
+        sql.AppendLine("group by")
+        sql.AppendLine("    nen.sakuhyokbn, nen.itakuno, nen.bakyny, nen.instno,")
+        sql.AppendLine("    nen4.dtnengetu, nen4.bankcd, nen4.sitencd, nen4.syumok, nen4.kozono, nen4.meigkn,")
+        sql.AppendLine("    nen4.yubin, nen4.jusyo1, nen4.jusyo2, nen4.namekj, nen4.namekn,")
+        sql.AppendLine("    nen4.seiyyyy, nen4.seimm, nen4.seidd,")
+        sql.AppendLine("    nen4.nyunen, nen4.nyutuki, nen4.nyuhi,")
+        sql.AppendLine("    nen4.tainen, nen4.taituki, nen4.taihi,")
+        sql.AppendLine("    nen4.fritesu, nen4.nencho_flg,")
+        sql.AppendLine("    nen4.bakyny, nen4.bakjnm, nen4.bazpc, nen4.baadj1, nen4.baadj2,")
+        sql.AppendLine("    nen4.batele, nen4.bakkrn, nen4.bakome, nen4.bahjno")
 
-        Return ret
+        sql.AppendLine(")")
+
+        Return dbc.ExecuteNonQuery(sql.ToString(), params)
 
     End Function
-
-    'Public Function InsertTNencho(pgid As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As Boolean
-
-    '    Dim ret As Boolean = False
-    '    Dim dbc As New DBClient
-    '    Dim sql As New StringBuilder()
-    '    Dim params As New List(Of NpgsqlParameter)
-
-    '    sql.AppendLine("INSERT INTO t_nencho")
-    '    sql.AppendLine("(")
-    '    sql.AppendLine("SELECT")
-    '    sql.AppendLine("    '3' AS sakuhyokbn")
-    '    sql.AppendLine("  , nen.dtnengetu")
-    '    sql.AppendLine("  , nen.itakuno")
-    '    sql.AppendLine("  , nen.bakyny") ' ★名寄先オーナーNO
-    '    sql.AppendLine("  , nen.instno")
-    '    sql.AppendLine("  , SUM(nen.fkinzem)")
-    '    sql.AppendLine("  , nen.bankcd")
-    '    sql.AppendLine("  , nen.sitencd")
-    '    sql.AppendLine("  , nen.syumok")
-    '    sql.AppendLine("  , nen.kozono")
-    '    sql.AppendLine("  , nen.meigkn")
-    '    sql.AppendLine("  , SUM(nen.fkinzeg)")
-    '    sql.AppendLine("  , SUM(nen.zeigak)")
-    '    sql.AppendLine("  , MAX(nen.frinengetu)")
-    '    sql.AppendLine("  , nen.yubin")
-    '    sql.AppendLine("  , nen.jusyo1")
-    '    sql.AppendLine("  , nen.jusyo2")
-    '    sql.AppendLine("  , nen.namekj")
-    '    sql.AppendLine("  , nen.namekn")
-    '    sql.AppendLine("  , nen.seiyyyy")
-    '    sql.AppendLine("  , nen.seimm")
-    '    sql.AppendLine("  , nen.seidd")
-    '    sql.AppendLine("  , nen.nyunen")
-    '    sql.AppendLine("  , nen.nyutuki")
-    '    sql.AppendLine("  , nen.nyuhi")
-    '    sql.AppendLine("  , nen.tainen")
-    '    sql.AppendLine("  , nen.taituki")
-    '    sql.AppendLine("  , nen.taihi")
-    '    sql.AppendLine("  , nen.fritesu")
-    '    sql.AppendLine("  , nen.nencho_flg")
-    '    sql.AppendLine("  , nen.bakyny")
-    '    sql.AppendLine("  , nen.bakjnm")
-    '    sql.AppendLine("  , nen.bazpc")
-    '    sql.AppendLine("  , nen.baadj1")
-    '    sql.AppendLine("  , nen.baadj2")
-    '    sql.AppendLine("  , nen.batele")
-    '    sql.AppendLine("  , nen.bakkrn")
-    '    sql.AppendLine("  , nen.bakome")
-    '    sql.AppendLine("  , nen.bahjno")
-    '    sql.AppendLine("  , NULL")
-    '    sql.AppendLine("  , @crt_user_id")
-    '    sql.AppendLine("  , CURRENT_TIMESTAMP")
-    '    sql.AppendLine("  , @crt_user_pg_id")
-    '    sql.AppendLine("  , NULL")
-    '    sql.AppendLine("  , NULL")
-    '    sql.AppendLine("  , NULL")
-    '    sql.AppendLine("FROM (")
-
-    '    '================ fin段階 ======================
-    '    sql.AppendLine("SELECT")
-    '    sql.AppendLine("    fin.*")
-    '    sql.AppendLine("  , COALESCE(NULLIF(own.bakyny,''), own.bakycd) AS bakyny")
-    '    sql.AppendLine("  , CASE WHEN own2.bakycd IS NULL THEN own.bakjnm ELSE own2.bakjnm END AS bakjnm")
-    '    sql.AppendLine("  , CASE WHEN own2.bakycd IS NULL THEN CONCAT(own.bazpc1,'-',own.bazpc2)")
-    '    sql.AppendLine("         ELSE CONCAT(own2.bazpc1,'-',own2.bazpc2) END AS bazpc")
-    '    sql.AppendLine("  , CASE WHEN own2.bakycd IS NULL THEN own.baadj1 ELSE own2.baadj1 END AS baadj1")
-    '    sql.AppendLine("  , CASE WHEN own2.bakycd IS NULL THEN own.baadj2 ELSE own2.baadj2 END AS baadj2")
-    '    sql.AppendLine("  , CASE WHEN own2.bakycd IS NULL THEN own.batele ELSE own2.batele END AS batele")
-    '    sql.AppendLine("  , CASE WHEN own2.bakycd IS NULL THEN own.bakkrn ELSE own2.bakkrn END AS bakkrn")
-    '    sql.AppendLine("  , CASE WHEN own2.bakycd IS NULL THEN own.bakome ELSE own2.bakome END AS bakome")
-    '    sql.AppendLine("  , CASE WHEN own2.bakycd IS NULL THEN own.bahjno ELSE own2.bahjno END AS bahjno")
-    '    sql.AppendLine("FROM (")
-
-    '    '================ fin本体 ======================
-    '    sql.AppendLine("SELECT")
-    '    sql.AppendLine("        MAX(a.frinengetu) AS dtnengetu")
-    '    sql.AppendLine("      , a.itakuno")
-    '    sql.AppendLine("      , a.ownerno")
-    '    sql.AppendLine("      , a.instno")
-    '    sql.AppendLine("      , SUM(a.fkinzem) AS fkinzem")
-    '    sql.AppendLine("      , b.bankcd")
-    '    sql.AppendLine("      , b.sitencd")
-    '    sql.AppendLine("      , b.syumok")
-    '    sql.AppendLine("      , b.kozono")
-    '    sql.AppendLine("      , b.meigkn")
-    '    sql.AppendLine("      , SUM(a.fkinzeg) AS fkinzeg")
-    '    sql.AppendLine("      , SUM(a.zeigak) AS zeigak")
-    '    sql.AppendLine("      , MAX(a.frinengetu) AS frinengetu")
-    '    sql.AppendLine("      , b.yubin")
-    '    sql.AppendLine("      , b.jusyo1")
-    '    sql.AppendLine("      , b.jusyo2")
-    '    sql.AppendLine("      , b.namekj")
-    '    sql.AppendLine("      , b.namekn")
-    '    sql.AppendLine("      , b.seiyyyy")
-    '    sql.AppendLine("      , b.seimm")
-    '    sql.AppendLine("      , b.seidd")
-    '    sql.AppendLine("      , b.nyunen")
-    '    sql.AppendLine("      , b.nyutuki")
-    '    sql.AppendLine("      , b.nyuhi")
-    '    sql.AppendLine("      , b.tainen")
-    '    sql.AppendLine("      , b.taituki")
-    '    sql.AppendLine("      , b.taihi")
-    '    sql.AppendLine("      , b.fritesu")
-    '    sql.AppendLine("      , b.nencho_flg")
-    '    sql.AppendLine("FROM t_instructor_furikomi a")
-    '    sql.AppendLine("LEFT JOIN t_instructor_furikomi b")
-    '    sql.AppendLine("  ON a.itakuno=b.itakuno AND a.ownerno=b.ownerno AND a.instno=b.instno")
-    '    sql.AppendLine(" AND b.frinengetu=(SELECT MAX(frinengetu) FROM t_instructor_furikomi c")
-    '    sql.AppendLine("                   WHERE c.itakuno=a.itakuno AND c.ownerno=a.ownerno AND c.instno=a.instno)")
-
-    '    sql.AppendLine("WHERE SUBSTR(a.frinengetu,1,4)=SUBSTR(@nengetsu,1,4)")
-    '    sql.AppendLine("  AND COALESCE(a.nencho_flg,'0') <> '1'")
-
-    '    sql.AppendLine("GROUP BY")
-    '    sql.AppendLine("    a.itakuno, a.ownerno, a.instno,")
-    '    sql.AppendLine("    b.bankcd, b.sitencd, b.syumok, b.kozono, b.meigkn,")
-    '    sql.AppendLine("    b.yubin, b.jusyo1, b.jusyo2, b.namekj, b.namekn,")
-    '    sql.AppendLine("    b.seiyyyy, b.seimm, b.seidd, b.nyunen, b.nyutuki, b.nyuhi,")
-    '    sql.AppendLine("    b.tainen, b.taituki, b.taihi, b.fritesu, b.nencho_flg")
-
-    '    sql.AppendLine(") fin")
-
-    '    '================ 名寄 join ======================
-    '    sql.AppendLine("LEFT JOIN tbkeiyakushamaster own")
-    '    sql.AppendLine("  ON fin.ownerno=own.bakycd")
-    '    sql.AppendLine(" AND own.bakome IS NOT NULL")
-    '    sql.AppendLine(" AND CAST(fin.frinengetu||'01' AS INTEGER) BETWEEN own.bafkst AND own.bafked")
-
-    '    sql.AppendLine("LEFT JOIN tbkeiyakushamaster own2")
-    '    sql.AppendLine("  ON own.bakyny=own2.bakycd")
-    '    sql.AppendLine(" AND own2.bakome IS NOT NULL")
-    '    sql.AppendLine(" AND CAST(fin.frinengetu||'01' AS INTEGER) BETWEEN own2.bafkst AND own2.bafked")
-
-    '    sql.AppendLine(") nen")
-
-    '    '================ targetList フィルタ ======================
-    '    If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
-    '        Dim i As Integer = 0
-    '        Dim sb As New StringBuilder()
-
-    '        For Each t In targetList
-    '            i += 1
-    '            params.Add(New NpgsqlParameter("@bakyny" & i, t.ownerno))
-    '            sb.Append("(nen.bakyny=@bakyny" & i & ") OR ")
-    '        Next
-
-    '        sb.Length -= 4
-    '        sql.AppendLine("WHERE " & sb.ToString())
-    '    End If
-
-    '    '================ 名寄先で最終集計 ======================
-    '    sql.AppendLine("GROUP BY")
-    '    sql.AppendLine("    nen.dtnengetu, nen.itakuno, nen.bakyny, nen.instno,")
-    '    sql.AppendLine("    nen.bankcd, nen.sitencd, nen.syumok, nen.kozono, nen.meigkn,")
-    '    sql.AppendLine("    nen.yubin, nen.jusyo1, nen.jusyo2, nen.namekj, nen.namekn,")
-    '    sql.AppendLine("    nen.seiyyyy, nen.seimm, nen.seidd, nen.nyunen, nen.nyutuki, nen.nyuhi,")
-    '    sql.AppendLine("    nen.tainen, nen.taituki, nen.taihi, nen.fritesu, nen.nencho_flg,")
-    '    sql.AppendLine("    nen.bakjnm, nen.bazpc, nen.baadj1, nen.baadj2, nen.batele, nen.bakkrn,")
-    '    sql.AppendLine("    nen.bakome, nen.bahjno")
-
-    '    sql.AppendLine(")")
-
-    '    '================ パラメータ ======================
-    '    params.Add(New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName))
-    '    params.Add(New NpgsqlParameter("@crt_user_pg_id", pgid))
-
-    '    ' 年度は targetList 先頭でよい（全件同じ年しか来ない）
-    '    params.Add(New NpgsqlParameter("@nengetsu", targetList(0).dtnengetu))
-
-    '    ret = dbc.ExecuteNonQuery(sql.ToString(), params)
-    '    Return ret
-
-    'End Function
 
     Public Function UpdateTInstructorFurikomi(pgid As String, simenengetsu As String, ownerno As String, Optional targetList As List(Of TNenchoEntity) = Nothing) As Boolean
 
