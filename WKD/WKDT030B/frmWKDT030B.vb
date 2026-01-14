@@ -34,17 +34,119 @@ Public Class frmWKDT030B
         End Using
 
         ' TextFieldParserを使ってCSVファイルを読み込む（Shift-JIS指定）
+        'Using parser As New TextFieldParser(targetFilePath, Encoding.GetEncoding("Shift_JIS"))
+        '    parser.TextFieldType = FieldType.Delimited
+        '    parser.SetDelimiters(",") '区切り文字はカンマ
+        '    While Not parser.EndOfData
+        '        Dim fields As String() = parser.ReadFields
+        '        Dim target As New TNenchoEntity
+        '        target.ownerno = fields(0) ' 顧客番号（オーナーＮｏ）
+        '        target.dtnengetu = fields(1) ' 締年月
+        '        targetList.Add(target)
+        '    End While
+        'End Using
+
+        ' TextFieldParserを使ってCSVファイルを読み込む（Shift-JIS指定）
         Using parser As New TextFieldParser(targetFilePath, Encoding.GetEncoding("Shift_JIS"))
             parser.TextFieldType = FieldType.Delimited
-            parser.SetDelimiters(",") '区切り文字はカンマ
+            parser.SetDelimiters(",") ' 区切り文字はカンマ
+            parser.HasFieldsEnclosedInQuotes = True
+            parser.TrimWhiteSpace = True
+
+            Dim lineNo As Integer = 0
+
             While Not parser.EndOfData
-                Dim fields As String() = parser.ReadFields
+                lineNo += 1
+
+                Dim fields As String() = Nothing
+                Try
+                    fields = parser.ReadFields()
+                Catch ex As MalformedLineException
+                    MessageBox.Show(
+                $"出力対象指定CSVの形式が不正です。{vbCrLf}" &
+                $"内容：{ex.Message}{vbCrLf}" &
+                $"ファイル：{targetFilePath}",
+                "",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            )
+                    Return
+                End Try
+
+                ' 空行（改行だけ等）はエラー
+                If fields Is Nothing OrElse fields.Length = 0 Then
+                    MessageBox.Show(
+                $"出力対象指定CSVに空白行があります。{vbCrLf}" &
+                $"ファイル：{targetFilePath}",
+                "",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            )
+                    Return
+                End If
+
+                ' 期待項目数チェック（ownerno, dtnengetu）
+                If fields.Length <> 2 Then
+                    MessageBox.Show(
+                $"出力対象指定CSVの項目数が不正です。（期待：2項目）{vbCrLf}" &
+                $"項目数：{fields.Length}{vbCrLf}" &
+                $"内容：{String.Join(",", fields)}{vbCrLf}" &
+                $"ファイル：{targetFilePath}",
+                "",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            )
+                    Return
+                End If
+
+                Dim ownerno As String = If(fields(0), "").Trim()
+                Dim dtnengetu As String = If(fields(1), "").Trim()
+
+                ' 空欄チェック（1つでも空ならエラー）
+                If String.IsNullOrEmpty(ownerno) OrElse String.IsNullOrEmpty(dtnengetu) Then
+                    MessageBox.Show(
+                $"出力対象指定CSVに空白項目があります。（オーナーNo/締年月）{vbCrLf}" &
+                $"内容：{String.Join(",", fields)}{vbCrLf}" &
+                $"ファイル：{targetFilePath}",
+                "",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            )
+                    Return
+                End If
+
+                ' 締年月フォーマット（yyyyMM）チェック：この時点で止める
+                Dim nengetuDate As Date
+                If Not Date.TryParseExact(dtnengetu, "yyyyMM", Nothing, Globalization.DateTimeStyles.None, nengetuDate) Then
+                    MessageBox.Show(
+                $"締年月が正しくありません。（yyyyMM）{vbCrLf}" &
+                $"締年月：{dtnengetu}{vbCrLf}" &
+                $"ファイル：{targetFilePath}",
+                "",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            )
+                    Return
+                End If
+
+                ' ここまで来たら安全に格納
                 Dim target As New TNenchoEntity
-                target.ownerno = fields(0) ' 顧客番号（オーナーＮｏ）
-                target.dtnengetu = fields(1) ' 締年月
+                target.ownerno = ownerno
+                target.dtnengetu = dtnengetu
                 targetList.Add(target)
             End While
         End Using
+
+        ' 1件も無い（ヘッダだけ等）もエラーにするならここで止める
+        If targetList.Count = 0 Then
+            MessageBox.Show(
+        $"出力対象指定CSVにデータ行がありません。{vbCrLf}ファイル：{targetFilePath}",
+        "",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Information
+    )
+            Return
+        End If
 
         Dim dtErrOwn As New DataTable()
         dtErrOwn.Columns.Add("オーナー№", GetType(String))
