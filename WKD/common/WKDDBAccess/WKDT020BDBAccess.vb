@@ -505,7 +505,10 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("  , tainen || taituki || taihi nyutaishabi") ' 入社/退職年月日（和暦）
         sql.AppendLine("  , seiyyyy") ' 生年月日元号
         sql.AppendLine("  , seiyyyy || seimm || seidd seiyyyymmdd") ' 生年月日（和暦）
-        sql.AppendLine("  , houjinno") ' 法人番号
+        sql.AppendLine("  , case nm.gs") ' 法人番号
+        sql.AppendLine("        when 1 then ''")
+        sql.AppendLine("        else houjinno")
+        sql.AppendLine("    end houjinno")
         sql.AppendLine("  , postno") ' オーナー郵便番号
         sql.AppendLine("  , rtrim(concat(addr1,addr2)) addr") ' オーナー住所
         sql.AppendLine("  , name") ' オーナー氏名
