@@ -95,7 +95,7 @@ Public Class frmWKDT020B
                 ' 期待項目数チェック（ownerno, instno, yyyymmdd）
                 If fields.Length <> 3 Then
                     MessageBox.Show(
-                $"出力対象指定CSVの項目数が不正です。（期待：3項目）{vbCrLf}" &
+                $"出力対象指定CSVの項目数が不正です。{vbCrLf}" &
                 $"項目数：{fields.Length}{vbCrLf}" &
                 $"内容：{String.Join(",", fields)}{vbCrLf}" &
                 $"ファイル：{targetFilePath}",
@@ -241,7 +241,7 @@ Public Class frmWKDT020B
             End If
 
             For Each target As TNenchoEntity In targetList
-                ' 年調作表データ更新
+                ' インストラクターデータ更新
                 If Not dba.UpdateTInstructorFurikomi(Me.ProductName, txtShoriNengetsu.Text.Replace("/", ""), target.ownerno, target.instno, target.tainen, target.taituki, target.taihi) Then
                     Return
                 End If

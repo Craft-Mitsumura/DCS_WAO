@@ -519,7 +519,7 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("  , count(*) over(partition by nys_ownerno,gs order by nys_ownerno,gs) cnt") ' 名寄オーナー№毎ページ数
         sql.AppendLine("  , rerunno") ' リラン№
         sql.AppendLine("from")
-        sql.AppendLine("    t_nencho")
+        sql.AppendLine("    t_nencho n")
         sql.AppendLine("  , (")
         sql.AppendLine("    select")
         sql.AppendLine("        gs") ' 帳票種類番号
@@ -531,8 +531,27 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("        end chohyoshurui") ' 帳票種類
         sql.AppendLine("    from generate_series(1, 1) gs")
         sql.AppendLine("    ) nm")
-        sql.AppendLine("where sakuhyokbn = '2'")
-        sql.AppendLine("and dtnengetu = @shoriNengetsu")
+        sql.AppendLine("where n.sakuhyokbn = '2'")
+        sql.AppendLine("and n.dtnengetu = @shoriNengetsu")
+
+        sql.AppendLine("and not exists (")
+        sql.AppendLine("    select 1")
+        sql.AppendLine("    from t_instructor_furikomi f")
+        sql.AppendLine("    where f.instno = n.instno")
+        sql.AppendLine("      and substr(f.frinengetu,1,4) = substr(@shoriNengetsu,1,4)")
+        sql.AppendLine("      and coalesce(f.nencho_flg,'0') = '1'")
+        sql.AppendLine("      and (")
+        sql.AppendLine("            f.ownerno = n.nys_ownerno")
+        sql.AppendLine("         or exists (")
+        sql.AppendLine("              select 1")
+        sql.AppendLine("              from tbkeiyakushamaster b")
+        sql.AppendLine("              where f.ownerno = b.bakycd")
+        sql.AppendLine("                and b.bakyny = n.nys_ownerno")
+        sql.AppendLine("                and cast(f.frinengetu || '01' as integer) between b.bafkst and b.bafked")
+        sql.AppendLine("                and b.bakome is not null")
+        sql.AppendLine("           )")
+        sql.AppendLine("          )")
+        sql.AppendLine(")")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengetsu", shoriNengetsu)
@@ -552,7 +571,7 @@ Public Class WKDT020BDBAccess
             If 0 < sqlIn.Length Then
                 ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
-                sql.AppendLine("and (nys_ownerno, instno) in (" & sqlIn.ToString & ")")
+                sql.AppendLine("and (n.nys_ownerno, n.instno) in (" & sqlIn.ToString & ")")
             End If
         End If
 
@@ -631,7 +650,26 @@ Public Class WKDT020BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("delete from t_nencho where sakuhyokbn = '2' and dtnengetu = @shoriNengetsu")
+        sql.AppendLine("delete from t_nencho n where n.sakuhyokbn = '2' and n.dtnengetu = @shoriNengetsu")
+
+        sql.AppendLine("  and not exists (")
+        sql.AppendLine("        select 1")
+        sql.AppendLine("        from t_instructor_furikomi f")
+        sql.AppendLine("        where f.instno = n.instno")
+        sql.AppendLine("          and substr(f.frinengetu,1,4) = substr(@shoriNengetsu,1,4)")
+        sql.AppendLine("          and coalesce(f.nencho_flg,'0') = '1'")
+        sql.AppendLine("          and (")
+        sql.AppendLine("                f.ownerno = n.nys_ownerno")
+        sql.AppendLine("             or exists (")
+        sql.AppendLine("                    select 1")
+        sql.AppendLine("                    from tbkeiyakushamaster b")
+        sql.AppendLine("                    where f.ownerno = b.bakycd")
+        sql.AppendLine("                      and b.bakyny = n.nys_ownerno")
+        sql.AppendLine("                      and cast(f.frinengetu || '01' as integer) between b.bafkst and b.bafked")
+        sql.AppendLine("                      and b.bakome is not null")
+        sql.AppendLine("                 )")
+        sql.AppendLine("              )")
+        sql.AppendLine("      )")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNengetsu", shoriNengetsu)
@@ -651,7 +689,7 @@ Public Class WKDT020BDBAccess
             If 0 < sqlIn.Length Then
                 ' 最後の余計なカンマを削除
                 sqlIn.Remove(sqlIn.Length - 1, 1)
-                sql.AppendLine("and (nys_ownerno, instno) in (" & sqlIn.ToString & ")")
+                sql.AppendLine("and (n.nys_ownerno, n.instno) in (" & sqlIn.ToString & ")")
             End If
         End If
 
@@ -689,6 +727,8 @@ Public Class WKDT020BDBAccess
         sql.AppendLine("  )")
         sql.AppendLine("  and a.instno = @instno")
         sql.AppendLine("  and substr(a.frinengetu,1,4) = substr(@shoriNengetsu,1,4)")
+
+        sql.AppendLine("  and coalesce(a.nencho_flg,'0') <> '1'")
 
         Dim params As New List(Of NpgsqlParameter) From {
         New NpgsqlParameter("@upd_user_id", SettingManager.GetInstance.LoginUserName),

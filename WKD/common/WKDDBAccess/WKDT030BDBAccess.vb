@@ -296,19 +296,19 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("  , case when own2.bakycd is null then own.bahjno else own2.bahjno end bahjno")      ' 法人番号
         sql.AppendLine("from (")
         sql.AppendLine("    select")
-        sql.AppendLine("        max(a.frinengetu) dtnengetu")  ' データ年月
-        sql.AppendLine("      , a.itakuno")                    ' 顧客番号（委託者Ｎｏ）
-        sql.AppendLine("      , a.ownerno")                    ' 顧客番号（オーナーＮｏ）
-        sql.AppendLine("      , a.instno")                     ' 顧客番号（インストラクターＮｏ）
-        sql.AppendLine("      , sum(a.fkinzem) fkinzem")       ' 振込金額（税引前）
+        sql.AppendLine("        aagg.dtnengetu dtnengetu")  ' データ年月
+        sql.AppendLine("      , aagg.itakuno")                    ' 顧客番号（委託者Ｎｏ）
+        sql.AppendLine("      , aagg.ownerno")                    ' 顧客番号（オーナーＮｏ）
+        sql.AppendLine("      , aagg.instno")                     ' 顧客番号（インストラクターＮｏ）
+        sql.AppendLine("      , aagg.fkinzem fkinzem")       ' 振込金額（税引前）
         sql.AppendLine("      , b.bankcd")                     ' 銀行コード
         sql.AppendLine("      , b.sitencd")                    ' 支店コード
         sql.AppendLine("      , b.syumok")                     ' 預金種目
         sql.AppendLine("      , b.kozono")                     ' 口座番号
         sql.AppendLine("      , b.meigkn")                     ' 預金者名義（カナ）
-        sql.AppendLine("      , sum(a.fkinzeg) fkinzeg")       ' 振込金額（税引後）
-        sql.AppendLine("      , sum(a.zeigak) zeigak")         ' 源泉徴収税額
-        sql.AppendLine("      , max(a.frinengetu) frinengetu") ' 振込年月
+        sql.AppendLine("      , aagg.fkinzeg fkinzeg")       ' 振込金額（税引後）
+        sql.AppendLine("      , aagg.zeigak zeigak")         ' 源泉徴収税額
+        sql.AppendLine("      , aagg.frinengetu frinengetu") ' 振込年月
         sql.AppendLine("      , b.yubin")                      ' 郵便番号
         sql.AppendLine("      , b.jusyo1")                     ' 住所１（漢字）
         sql.AppendLine("      , b.jusyo2")                     ' 住所２（漢字）
@@ -325,29 +325,89 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("      , b.taihi")                      ' 退職日
         sql.AppendLine("      , b.fritesu")                    ' 振込手数料
         sql.AppendLine("      , b.nencho_flg")                 ' 年調資料出力フラグ
-        sql.AppendLine("    from t_instructor_furikomi a")
+        'sql.AppendLine("    from t_instructor_furikomi a")
+        'sql.AppendLine("    left join t_instructor_furikomi b")
+        'sql.AppendLine("      on a.itakuno = b.itakuno")
+        'sql.AppendLine("     and a.ownerno = b.ownerno")
+        'sql.AppendLine("     and a.instno  = b.instno")
+        'sql.AppendLine("     and b.frinengetu = (")
+        'sql.AppendLine("            select max(frinengetu)")
+        'sql.AppendLine("            from t_instructor_furikomi c")
+        'sql.AppendLine("            where c.itakuno = a.itakuno")
+        'sql.AppendLine("              and c.ownerno = a.ownerno")
+        'sql.AppendLine("              and c.instno  = a.instno")
+        'sql.AppendLine("        )")
+        ''sql.AppendLine("    where substr(a.frinengetu,1,4) = substr(@sime1,1,4)")
+        'sql.AppendLine("      where coalesce(a.nencho_flg,'0') <> '1'")
+
+        sql.AppendLine("    from (")
+        sql.AppendLine("        select")
+        sql.AppendLine("            max(a.frinengetu) as frinengetu")
+        sql.AppendLine("          , max(a.frinengetu) as dtnengetu")
+        sql.AppendLine("          , a.itakuno")
+        sql.AppendLine("          , a.ownerno")
+        sql.AppendLine("          , a.instno")
+        sql.AppendLine("          , sum(a.fkinzem) as fkinzem")
+        sql.AppendLine("          , sum(a.fkinzeg) as fkinzeg")
+        sql.AppendLine("          , sum(a.zeigak)  as zeigak")
+        sql.AppendLine("        from t_instructor_furikomi a")
+        sql.AppendLine("        where coalesce(a.nencho_flg,'0') <> '1'")
+
+        Dim params As New List(Of NpgsqlParameter) From {
+        New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
+        New NpgsqlParameter("@crt_user_pg_id", pgid)
+    }
+
+        If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
+
+            Dim i As Integer = 0
+            Dim orConditions As New StringBuilder()
+
+            For Each target As TNenchoEntity In targetList
+                i += 1
+
+                params.Add(New NpgsqlParameter("@ownerno" & i.ToString(), target.ownerno))
+                params.Add(New NpgsqlParameter("@sime" & i.ToString(), target.dtnengetu))
+
+                orConditions.Append("(" &
+                    "a.frinengetu <= @sime" & i.ToString() & " and (" &
+                        "a.ownerno = @ownerno" & i.ToString() &
+                        " or exists (" &
+                            "select 1 " &
+                            "from tbkeiyakushamaster d " &
+                            "where d.bakycd = a.ownerno " &
+                            "  and d.bakyny = @ownerno" & i.ToString() &
+                            "  and cast(a.frinengetu || '01' as integer) between d.bafkst and d.bafked " &
+                            "  and d.bakome is not null" &
+                        ")" &
+                    ")" &
+                ") or ")
+            Next
+
+            If orConditions.Length > 0 Then
+                orConditions.Length -= 4 ' 最後の " or " を削除
+                sql.AppendLine("      and (" & orConditions.ToString() & ")")
+            End If
+        End If
+
+        'sql.AppendLine("    group by")
+        'sql.AppendLine("        a.itakuno, a.ownerno, a.instno,")
+        'sql.AppendLine("        b.bankcd, b.sitencd, b.syumok, b.kozono, b.meigkn,")
+        'sql.AppendLine("        b.yubin, b.jusyo1, b.jusyo2, b.namekj, b.namekn,")
+        'sql.AppendLine("        b.seiyyyy, b.seimm, b.seidd,")
+        'sql.AppendLine("        b.nyunen, b.nyutuki, b.nyuhi,")
+        'sql.AppendLine("        b.tainen, b.taituki, b.taihi,")
+        'sql.AppendLine("        b.fritesu, b.nencho_flg")
+
+        sql.AppendLine("        group by a.itakuno, a.ownerno, a.instno")
+        sql.AppendLine("    ) aagg")
         sql.AppendLine("    left join t_instructor_furikomi b")
-        sql.AppendLine("      on a.itakuno = b.itakuno")
-        sql.AppendLine("     and a.ownerno = b.ownerno")
-        sql.AppendLine("     and a.instno  = b.instno")
-        sql.AppendLine("     and b.frinengetu = (")
-        sql.AppendLine("            select max(frinengetu)")
-        sql.AppendLine("            from t_instructor_furikomi c")
-        sql.AppendLine("            where c.itakuno = a.itakuno")
-        sql.AppendLine("              and c.ownerno = a.ownerno")
-        sql.AppendLine("              and c.instno  = a.instno")
-        sql.AppendLine("        )")
-        sql.AppendLine("    where substr(a.frinengetu,1,4) = substr(@sime1,1,4)")
-        sql.AppendLine("      and coalesce(a.nencho_flg,'0') <> '1'")
-        sql.AppendLine("    group by")
-        sql.AppendLine("        a.itakuno, a.ownerno, a.instno,")
-        sql.AppendLine("        b.bankcd, b.sitencd, b.syumok, b.kozono, b.meigkn,")
-        sql.AppendLine("        b.yubin, b.jusyo1, b.jusyo2, b.namekj, b.namekn,")
-        sql.AppendLine("        b.seiyyyy, b.seimm, b.seidd,")
-        sql.AppendLine("        b.nyunen, b.nyutuki, b.nyuhi,")
-        sql.AppendLine("        b.tainen, b.taituki, b.taihi,")
-        sql.AppendLine("        b.fritesu, b.nencho_flg")
+        sql.AppendLine("      on b.itakuno = aagg.itakuno")
+        sql.AppendLine("     and b.ownerno = aagg.ownerno")
+        sql.AppendLine("     and b.instno  = aagg.instno")
+        sql.AppendLine("     and b.frinengetu = aagg.frinengetu")
         sql.AppendLine(") fin")
+
         sql.AppendLine("left join tbkeiyakushamaster own")
         sql.AppendLine("  on fin.ownerno = own.bakycd")
         sql.AppendLine(" and own.bakome is not null")
@@ -357,31 +417,26 @@ Public Class WKDT030BDBAccess
         sql.AppendLine(" and own2.bakome is not null")
         sql.AppendLine(" and cast(fin.frinengetu || '01' as integer) between own2.bafkst and own2.bafked")
 
-        Dim params As New List(Of NpgsqlParameter) From {
-        New NpgsqlParameter("@crt_user_id", SettingManager.GetInstance.LoginUserName),
-        New NpgsqlParameter("@crt_user_pg_id", pgid)
-    }
+        'If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
+        '    params.Add(New NpgsqlParameter("@sime1", targetList(0).dtnengetu))
 
-        If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
-            params.Add(New NpgsqlParameter("@sime1", targetList(0).dtnengetu))
+        '    Dim i As Integer = 0
+        '    Dim orConditions As New StringBuilder()
 
-            Dim i As Integer = 0
-            Dim orConditions As New StringBuilder()
+        '    For Each target As TNenchoEntity In targetList
+        '        i += 1
+        '        params.Add(New NpgsqlParameter("@ownerno" & i.ToString(), target.ownerno))
 
-            For Each target As TNenchoEntity In targetList
-                i += 1
-                params.Add(New NpgsqlParameter("@ownerno" & i.ToString(), target.ownerno))
+        '        orConditions.Append("(" &
+        '                        "(own.bakyny = @ownerno" & i.ToString() & " or own.bakycd = @ownerno" & i.ToString() & ")" &
+        '                        ") or ")
+        '    Next
 
-                orConditions.Append("(" &
-                                "(own.bakyny = @ownerno" & i.ToString() & " or own.bakycd = @ownerno" & i.ToString() & ")" &
-                                ") or ")
-            Next
-
-            If orConditions.Length > 0 Then
-                orConditions.Length -= 4
-                sql.AppendLine("where (" & orConditions.ToString() & ")")
-            End If
-        End If
+        '    If orConditions.Length > 0 Then
+        '        orConditions.Length -= 4
+        '        sql.AppendLine("where (" & orConditions.ToString() & ")")
+        '    End If
+        'End If
 
         sql.AppendLine("),") ' nen
 
@@ -510,7 +565,9 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("  and (km.bakyny = @ownerno")
         sql.AppendLine("  or tif.ownerno = @ownerno)")
         'sql.AppendLine("  and coalesce(tif.nencho_flg,'0') <> '1'")
-        sql.AppendLine("  and substr(tif.frinengetu,1,4) = substr(@simenengetsu,1,4)")
+        'sql.AppendLine("  and substr(tif.frinengetu,1,4) = substr(@simenengetsu,1,4)")
+        sql.AppendLine("  and tif.frinengetu <= @simenengetsu")
+        sql.AppendLine("  and coalesce(tif.nencho_flg,'0') <> '1'")
         sql.AppendLine("  and cast(tif.frinengetu || '01' as integer) between km.bafkst and km.bafked")
         sql.AppendLine("  and km.bakome is not null")
 
@@ -520,30 +577,6 @@ Public Class WKDT030BDBAccess
         New NpgsqlParameter("@simenengetsu", simenengetsu),
         New NpgsqlParameter("@ownerno", ownerno)
         }
-
-        'If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
-        '    Dim i As Integer = 0
-        '    Dim sqlIn As New StringBuilder()
-        '    Dim sqlOwnernoIn As New StringBuilder()
-
-        '    For Each target As TNenchoEntity In targetList
-        '        i += 1
-        '        Dim paramName As String = "@ownerno" & i.ToString()
-        '        params.Add(New NpgsqlParameter(paramName, target.ownerno))
-        '        sqlIn.Append(paramName & ",")
-        '        sqlOwnernoIn.Append(paramName & ",")
-        '    Next
-
-        '    If sqlIn.Length > 0 Then
-        '        sqlIn.Length -= 1
-        '        sqlOwnernoIn.Length -= 1
-
-        '        sql.AppendLine("  and (")
-        '        sql.AppendLine("         km.bakyny in (" & sqlIn.ToString() & ")")
-        '        sql.AppendLine("      or tif.ownerno in (" & sqlOwnernoIn.ToString() & ")")
-        '        sql.AppendLine("      )")
-        '    End If
-        'End If
 
         ret = dbc.ExecuteNonQuery(sql.ToString(), params)
 
@@ -568,7 +601,9 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("  and (km.bakyny = @ownerno")
         sql.AppendLine("  or tif.ownerno = @ownerno)")
         'sql.AppendLine("  and coalesce(tif.nencho_flg,'0') <> '1'")
-        sql.AppendLine("  and substr(tif.frinengetu,1,4) = substr(@simenengetsu,1,4)")
+        'sql.AppendLine("  and substr(tif.frinengetu,1,4) = substr(@simenengetsu,1,4)")
+        sql.AppendLine("  and tif.frinengetu <= @simenengetsu")
+        sql.AppendLine("  and coalesce(tif.nencho_flg,'0') <> '1'")
         sql.AppendLine("  and cast(tif.frinengetu || '01' as integer) between km.bafkst and km.bafked")
         sql.AppendLine("  and km.bakome is not null")
 
@@ -585,7 +620,7 @@ Public Class WKDT030BDBAccess
 
     End Function
 
-    Public Function GetTNencho(Optional targetList As List(Of TNenchoEntity) = Nothing) As DataTable
+    Public Function GetTNencho(Optional targetList As List(Of TNenchoEntity) = Nothing, Optional ReOutput As Boolean = False) As DataTable
 
         Dim dt As DataTable = Nothing
         Dim dbc As New DBClient
@@ -636,7 +671,7 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("  , count(*) over(partition by nys_ownerno,gs order by nys_ownerno,gs) cnt") ' 名寄オーナー№毎ページ数
         sql.AppendLine("  , rerunno") ' リラン№
         sql.AppendLine("from")
-        sql.AppendLine("    t_nencho")
+        sql.AppendLine("    t_nencho n")
         sql.AppendLine("  , (")
         sql.AppendLine("    select")
         sql.AppendLine("        gs") ' 帳票種類番号
@@ -654,27 +689,64 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("        end chohyoshurui") ' 帳票種類
         sql.AppendLine("    from generate_series(1, 4) gs")
         sql.AppendLine("    ) nm")
-        sql.AppendLine("where sakuhyokbn = '3'")
+        sql.AppendLine("where n.sakuhyokbn = '3'")
+
+        If Not ReOutput Then
+            sql.AppendLine("  and not exists (")
+            sql.AppendLine("        select 1")
+            sql.AppendLine("        from t_instructor_furikomi f")
+            sql.AppendLine("        left join tbkeiyakushamaster b")
+            sql.AppendLine("          on f.ownerno = b.bakycd")
+            sql.AppendLine("         and b.bakome is not null")
+            sql.AppendLine("         and cast(f.frinengetu || '01' as integer) between b.bafkst and b.bafked")
+            sql.AppendLine("        where f.instno = n.instno")
+            sql.AppendLine("          and f.frinengetu = n.dtnengetu")
+            sql.AppendLine("          and coalesce(f.nencho_flg,'0') = '1'")
+            sql.AppendLine("          and (")
+            sql.AppendLine("                f.ownerno = n.nys_ownerno")
+            sql.AppendLine("             or b.bakyny = n.nys_ownerno")
+            sql.AppendLine("              )")
+            sql.AppendLine("      )")
+        End If
 
         Dim params As New List(Of NpgsqlParameter)
 
-        If Not targetList Is Nothing Then
+        If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
             Dim i As Integer = 0
-            Dim sqlIn As New StringBuilder()
+            Dim orConditions As New StringBuilder()
 
             For Each target As TNenchoEntity In targetList
                 i += 1
-                params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
-                params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
-                'sqlIn.Append("(@ownerno" & i.ToString & ", case when dtnengetu <= @sime" & i.ToString & " then 1 else 0 end),")
-                sqlIn.Append("@ownerno" & i.ToString & ",")
+
+                params.Add(New NpgsqlParameter("@ownerno" & i.ToString(), target.ownerno))
+                params.Add(New NpgsqlParameter("@sime" & i.ToString(), target.dtnengetu))
+
+                If ReOutput Then
+                    ' 再出力
+                    orConditions.Append("(" &
+                        "n.nys_ownerno = @ownerno" & i &
+                        " and n.dtnengetu = @sime" & i &
+                    ") or ")
+                Else
+                    ' 新規出力
+                    orConditions.Append("(" &
+                        "n.nys_ownerno = @ownerno" & i &
+                        " and n.dtnengetu <= @sime" & i &
+                        " and n.dtnengetu >= (" &
+                            "select coalesce(max(x.dtnengetu),'000000') " &
+                            "from t_nencho x " &
+                            "where x.sakuhyokbn = '3' " &
+                            "  and x.nys_ownerno = @ownerno" & i &
+                            "  and x.dtnengetu < @sime" & i &
+                        ")" &
+                    ") or ")
+                End If
+
             Next
 
-            If 0 < sqlIn.Length Then
-                ' 最後の余計なカンマを削除
-                sqlIn.Remove(sqlIn.Length - 1, 1)
-                'sql.AppendLine("and (ownerno, 1) in (" & sqlIn.ToString & ")")
-                sql.AppendLine("and nys_ownerno in (" & sqlIn.ToString & ")")
+            If orConditions.Length > 0 Then
+                orConditions.Length -= 4 ' 最後の " or " を削除
+                sql.AppendLine("and (" & orConditions.ToString() & ")")
             End If
         End If
 
@@ -699,27 +771,44 @@ Public Class WKDT030BDBAccess
         Dim dbc As New DBClient
 
         Dim sql As New StringBuilder()
-        sql.AppendLine("delete from t_nencho where sakuhyokbn = '3'")
+        sql.AppendLine("delete from t_nencho n where n.sakuhyokbn = '3'")
+
+        sql.AppendLine("  and not exists (")
+        sql.AppendLine("        select 1")
+        sql.AppendLine("        from t_instructor_furikomi f")
+        sql.AppendLine("        left join tbkeiyakushamaster b")
+        sql.AppendLine("          on f.ownerno = b.bakycd")
+        sql.AppendLine("         and b.bakome is not null")
+        sql.AppendLine("         and cast(f.frinengetu || '01' as integer) between b.bafkst and b.bafked")
+        sql.AppendLine("        where f.instno = n.instno")
+        sql.AppendLine("          and f.frinengetu = n.dtnengetu")
+        sql.AppendLine("          and coalesce(f.nencho_flg,'0') = '1'")
+        sql.AppendLine("          and (")
+        sql.AppendLine("                f.ownerno = n.nys_ownerno")
+        sql.AppendLine("             or b.bakyny = n.nys_ownerno")
+        sql.AppendLine("              )")
+        sql.AppendLine("      )")
 
         Dim params As New List(Of NpgsqlParameter)
 
-        If Not targetList Is Nothing Then
+        If targetList IsNot Nothing AndAlso targetList.Count > 0 Then
             Dim i As Integer = 0
-            Dim sqlIn As New StringBuilder()
+            Dim orConditions As New StringBuilder()
 
             For Each target As TNenchoEntity In targetList
                 i += 1
-                params.Add(New NpgsqlParameter("@ownerno" & i.ToString, target.ownerno))
-                params.Add(New NpgsqlParameter("@sime" & i.ToString, target.dtnengetu))
-                'sqlIn.Append("(@ownerno" & i.ToString & ", case when dtnengetu <= @sime" & i.ToString & " then 1 else 0 end),")
-                sqlIn.Append("@ownerno" & i.ToString & ",")
+
+                params.Add(New NpgsqlParameter("@ownerno" & i.ToString(), target.ownerno))
+
+                orConditions.Append("(" &
+                            "n.nys_ownerno = @ownerno" & i.ToString() &
+                        ") or ")
+
             Next
 
-            If 0 < sqlIn.Length Then
-                ' 最後の余計なカンマを削除
-                sqlIn.Remove(sqlIn.Length - 1, 1)
-                'sql.AppendLine("and (ownerno, 1) in (" & sqlIn.ToString & ")")
-                sql.AppendLine("and nys_ownerno in (" & sqlIn.ToString & ")")
+            If orConditions.Length > 0 Then
+                orConditions.Length -= 4
+                sql.AppendLine("and (" & orConditions.ToString() & ")")
             End If
         End If
 

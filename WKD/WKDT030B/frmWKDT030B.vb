@@ -88,7 +88,7 @@ Public Class frmWKDT030B
                 ' 期待項目数チェック（ownerno, dtnengetu）
                 If fields.Length <> 2 Then
                     MessageBox.Show(
-                $"出力対象指定CSVの項目数が不正です。（期待：2項目）{vbCrLf}" &
+                $"出力対象指定CSVの項目数が不正です。{vbCrLf}" &
                 $"項目数：{fields.Length}{vbCrLf}" &
                 $"内容：{String.Join(",", fields)}{vbCrLf}" &
                 $"ファイル：{targetFilePath}",
@@ -132,7 +132,8 @@ Public Class frmWKDT030B
                 ' ここまで来たら安全に格納
                 Dim target As New TNenchoEntity
                 target.ownerno = ownerno
-                target.dtnengetu = dtnengetu
+                Dim dtnengetuPlus1 As String = nengetuDate.AddMonths(1).ToString("yyyyMM")
+                target.dtnengetu = dtnengetuPlus1
                 targetList.Add(target)
             End While
         End Using
@@ -200,7 +201,8 @@ Public Class frmWKDT030B
         Dim dt As DataTable = Nothing
 
         ' 年調作表データ取得
-        dt = dba.GetTNencho(targetList)
+        Dim ReOutput As Boolean = rdoShoriKubun_1.Checked
+        dt = dba.GetTNencho(targetList, ReOutput)
         If dt.Rows.Count <= 0 Then
             ' 処理区分=再出力
             If rdoShoriKubun_1.Checked Then
@@ -223,7 +225,7 @@ Public Class frmWKDT030B
                 Return
             End If
 
-            ' 年調作表データ更新
+            ' インストラクターデータ更新
             For Each target As TNenchoEntity In targetList
                 If Not dba.UpdateTInstructorFurikomi(Me.ProductName, target.dtnengetu, target.ownerno) Then
                     Return
@@ -242,7 +244,7 @@ Public Class frmWKDT030B
                 Return
             End If
 
-            ' 年調作表データ年調作表フラグ更新
+            ' インストラクターデータ年調作表フラグ更新
             For Each target As TNenchoEntity In targetList
                 If Not dba.UpdateTInstructorFurikomiNenchoFlg(Me.ProductName, target.dtnengetu, target.ownerno) Then
                     Return
