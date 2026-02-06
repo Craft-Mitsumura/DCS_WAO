@@ -306,13 +306,6 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("where sakuhyokbn = '1'")
         sql.AppendLine("and dtnengetu = @shoriNendo || '12'")
 
-        sql.AppendLine("  and exists (")
-        sql.AppendLine("        select 1")
-        sql.AppendLine("        from t_instructor_furikomi a")
-        sql.AppendLine("        where substr(a.frinengetu,1,4) = @shoriNendo")
-        sql.AppendLine("          and coalesce(a.nencho_flg,'0') <> '1'")
-        sql.AppendLine("      )")
-
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNendo", shoriNendo)
         }
@@ -356,13 +349,6 @@ Public Class WKDT010BDBAccess
 
         Dim sql As New StringBuilder()
         sql.AppendLine("delete from t_nencho where sakuhyokbn = '1' and dtnengetu = @shoriNendo || '12'")
-
-        sql.AppendLine("  and exists (")
-        sql.AppendLine("        select 1")
-        sql.AppendLine("        from t_instructor_furikomi a")
-        sql.AppendLine("        where substr(a.frinengetu,1,4) = @shoriNendo")
-        sql.AppendLine("          and coalesce(a.nencho_flg,'0') <> '1'")
-        sql.AppendLine("      )")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@shoriNendo", shoriNendo)
