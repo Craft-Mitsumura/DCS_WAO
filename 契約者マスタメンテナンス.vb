@@ -126,6 +126,11 @@ Friend Class frmKeiyakushaMaster
         sql = sql & " bakyed = " & lblBAKYxx(1).Text & ","
         'sql = sql & " bafkst = " & lblBAFKxx(0).Text & ","
         'sql = sql & " bafked = " & lblBAFKxx(1).Text & ","
+
+        '2026/02/05 èCê≥
+        sql &= " bafkst = " & Val(lblBAKYxx(0).Text) & ","
+        sql &= " bafked = " & Val(lblBAKYxx(1).Text) & ","
+
         sql = sql & " bakyfg = '" & lblBAKYFG.Text & "',"
         sql = sql & " basofu = NULL,"
 

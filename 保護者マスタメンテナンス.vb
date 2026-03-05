@@ -896,10 +896,14 @@ txtCAHGCD_KeyDownError:
         Dim obj As Object
         Dim msg As String
         '//保護者・漢字名称は必須
-        If txtCAKJNM.Text = "" Then
-            obj = txtCAKJNM
-            msg = "口座名義人(漢字)は必須入力です."
+        '//2026/02/26 修正
+        If getonlinekb() <> 1 Then
+            If txtCAKJNM.Text = "" Then
+                obj = txtCAKJNM
+                msg = "保護者名(漢字)は必須入力です."
+            End If
         End If
+
         '//保護者・カナ名称は必須
         '''    If txtCAKNNM.Text = "" Then
         '''        Set obj = txtCAKNNM
@@ -1163,6 +1167,43 @@ pRirekiAddNewError:
     End Sub
 
     Private Sub txtCAKNNM_KeyUp(sender As Object, e As KeyEventArgs) Handles txtCAKNNM.KeyUp
-        txtCAKZNM.Text = txtCAKNNM.Text
+        'txtCAKZNM.Text = txtCAKNNM.Text
+
+        '2026/02/05 修正
+        If getonlinekb() <> 1 Then
+            txtCAKZNM.Text = txtCAKNNM.Text
+        End If
     End Sub
+
+    '2026/02/05 追加
+    Private Function getonlinekb() As Integer
+
+        Dim sql As String
+        Dim ds As DataSet
+
+        sql = "SELECT onlinekb FROM tchogoshaMaster"
+        sql &= " WHERE CAITKB = '" & lblCAITKB.Text & "'"
+        sql &= "   AND CAKYCD = '" & lblCAKYCD.Text & "'"
+        sql &= "   AND CAHGCD = '" & lblCAHGCD.Text & "'"
+        sql &= "   AND CASQNO = " & lblCASQNO.Text
+
+        ds = gdDBS.ExecuteDataset(sql)
+
+        ' データなし → 0（連携する）
+        If ds Is Nothing _
+        OrElse ds.Tables.Count = 0 _
+        OrElse ds.Tables(0).Rows.Count = 0 Then
+            Return 0
+        End If
+
+        Dim v = ds.Tables(0).Rows(0)("onlinekb")
+
+        ' NULL(DBNull) → 0
+        If IsDBNull(v) Then
+            Return 0
+        End If
+
+        Return Val(v)
+
+    End Function
 End Class
