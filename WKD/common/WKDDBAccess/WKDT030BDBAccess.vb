@@ -370,7 +370,8 @@ Public Class WKDT030BDBAccess
                 params.Add(New NpgsqlParameter("@sime" & i.ToString(), target.dtnengetu))
 
                 orConditions.Append("(" &
-                    "a.frinengetu <= @sime" & i.ToString() & " and (" &
+                    "a.frinengetu <= @sime" & i.ToString() & " and " &
+                    "substr(a.frinengetu,1,4) = substr(@sime" & i.ToString() & ",1,4) and (" &
                         "a.ownerno = @ownerno" & i.ToString() &
                         " or exists (" &
                             "select 1 " &
@@ -568,6 +569,7 @@ Public Class WKDT030BDBAccess
         'sql.AppendLine("  and substr(tif.frinengetu,1,4) = substr(@simenengetsu,1,4)")
         sql.AppendLine("  and tif.frinengetu <= @simenengetsu")
         sql.AppendLine("  and coalesce(tif.nencho_flg,'0') <> '1'")
+        sql.AppendLine("  and substr(tif.frinengetu,1,4) = substr(@simenengetsu,1,4)")
         sql.AppendLine("  and cast(tif.frinengetu || '01' as integer) between km.bafkst and km.bafked")
         sql.AppendLine("  and km.bakome is not null")
 
@@ -604,6 +606,7 @@ Public Class WKDT030BDBAccess
         'sql.AppendLine("  and substr(tif.frinengetu,1,4) = substr(@simenengetsu,1,4)")
         sql.AppendLine("  and tif.frinengetu <= @simenengetsu")
         sql.AppendLine("  and coalesce(tif.nencho_flg,'0') <> '1'")
+        sql.AppendLine("  and substr(tif.frinengetu,1,4) = substr(@simenengetsu,1,4)")
         sql.AppendLine("  and cast(tif.frinengetu || '01' as integer) between km.bafkst and km.bafked")
         sql.AppendLine("  and km.bakome is not null")
 
