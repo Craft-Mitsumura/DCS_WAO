@@ -743,6 +743,7 @@ Public Class WKDT030BDBAccess
                             "from t_nencho x " &
                             "where x.sakuhyokbn = '3' " &
                             "  and x.nys_ownerno = @ownerno" & i &
+                            "  and x.instno = n.instno" &
                             "  and x.dtnengetu < @sime" & i &
                         ")" &
                     ") or ")
