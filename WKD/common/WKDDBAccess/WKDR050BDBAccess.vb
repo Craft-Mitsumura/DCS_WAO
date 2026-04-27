@@ -35,6 +35,7 @@ Public Class WKDR050BDBAccess
         sql.AppendLine(" FROM ")
         sql.AppendLine(" t_instructor_furikomi ")
         sql.AppendLine(" WHERE dtnengetu = @dtnengetu ")
+        sql.AppendLine(" and fkinzeg > 0 ")
         sql.AppendLine(" ORDER BY itakuno, ownerno, instno ")
 
         Dim params As New List(Of NpgsqlParameter) From {
