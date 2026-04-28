@@ -57,6 +57,7 @@ Public Class WKDR050BDBAccess
         sql.AppendLine(" FROM ")
         sql.AppendLine(" t_instructor_furikomi ")
         sql.AppendLine(" WHERE dtnengetu = @dtnengetu ")
+        sql.AppendLine(" and fkinzeg > 0 ")
 
         Dim params As New List(Of NpgsqlParameter) From {
             New NpgsqlParameter("@dtnengetu", dtnengetu)
