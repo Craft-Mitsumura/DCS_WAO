@@ -103,15 +103,34 @@ Public Class frmWKDC040B
             newRow("作成日") = sysDate.ToString("dd")
             newRow("保護者郵便番号") = row(12)
             'newRow("保護者住所") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
-<<<<<<< HEAD
             '2026/05/13 ADD START
             'newRow("保護者住所") = (row(13).ToString & row(14).ToString).Trim & (row(15).ToString & row(16).ToString).Trim
-            newRow("保護者住所") = (row(13).ToString & row(14).ToString).Trim & "　" & (row(15).ToString & row(16).ToString).Trim
+
+            '2026/06/25 ADD START
+
+            'newRow("保護者住所") = (row(13).ToString & row(14).ToString).Trim & "　" & (row(15).ToString & row(16).ToString).Trim
+
+            Dim addr1 As String = (row(13).ToString & row(14).ToString).Trim
+            Dim addr2 As String = (row(15).ToString & row(16).ToString).Trim
+
+            Const fullarea As Integer = 20
+
+            Dim addr1len As Integer = addr1.Length
+            Dim remainder As Integer = addr1len Mod fullarea
+
+            Dim separator As String = ""
+
+            If remainder <> 0 Then
+                Dim pad As Integer = fullarea - remainder
+                separator = New String("　"c, pad)
+            End If
+
+            newRow("保護者住所") = addr1 & separator & addr2
+
+            '2026/06/25 ADD E N D
+
             '2026/05/13 ADD E N D
 
-=======
-            newRow("保護者住所") = (row(13).ToString & row(14).ToString).Trim & "　" & (row(15).ToString & row(16).ToString).Trim
->>>>>>> 22bde122097dffbff2946051240a7867c7f9f2a8
 
             Dim nameLength1 As Integer = row(17).ToString.Trim.Length
             Dim nameLength2 As Integer = row(18).ToString.Trim.Length
