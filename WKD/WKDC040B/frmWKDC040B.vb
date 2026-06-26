@@ -103,11 +103,15 @@ Public Class frmWKDC040B
             newRow("作成日") = sysDate.ToString("dd")
             newRow("保護者郵便番号") = row(12)
             'newRow("保護者住所") = row(13).ToString.Trim & row(14).ToString.Trim & row(15).ToString.Trim & row(16).ToString.Trim
+<<<<<<< HEAD
             '2026/05/13 ADD START
             'newRow("保護者住所") = (row(13).ToString & row(14).ToString).Trim & (row(15).ToString & row(16).ToString).Trim
             newRow("保護者住所") = (row(13).ToString & row(14).ToString).Trim & "　" & (row(15).ToString & row(16).ToString).Trim
             '2026/05/13 ADD E N D
 
+=======
+            newRow("保護者住所") = (row(13).ToString & row(14).ToString).Trim & "　" & (row(15).ToString & row(16).ToString).Trim
+>>>>>>> 22bde122097dffbff2946051240a7867c7f9f2a8
 
             Dim nameLength1 As Integer = row(17).ToString.Trim.Length
             Dim nameLength2 As Integer = row(18).ToString.Trim.Length
