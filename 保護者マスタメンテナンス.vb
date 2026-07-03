@@ -1206,4 +1206,25 @@ pRirekiAddNewError:
         Return Val(v)
 
     End Function
+
+    '2026/07/03 ADD START
+
+    Private Sub txtCAKJNM_TextChanged(sender As Object, e As EventArgs) Handles txtCAKJNM.TextChanged, ImText1.TextChanged
+
+        Static previousText As String = ""
+
+        Dim tb As GrapeCity.Win.Editors.GcTextBox = DirectCast(sender, GrapeCity.Win.Editors.GcTextBox)
+
+        If tb.Text <> StrConv(tb.Text, VbStrConv.Wide) Then
+
+            tb.Text = previousText
+            tb.SelectionStart = tb.Text.Length
+
+        Else
+            previousText = tb.Text
+        End If
+
+    End Sub
+
+    '2026/07/03 ADD E N D
 End Class
