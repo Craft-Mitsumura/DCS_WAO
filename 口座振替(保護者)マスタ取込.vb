@@ -308,7 +308,10 @@ Friend Class frmFurikaeReqImportAuto
         If arrContent(row, 6) = "9900" Then
             sql = sql & gdDBS.ColumnDataSet("1", vEnd:=True) & "," & vbCrLf '//取引金融機関区分
             sql = sql & gdDBS.ColumnDataSet(arrContent(row, 7), vEnd:=True) & "," & vbCrLf '//通帳記号
-            sql = sql & gdDBS.ColumnDataSet(arrContent(row, 9), vEnd:=True) & "," & vbCrLf '//通帳番号
+            '2026/07/31 ADD START
+            'sql = sql & gdDBS.ColumnDataSet(arrContent(row, 9), vEnd:=True) & "," & vbCrLf '//通帳番号
+            sql = sql & gdDBS.ColumnDataSet(arrContent(row, 9) & "1", vEnd:=True) & "," & vbCrLf '//通帳番号
+            '2026/07/31 ADD E N D
         Else
             sql = sql & gdDBS.ColumnDataSet("0", vEnd:=True) & "," & vbCrLf '//取引金融機関区分
         End If
@@ -343,7 +346,10 @@ Friend Class frmFurikaeReqImportAuto
         If arrContent(row, 6) = "9900" Then
             sql = sql & " CAKKBN = " & gdDBS.ColumnDataSet("1", vEnd:=True) & "," & vbCrLf '//取引金融機関区分
             sql = sql & " CAYBTK = " & gdDBS.ColumnDataSet(arrContent(row, 7), vEnd:=True) & "," & vbCrLf '//通帳記号
-            sql = sql & " CAYBTN = " & gdDBS.ColumnDataSet(arrContent(row, 9), vEnd:=True) & "," & vbCrLf '//通帳番号
+            '2026/07/31 ADD START
+            'sql = sql & " CAYBTN = " & gdDBS.ColumnDataSet(arrContent(row, 9), vEnd:=True) & "," & vbCrLf '//通帳番号
+            sql = sql & " CAYBTN = " & gdDBS.ColumnDataSet(arrContent(row, 9) & "1", vEnd:=True) & "," & vbCrLf '//通帳番号
+            '2026/07/31 ADD E N D
         Else
             sql = sql & " CAKKBN = " & gdDBS.ColumnDataSet("0", vEnd:=True) & "," & vbCrLf '//取引金融機関区分
         End If
