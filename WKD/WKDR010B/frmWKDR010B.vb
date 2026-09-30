@@ -8,6 +8,12 @@ Imports System.Text.RegularExpressions
 
 Public Class frmWKDR010B
 
+    '2026/09/11 ADD START
+
+    Private selectedFilePath As String = String.Empty
+
+    '2026/09/11 ADD E N D
+
     Private Sub frmWKDR010B_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         ' システム日付
@@ -18,6 +24,11 @@ Public Class frmWKDR010B
 
         ' 処理年月
         txtShoriNengetsu.Text = sysDate.ToString("yyyy/MM")
+
+        '2026/09/11 ADD START
+        CheckBox1.Visible = False
+        CheckBox1.Checked = False
+        '2026/09/11 ADD E N D
 
     End Sub
 
@@ -35,18 +46,48 @@ Public Class frmWKDR010B
             Return
         End If
 
-        Using frmFileDialog As New OpenFileDialog
-            frmFileDialog.FileName = "コンビニ収納確報データ.txt"
-            frmFileDialog.Filter = "テキスト文書(*.txt)|*.txt"
-            frmFileDialog.Title = "ファイルを選択してください"
-            ' ダイアログを表示する
-            If frmFileDialog.ShowDialog() = DialogResult.OK Then
-                filePath = frmFileDialog.FileName
-                inputDirectory = Path.GetDirectoryName(filePath)
-            Else
+        '2026/09/11 ADD START
+
+        If CheckBox1.Checked Then
+
+            If String.IsNullOrEmpty(selectedFilePath) OrElse Not File.Exists(selectedFilePath) Then
+                MessageBox.Show("取込対象ファイルが移動したか、削除されました。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 Return
             End If
-        End Using
+
+            filePath = selectedFilePath
+
+        Else
+
+            CheckBox1.Visible = False
+            CheckBox1.Checked = False
+
+            '2026/09/11 ADD E N D
+
+            Using frmFileDialog As New OpenFileDialog
+                frmFileDialog.FileName = "コンビニ収納確報データ.txt"
+                frmFileDialog.Filter = "テキスト文書(*.txt)|*.txt"
+                frmFileDialog.Title = "ファイルを選択してください"
+                ' ダイアログを表示する
+                If frmFileDialog.ShowDialog() = DialogResult.OK Then
+                    filePath = frmFileDialog.FileName
+                    '2026/09/11 ADD START
+                    selectedFilePath = filePath
+                    'inputDirectory = Path.GetDirectoryName(filePath)
+                    '2026/09/11 ADD E N D
+
+                Else
+                    Return
+                End If
+            End Using
+
+            '2026/09/11 ADD START
+
+        End If
+
+        inputDirectory = Path.GetDirectoryName(filePath)
+
+        '2026/09/11 ADD E N D
 
         ' システム日付
         Dim sysDate As Date = Now
@@ -116,7 +157,30 @@ Public Class frmWKDR010B
                     entity.itakuno = If(tableHeaderList(i).kgycd = "00404", "33948", tableHeaderList(i).kgycd)
                     entity.ownerno = GetMidByte((fields(8)), 2, 7)
                     entity.seitono = GetMidByte((fields(8)), 9, 8)
-                    entity.kseqno = GetMidByte((fields(8)), 1, 1)
+
+                    '2026/09/18 ADD START
+
+                    'entity.kseqno = GetMidByte((fields(8)), 1, 1)
+
+                    Dim seqEntity = entityList.Where(
+                    Function(x) x.dtnengetu = entity.dtnengetu AndAlso
+                                x.itakuno = entity.itakuno AndAlso
+                                x.ownerno = entity.ownerno AndAlso
+                                x.seitono = entity.seitono
+                              ).ToList()
+
+                    Dim Kseqno As Integer = 0
+
+                    If seqEntity.Count > 0 Then
+                        Kseqno = seqEntity.Max(
+                                Function(x) CInt(x.kseqno)
+                                                   )
+                    End If
+
+                    entity.kseqno = (Kseqno + 1).ToString()
+
+                    '2026/09/18 ADD E N D
+
                     'Detail
                     entity.dtsybt = fields(1)
                     entity.syndate = fields(2)
@@ -157,13 +221,36 @@ Public Class frmWKDR010B
         End If
 
         'データ年月＝システム日付の前月でない場合はエラーとする
-        If dtnengetuerrflg Then
-            MessageBox.Show("処理年月と取込対象データのデータ年月が一致していません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Exit Sub
+        '2026/09/11 ADD START
+
+        If Not CheckBox1.Checked Then
+
+            '2026/09/11 ADD E N D
+
+            If dtnengetuerrflg Then
+                '2026/09/11 ADD START
+
+                'MessageBox.Show("処理年月と取込対象データのデータ年月が一致していません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                MessageBox.Show("処理年月と取込対象のデータ年月が一致していません。" & Environment.NewLine &
+                                "取込対象データに問題が無い事を確認して、" & Environment.NewLine &
+                                "再度「取込」ボタンを押下してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                CheckBox1.Visible = True
+                '2026/09/11 ADD E N D
+
+                Exit Sub
+            End If
+
+        Else
+            For Each entity As TConveniFurikomiKakuhoEntity In entityList
+                entity.dtnengetu = monthAgo
+            Next
+
         End If
 
+
         Dim errorRecords As New List(Of String)
-        Dim row As Integer = 0
+            Dim row As Integer = 0
 
         ' ①先頭レコードは、データ区分=1以外であればエラーとする
         If savereckbn <> "1" Then
@@ -354,6 +441,13 @@ Public Class frmWKDR010B
         End If
 
         MessageBox.Show("「" & filePath & "」が取り込まれました。", "正常終了", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        '2026/09/11 ADD START
+        If CheckBox1.Visible Then
+            CheckBox1.Visible = False
+            CheckBox1.Checked = False
+        End If
+        '2026/09/11 ADD E N D
 
     End Sub
 
