@@ -223,31 +223,31 @@ Public Class frmWKDR010B
         'データ年月＝システム日付の前月でない場合はエラーとする
         '2026/09/11 ADD START
 
-        If Not CheckBox1.Checked Then
+        'If Not CheckBox1.Checked Then
 
-            '2026/09/11 ADD E N D
+        '2026/09/11 ADD E N D
 
-            If dtnengetuerrflg Then
-                '2026/09/11 ADD START
+        If dtnengetuerrflg Then
+            '2026/09/11 ADD START
 
-                'MessageBox.Show("処理年月と取込対象データのデータ年月が一致していません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                MessageBox.Show("処理年月と取込対象のデータ年月が一致していません。" & Environment.NewLine &
-                                "取込対象データに問題が無い事を確認して、" & Environment.NewLine &
-                                "再度「取込」ボタンを押下してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            ''MessageBox.Show("処理年月と取込対象データのデータ年月が一致していません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            'MessageBox.Show("処理年月と取込対象のデータ年月が一致していません。" & Environment.NewLine &
+            '                "取込対象データに問題が無い事を確認して、" & Environment.NewLine &
+            '                "再度「取込」ボタンを押下してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-                CheckBox1.Visible = True
-                '2026/09/11 ADD E N D
+            'CheckBox1.Visible = True
+            ''2026/09/11 ADD E N D
 
-                Exit Sub
-            End If
+            'Exit Sub
+            '2026/10/02 ADD START
 
-        Else
             For Each entity As TConveniFurikomiKakuhoEntity In entityList
                 entity.dtnengetu = monthAgo
             Next
 
-        End If
+            '2026/10/02 ADD E N D
 
+        End If
 
         Dim errorRecords As New List(Of String)
             Dim row As Integer = 0
@@ -335,23 +335,60 @@ Public Class frmWKDR010B
         dtErrDetail.TableName = "コンビニ受信データチェックリスト（明細）" & vbCrLf & sysDate.ToString("yyyy-MM-dd")
         dtErrDetail.Rows.Add("顧客番号", "金額", "データ種別", "期限", "ＣＶＳ", "店舗ＣＤ", "収納年月日", "収納時間")
         For Each dtrow As DataRow In tbCheckDetail.Rows
-            If IsDBNull(dtrow("kakutei_dtnengetu")) OrElse dtrow("kingk") <> dtrow("kakutei_kingaku") OrElse dtrow("dtsybt") <> "02" OrElse dtrow("shrikgn").ToString().Substring(4, 2) <> "24" Then
-                For Each dtrow2 As DataRow In tbCheckDetail.Rows
-                    dtErrDetail.Rows.Add(dtrow("itakuno") & dtrow("ownerno") & dtrow("seitono"), CnvDec(dtrow("kingk")).ToString("#,##0"), dtrow2("dtsybt"), dtrow2("shrikgn"), dtrow2("cvscd"), dtrow2("uktncd"), dtrow2("syndate"), dtrow2("syntime"))
-                    errCnt += 1
-                Next
+            '2026/10/02 ADD START
+            If IsDBNull(dtrow("kakutei_dtnengetu")) OrElse dtrow("kingk") <> dtrow("kakutei_kingaku") OrElse dtrow("dtsybt") <> "02" OrElse dtrow("shrikgn").ToString().Substring(4, 2) <> "24" OrElse dtrow("syndate").ToString().Substring(0, 6) <> monthAgo Then
+
+                'If IsDBNull(dtrow("kakutei_dtnengetu")) OrElse dtrow("kingk") <> dtrow("kakutei_kingaku") OrElse dtrow("dtsybt") <> "02" OrElse dtrow("shrikgn").ToString().Substring(4, 2) <> "24" Then
+                'For Each dtrow2 As DataRow In tbCheckDetail.Rows
+                '    dtErrDetail.Rows.Add(dtrow("itakuno") & dtrow("ownerno") & dtrow("seitono"), CnvDec(dtrow("kingk")).ToString("#,##0"), dtrow2("dtsybt"), dtrow2("shrikgn"), dtrow2("cvscd"), dtrow2("uktncd"), dtrow2("syndate"), dtrow2("syntime"))
+                '    errCnt += 1
+                'Next
+                dtErrDetail.Rows.Add(dtrow("itakuno") & dtrow("ownerno") & dtrow("seitono"), CnvDec(dtrow("kingk")).ToString("#,##0"), dtrow("dtsybt"), dtrow("shrikgn"), dtrow("cvscd"), dtrow("uktncd"), dtrow("syndate"), dtrow("syntime"))
+                errCnt += 1
+                '2026/10/02 ADD E N D
+
             End If
         Next
         dtErrDetail.Rows.Add("合計", errCnt.ToString(), "件")
         strName = "コンビニ受信データチェックリスト（明細）.csv"
         WriteCsvData(dtErrDetail, inputDirectory, strName,, True, True)
 
-        ' 完了メッセ―ジ
-        If tableHeaderList.Count <> 6 OrElse 0 < errCnt Then
-            If MessageBox.Show("確報データエラー有り" & vbCrLf & vbCrLf & "取込処理を継続しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.No Then
-                Return
+        '2026/10/02 ADD START
+
+        '' 完了メッセ―ジ
+        'If tableHeaderList.Count <> 6 OrElse 0 < errCnt Then
+        '    If MessageBox.Show("確報データエラー有り" & vbCrLf & vbCrLf & "取込処理を継続しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.No Then
+        '        Return
+        '    End If
+        'End If
+
+        Dim CheckFlg As Boolean = False
+
+        If Not CheckBox1.Visible Then
+
+            ' 完了メッセ―ジ
+            If tableHeaderList.Count <> 6 OrElse 0 < errCnt Then
+                If MessageBox.Show("取込対象データのうち、データ年月・金額・データ種別・支払期限の不整合があります。" & vbCrLf & vbCrLf & "出力されたチェックリストを確認し、問題がないことを確認のうえ、再度「取込」ボタンを押下してください。", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.No Then
+
+
+
+                    Return
+                End If
+
+                CheckBox1.Visible = True
+                CheckBox1.Checked = False
+                CheckFlg = True
+
             End If
+
         End If
+
+        If Not CheckBox1.Checked AndAlso CheckFlg Then
+            Return
+
+        End If
+
+        '2026/10/02 ADD E N D
 
         'コンビニ振込確報データのデータ年月が該当年月と同一のデータを削除
         If Not dba.Delete(monthAgo) Then
