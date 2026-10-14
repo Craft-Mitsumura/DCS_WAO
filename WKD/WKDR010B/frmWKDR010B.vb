@@ -153,6 +153,9 @@ Public Class frmWKDR010B
                     entity.dtnengetu = GetMidByte((fields(2)), 1, 6)
                     If entity.dtnengetu <> monthAgo Then
                         dtnengetuerrflg = True
+                        '2026/10/14 ADD START
+                        entity.dtnengetu = monthAgo
+                        '2026/10/14 ADD E N D
                     End If
                     entity.itakuno = If(tableHeaderList(i).kgycd = "00404", "33948", tableHeaderList(i).kgycd)
                     entity.ownerno = GetMidByte((fields(8)), 2, 7)
@@ -219,7 +222,7 @@ Public Class frmWKDR010B
             MessageBox.Show("取込対象データが存在しません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
-
+        '2026/10/14 DEL START
         'データ年月＝システム日付の前月でない場合はエラーとする
         '2026/09/11 ADD START
 
@@ -227,28 +230,28 @@ Public Class frmWKDR010B
 
         '2026/09/11 ADD E N D
 
-        If dtnengetuerrflg Then
-            '2026/09/11 ADD START
+        'If dtnengetuerrflg Then
+        '    '2026/09/11 ADD START
 
-            ''MessageBox.Show("処理年月と取込対象データのデータ年月が一致していません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            'MessageBox.Show("処理年月と取込対象のデータ年月が一致していません。" & Environment.NewLine &
-            '                "取込対象データに問題が無い事を確認して、" & Environment.NewLine &
-            '                "再度「取込」ボタンを押下してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        '    ''MessageBox.Show("処理年月と取込対象データのデータ年月が一致していません。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        '    'MessageBox.Show("処理年月と取込対象のデータ年月が一致していません。" & Environment.NewLine &
+        '    '                "取込対象データに問題が無い事を確認して、" & Environment.NewLine &
+        '    '                "再度「取込」ボタンを押下してください。", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-            'CheckBox1.Visible = True
-            ''2026/09/11 ADD E N D
+        '    'CheckBox1.Visible = True
+        '    ''2026/09/11 ADD E N D
 
-            'Exit Sub
-            '2026/10/02 ADD START
+        '    'Exit Sub
+        '    '2026/10/02 ADD START
 
-            For Each entity As TConveniFurikomiKakuhoEntity In entityList
-                entity.dtnengetu = monthAgo
-            Next
+        '    For Each entity As TConveniFurikomiKakuhoEntity In entityList
+        '        entity.dtnengetu = monthAgo
+        '    Next
 
-            '2026/10/02 ADD E N D
+        '    '2026/10/02 ADD E N D
 
-        End If
-
+        'End If
+        '2026/10/14 DEL E N D
         Dim errorRecords As New List(Of String)
             Dim row As Integer = 0
 
