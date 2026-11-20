@@ -274,6 +274,12 @@ Public Class frmWKDT020B
         dt.Columns("seiyyyymmdd").ReadOnly = False
         dt.Columns("nyutaishabi").ReadOnly = False
 
+        '2026/11/11 ADD START
+        dt.Columns.Add("nyutaigengou", GetType(String))
+        dt.Columns.Add("mukou", GetType(String))
+        '2026/11/11 ADD E N D
+
+
         For Each row As DataRow In dt.Rows
             If CnvStr(row("dtnengetu")).Length = 6 Then
                 Dim days As Date = CnvDat(row("dtnengetu").ToString & "01")

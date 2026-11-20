@@ -644,15 +644,31 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("  , zeigak") ' 源泉徴収税額
         sql.AppendLine("  , '年末調整未済'") ' 摘要欄
         sql.AppendLine("  , nm.otsuran") ' 乙欄
+        '2026/11/11 ADD START
+        'sql.AppendLine("  , case") ' 就職欄
+        'sql.AppendLine("        when substring(frinengetu,1,4) = nyunen then '＊'")
         sql.AppendLine("  , case") ' 就職欄
-        sql.AppendLine("        when substring(frinengetu,1,4) = nyunen then '＊'")
+        sql.AppendLine("         when gs = 3 then")
+        sql.AppendLine("            case") ' 就職欄
+        sql.AppendLine("                when substring(frinengetu,1,4) = nyunen then '1'")
+        sql.AppendLine("                else '2'")
+        sql.AppendLine("             end")
+        sql.AppendLine("         when substring(frinengetu,1,4) = nyunen then '＊'")
         sql.AppendLine("        else ''")
         sql.AppendLine("    end shushokuran")
+        '2026/11/11 ADD E N D
         'sql.AppendLine("  , case") ' 退職欄
         'sql.AppendLine("        when substring(frinengetu,1,4) = tainen then '＊'")
         'sql.AppendLine("        else ''")
         'sql.AppendLine("    end taishokuran")
-        sql.AppendLine("  , '＊' taishokuran") ' 退職欄
+        '2026/11/11 ADD START
+
+        'sql.AppendLine("  , '＊' taishokuran") ' 退職欄
+        sql.AppendLine("  , case") ' 退職欄
+        sql.AppendLine("when gs = 3 then '1'")
+        sql.AppendLine("else '＊'")
+        sql.AppendLine("end taishokuran")
+        '2026/11/11 ADD E N D
         'sql.AppendLine("  , case") ' 入社/退職年月日（和暦）
         'sql.AppendLine("        when substring(frinengetu,1,4) = tainen then tainen || taituki || taihi")
         'sql.AppendLine("        else ")
@@ -663,9 +679,14 @@ Public Class WKDT030BDBAccess
         'sql.AppendLine("    end nyutaishabi")
         sql.AppendLine("  , tainen || taituki || taihi nyutaishabi") ' 入社/退職年月日（和暦）
         sql.AppendLine("  , seiyyyy") ' 生年月日元号
-        sql.AppendLine("  , seiyyyy || seimm || seidd seiyyyymmdd") ' 生年月日（和暦）
-        sql.AppendLine("  , case nm.gs") ' 法人番号
-        sql.AppendLine("        when 1 then ''")
+        '2026/11/11 ADD START
+        'sql.AppendLine("  , seiyyyy || seimm || seidd seiyyyymmdd") ' 生年月日（和暦）
+        sql.AppendLine("  , seiyyyy || lpad(seimm, 2, '0') || lpad(seidd, 2, '0') seiyyyymmdd") ' 生年月日（和暦）
+        'sql.AppendLine("  , case nm.gs") ' 法人番号
+        'sql.AppendLine("        when 1 then ''")
+        sql.AppendLine("  , case ") ' 法人番号
+        sql.AppendLine("        when nm.gs in (1, 2) then ''")
+        '2026/11/11 ADD E N D
         sql.AppendLine("        else houjinno")
         sql.AppendLine("    end houjinno")
         sql.AppendLine("  , postno") ' オーナー郵便番号
@@ -684,7 +705,10 @@ Public Class WKDT030BDBAccess
         sql.AppendLine("      , case gs")
         sql.AppendLine("            when 1 then '＊'")
         sql.AppendLine("            when 2 then '＊'")
-        sql.AppendLine("            when 3 then '＊'")
+        '2026/11/11 ADD START
+        'sql.AppendLine("            when 3 then '＊'")
+        sql.AppendLine("            when 3 then '1'")
+        '2026/11/11 ADD E N D
         sql.AppendLine("            when 4 then '＊'")
         sql.AppendLine("        end otsuran") ' 乙欄
         sql.AppendLine("      , case gs")

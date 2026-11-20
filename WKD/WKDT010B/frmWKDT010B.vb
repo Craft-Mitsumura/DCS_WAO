@@ -141,6 +141,11 @@ Public Class frmWKDT010B
         dt.Columns("seiyyyymmdd").ReadOnly = False
         dt.Columns("nyutaishabi").ReadOnly = False
 
+        '2026/11/11 ADD START
+        dt.Columns.Add("nyutaigengou", GetType(String))
+        dt.Columns.Add("mukou", GetType(String))
+        '2026/11/11 ADD E N D
+
         For Each row As DataRow In dt.Rows
             If CnvStr(row("dtnengetu")).Length = 6 Then
                 Dim days As Date
@@ -170,8 +175,24 @@ Public Class frmWKDT010B
                 Dim nyutaishayear As Integer = Integer.Parse(nyutaishabi.Substring(0, 4))
                 Dim nyutaiwareki As Integer = jpCalendar.GetYear(New DateTime(nyutaishayear, 1, 1))
                 Dim nyutainen As String = (nyutaiwareki Mod 100).ToString("00")
+
+                '2026/11/11 ADD START
+                If CnvStr(row("chohyoshurui")) = "税務署提出用" Then
+                    Dim nyutaishaday As Date = CnvDat(row("nyutaishabi").ToString)
+                    Dim nyutaishagengou As String = nyutaishaday.ToString("gg", ci)
+
+                    row("nyutaigengou") = nyutaishagengou
+                End If
+
+                '2026/11/11 ADD E N D
+
                 row("nyutaishabi") = nyutainen & nyutaishabi.Substring(4, 4)
             End If
+            '2026/11/11 ADD START
+            If CnvStr(row("chohyoshurui")) = "税務署提出用" Then
+                row("mukou") = 0
+            End If
+            '2026/11/11 ADD E N D
         Next
 
         Dim msg As New StringBuilder()
