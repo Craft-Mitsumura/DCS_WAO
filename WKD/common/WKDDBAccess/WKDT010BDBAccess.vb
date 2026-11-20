@@ -296,9 +296,8 @@ Public Class WKDT010BDBAccess
         sql.AppendLine("            end")
         sql.AppendLine("    end nyutaishabi")
         sql.AppendLine("  , seiyyyy") ' 生年月日元号
+        sql.AppendLine("  , seiyyyy || seimm || seidd seiyyyymmdd") ' 生年月日（和暦）
         '2026/11/11 ADD START
-        'sql.AppendLine("  , seiyyyy || seimm || seidd seiyyyymmdd") ' 生年月日（和暦）
-        sql.AppendLine("  , seiyyyy || lpad(seimm, 2, '0') || lpad(seidd, 2, '0') seiyyyymmdd") ' 生年月日（和暦）
         'sql.AppendLine("  , case nm.gs") ' 法人番号
         sql.AppendLine("  , case ") ' 法人番号
         'sql.AppendLine("        when 1 then ''")
